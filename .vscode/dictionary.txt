@@ -2,6 +2,7 @@ antfu
 booleanish
 bumpp
 bunx
+certutil
 changelogen
 changelogithub
 codecov
@@ -15,6 +16,8 @@ deps
 destructurable
 entrypoints
 heroicons
+keychain
+Keychains
 lockb
 mkcert
 openweb

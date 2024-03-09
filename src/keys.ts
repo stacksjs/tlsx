@@ -1,4 +1,8 @@
 import crypto from 'node:crypto'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { runCommand } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
 import type { GenerateCertOptions } from './types'
 
@@ -68,6 +72,31 @@ export function generateCert(options?: GenerateCertOptions) {
 
 export { tls, pki, forge }
 
-// export function addCertToSystemTrustStore(cert: string) {
-//   // TODO
-// }
+export interface AddCertOptions {
+  customCertPath?: string
+}
+
+export async function addCertToSystemTrustStore(cert: string, options?: AddCertOptions) {
+  // Construct the path using os.homedir() and path.join()
+  const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`)
+
+  // Ensure the directory exists before writing the file
+  const certDir = path.dirname(certPath)
+  if (!fs.existsSync(certDir))
+    fs.mkdirSync(certDir, { recursive: true })
+
+  fs.writeFileSync(certPath, cert)
+  const platform = os.platform()
+
+  if (platform === 'darwin') // macOS
+    await runCommand(`sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${certPath}`)
+  else if (platform === 'win32') // Windows
+    await runCommand(`certutil -enterprise -f -v -AddStore "Root" ${certPath}`)
+  else if (platform === 'linux') // Linux (This might vary based on the distro)
+    // For Ubuntu/Debian based systems. Adjust accordingly for other distros.
+    await runCommand(`sudo cp ${certPath} /usr/local/share/ca-certificates/ && sudo update-ca-certificates`)
+  else
+    throw new Error(`Unsupported platform: ${platform}`)
+
+  return certPath
+}
