@@ -70,8 +70,6 @@ export function generateCert(options?: GenerateCertOptions) {
   }
 }
 
-export { tls, pki, forge }
-
 export interface AddCertOptions {
   customCertPath?: string
 }
@@ -93,10 +91,12 @@ export async function addCertToSystemTrustStore(cert: string, options?: AddCertO
   else if (platform === 'win32') // Windows
     await runCommand(`certutil -enterprise -f -v -AddStore "Root" ${certPath}`)
   else if (platform === 'linux') // Linux (This might vary based on the distro)
-    // For Ubuntu/Debian based systems. Adjust accordingly for other distros.
+    // for Ubuntu/Debian based systems
     await runCommand(`sudo cp ${certPath} /usr/local/share/ca-certificates/ && sudo update-ca-certificates`)
   else
     throw new Error(`Unsupported platform: ${platform}`)
 
   return certPath
 }
+
+export { tls, pki, forge }
