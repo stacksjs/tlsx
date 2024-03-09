@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.3...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.0.3...main)
+
+### 🏡 Chore
+
+- Wip ([662f301](https://github.com/stacksjs/tlsx/commit/662f301))
+
+### ❤️ Contributors
+
+- Chris <chrisbreuer93@gmail.com>
+
 ## v0.0.2...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.0.2...main)
