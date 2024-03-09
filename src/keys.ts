@@ -4,13 +4,31 @@ import os from 'node:os'
 import path from 'node:path'
 import { runCommand } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
-import type { GenerateCertOptions } from './types'
+import { config } from './config'
+
+export interface GenerateCertOptions {
+  altNameIPs?: string[]
+  altNameURIs?: string[]
+  validityDays?: number
+  organizationName?: string
+  countryName?: string
+  stateName?: string
+  localityName?: string
+  commonName?: string
+}
 
 export function generateCert(options?: GenerateCertOptions) {
+  console.log('generateCert', config)
+
   const def: GenerateCertOptions = {
     altNameIPs: ['127.0.0.1'],
     altNameURIs: ['localhost'],
     validityDays: 1,
+    organizationName: 'tlsx stacks.localhost',
+    countryName: 'US',
+    stateName: 'California',
+    localityName: 'Playa Vista',
+    commonName: 'stacks.localhost',
   }
 
   if (!options)
@@ -36,7 +54,7 @@ export function generateCert(options?: GenerateCertOptions) {
     value: 'Some-State',
   }, {
     name: 'organizationName',
-    value: 'Stacks.js, Inc.',
+    value: `stacks.localhost`,
   }]
   cert.setSubject(attrs)
   cert.setIssuer(attrs)
@@ -75,15 +93,7 @@ export interface AddCertOptions {
 }
 
 export async function addCertToSystemTrustStore(cert: string, options?: AddCertOptions) {
-  // Construct the path using os.homedir() and path.join()
-  const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`)
-
-  // Ensure the directory exists before writing the file
-  const certDir = path.dirname(certPath)
-  if (!fs.existsSync(certDir))
-    fs.mkdirSync(certDir, { recursive: true })
-
-  fs.writeFileSync(certPath, cert)
+  const certPath = storeCert(cert, options)
   const platform = os.platform()
 
   if (platform === 'darwin') // macOS
@@ -95,6 +105,20 @@ export async function addCertToSystemTrustStore(cert: string, options?: AddCertO
     await runCommand(`sudo cp ${certPath} /usr/local/share/ca-certificates/ && sudo update-ca-certificates`)
   else
     throw new Error(`Unsupported platform: ${platform}`)
+
+  return certPath
+}
+
+export function storeCert(cert: string, options?: AddCertOptions) {
+  // Construct the path using os.homedir() and path.join()
+  const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`)
+
+  // Ensure the directory exists before writing the file
+  const certDir = path.dirname(certPath)
+  if (!fs.existsSync(certDir))
+    fs.mkdirSync(certDir, { recursive: true })
+
+  fs.writeFileSync(certPath, cert)
 
   return certPath
 }
