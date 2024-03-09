@@ -13,6 +13,7 @@
 ## Features
 
 - SSL Support _(HTTPS by default)_
+- Configurable
 
 ## Install
 

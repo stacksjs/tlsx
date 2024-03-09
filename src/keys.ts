@@ -29,7 +29,7 @@ export async function generateCert(options?: GenerateCertOptions) {
   }, {
     shortName: 'ST',
     value: opts.stateName ?? 'California',
-  }, {  
+  }, {
     name: 'organizationName',
     value: opts.organizationName ?? 'tlsx stacks.localhost', // simply for a recognizable name
   }]
