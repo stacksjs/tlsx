@@ -2,38 +2,15 @@ import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { runCommand } from '@stacksjs/cli'
+import { log, runCommand } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
-import { config } from './config'
+import { resolveConfig } from './config'
+import type { GenerateCertOptions } from './types'
 
-export interface GenerateCertOptions {
-  altNameIPs?: string[]
-  altNameURIs?: string[]
-  validityDays?: number
-  organizationName?: string
-  countryName?: string
-  stateName?: string
-  localityName?: string
-  commonName?: string
-}
+export async function generateCert(options?: GenerateCertOptions) {
+  log.debug('generateCert', options)
 
-export function generateCert(options?: GenerateCertOptions) {
-  console.log('generateCert', config)
-
-  const def: GenerateCertOptions = {
-    altNameIPs: ['127.0.0.1'],
-    altNameURIs: ['localhost'],
-    validityDays: 1,
-    organizationName: 'tlsx stacks.localhost',
-    countryName: 'US',
-    stateName: 'California',
-    localityName: 'Playa Vista',
-    commonName: 'stacks.localhost',
-  }
-
-  if (!options)
-    options = def
-
+  const opts = await resolveConfig(options)
   const keys = pki.rsa.generateKeyPair(2048)
   const cert = pki.createCertificate()
   cert.publicKey = keys.publicKey
@@ -44,18 +21,19 @@ export function generateCert(options?: GenerateCertOptions) {
   // - non-negative (prefix a '00' if your value starts with a '1' bit)
   cert.serialNumber = `01${crypto.randomBytes(19).toString('hex')}` // 1 octet = 8 bits = 1 byte = 2 hex chars
   cert.validity.notBefore = new Date()
-  cert.validity.notAfter = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * (options.validityDays ?? 1))
+  cert.validity.notAfter = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * (opts.validityDays ?? 1))
 
   const attrs = [{
     name: 'countryName',
-    value: 'AU',
+    value: opts.countryName ?? 'US',
   }, {
     shortName: 'ST',
-    value: 'Some-State',
+    value: opts.stateName ?? 'California',
   }, {
     name: 'organizationName',
-    value: `stacks.localhost`,
+    value: opts.organizationName ?? 'tlsx stacks.localhost',
   }]
+
   cert.setSubject(attrs)
   cert.setIssuer(attrs)
 
@@ -63,13 +41,13 @@ export function generateCert(options?: GenerateCertOptions) {
   cert.setExtensions([{
     name: 'subjectAltName',
     altNames: [
-      ...(options.altNameURIs !== undefined
-        ? options.altNameURIs.map(uri => ({ type: 6, value: uri }))
+      ...(opts.altNameURIs !== undefined
+        ? opts.altNameURIs.map(uri => ({ type: 6, value: uri }))
         : []
       ),
 
-      ...(options.altNameIPs !== undefined
-        ? options.altNameIPs.map(uri => ({ type: 7, ip: uri }))
+      ...(opts.altNameIPs !== undefined
+        ? opts.altNameIPs.map(uri => ({ type: 7, ip: uri }))
         : []
       ),
     ],
