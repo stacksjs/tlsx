@@ -1,8 +1,6 @@
 import os from 'node:os'
 import { CAC } from 'cac'
-import { readFileSync, writeFileSync } from 'fs-extra'
 import { log } from '@stacksjs/logging'
-import { config } from '../src/config'
 import { version } from '../package.json'
 
 const cli = new CAC('tlsx')
