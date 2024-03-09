@@ -1,4 +1,4 @@
-<p align="center"><img src=".github/art/cover.jpg" alt="Social Card of this repo"></p>
+<p align="center"><img src=".github/art/cover.png" alt="Social Card of this repo"></p>
 
 [![npm version][npm-version-src]][npm-version-href]
 [![GitHub Actions][github-actions-src]][github-actions-href]
@@ -6,19 +6,13 @@
 <!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
 
-# Zero-Config & Setup HTTPS
+# Zero-Config & Zero-Setup HTTPS
 
-> A zero-config reverse proxy for local development with SSL support, custom domains, and more.
+>
 
 ## Features
 
-- Reverse Proxy
 - SSL Support _(HTTPS by default)_
-- Custom Domains _(with wildcard support)_
-- Auto HTTP-to-HTTPS Redirection
-- `/etc/hosts` Management _(auto-updating)_
-- Dependency-Free Binary
-- Zero-Config Setup
 
 ## Install
 
@@ -42,21 +36,13 @@ There are two ways of using this reverse proxy: _as a library or as a CLI._
 Given the npm package is installed:
 
 ```js
-import { startProxy } from 'tlsx'
-
-startProxy({
-  from: 'localhost:3000',
-  to: 'my-project.localhost' // or try 'my-project.test'
-})
+// wip
 ```
 
 ### CLI
 
 ```bash
-tlsx --from localhost:3000 --to my-project.localhost
-tlsx --from localhost:8080 --to my-project.test --keyPath ./key.pem --certPath ./cert.pem
-tlsx --help
-tlsx --version
+tlsx ...
 ```
 
 ## Configuration
@@ -65,9 +51,20 @@ The Reverse Proxy can be configured using a `tlsx.config.ts` _(or `tlsx.config.j
 
 ```ts
 // tlsx.config.ts (or tlsx.config.js)
+import type { TlsConfig } from './src/types'
+
 export default {
-  'localhost:3000': 'stacks.localhost'
-}
+  ssl: {
+    altNameIPs: ['127.0.0.1'],
+    altNameURIs: ['localhost'],
+    organizationName: 'tlsx stacks.localhost',
+    countryName: 'US',
+    stateName: 'California',
+    localityName: 'Playa Vista',
+    commonName: 'stacks.localhost',
+    validityDays: 1,
+  },
+} satisfies TlsConfig
 ```
 
 _Then run:_
@@ -86,7 +83,7 @@ bun test
 
 ## Changelog
 
-Please see our [releases](https://github.com/stacksjs/stacks/releases) page for more information on what has changed recently.
+Please see our [releases](https://github.com/stacksjs/tlsx/releases) page for more information on what has changed recently.
 
 ## Contributing
 
@@ -104,7 +101,7 @@ For casual chit-chat with others using this package:
 
 ## Postcardware
 
-Two things are true: Stacks OSS will always stay open-source, and we do love to receive postcards from wherever Stacks is used! 🌍 _We also publish them on our website. And thank you, Spatie_
+Two things are true: Stacks OSS will always stay open-source, and we do love to receive postcards from wherever Stacks is used! 🌍 _We also publish them on our website._
 
 Our address: Stacks.js, 5710 Crescent Park #107, Playa Vista 90094, CA.
 
