@@ -18,10 +18,16 @@
 ## Install
 
 ```bash
-bun install -d tlsx
+bun install -d sslx
+
+# or, invoke immediately
+bunx sslx
+npx sslx
 ```
 
-_Alternatively, you can install:_
+Please note, we are looking to publish this package to npm under the name `tlsx`. _Hoping npm will release the name for us._
+
+Alternatively, you can install:
 
 ```bash
 brew install tlsx # wip
@@ -36,19 +42,24 @@ There are two ways of using this reverse proxy: _as a library or as a CLI._
 
 Given the npm package is installed:
 
-```js
-// wip
+```ts
+import { config, generateCert, addCertToSystemTrustStore, storeCert, tls, pki, forge } from 'sslx'
+import type { AddCertOptions, GenerateCertOptions, TlsConfig, TlsOptions } from 'sslx'
+
+// ...
 ```
 
 ### CLI
 
 ```bash
-tlsx ...
+# more docs incoming
+tlsx --help
+tlsx version
 ```
 
 ## Configuration
 
-The Reverse Proxy can be configured using a `tlsx.config.ts` _(or `tlsx.config.js`)_ file and it will be automatically loaded when running the `tlsx` command.
+The Reverse Proxy can be configured using a `tls.config.ts` _(or `tls.config.js`)_ file and it will be automatically loaded when running the `tlsx` command.
 
 ```ts
 // tlsx.config.ts (or tlsx.config.js)
@@ -71,7 +82,7 @@ export default {
 _Then run:_
 
 ```bash
-tlsx start
+tlsx
 ```
 
 To learn more, head over to the [documentation](https://tlsx.sh/).
