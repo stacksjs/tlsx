@@ -2,6 +2,7 @@ import os from 'node:os'
 import { CAC } from 'cac'
 import { log } from '@stacksjs/logging'
 import { version } from '../package.json'
+import { addCertToSystemTrustStore, generateCert } from '../src'
 
 const cli = new CAC('tlsx')
 
@@ -26,6 +27,7 @@ cli
   .action(async (domain?: string, options?: Options) => {
     log.debug(`Generating a self-signed SSL certificate for domain: ${domain}`)
     log.debug('Options:', options)
+    await addCertToSystemTrustStore((await generateCert()).cert) // TODO: domain
     // Generate a keypair and create an X.509v3 certificate for the domain
     // await generateAndSaveCertificates()
     // await addRootCAToSystemTrust()

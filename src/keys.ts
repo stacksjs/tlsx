@@ -2,7 +2,7 @@ import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { log, runCommand } from '@stacksjs/cli'
+import { log, runCommand, runCommands } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
 import { resolveConfig } from './config'
 import type { GenerateCertOptions } from './types'
@@ -77,13 +77,14 @@ export async function addCertToSystemTrustStore(cert: string, options?: AddCertO
   if (platform === 'darwin') // macOS
     await runCommand(`sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${certPath}`)
   else if (platform === 'win32') // Windows
-    await runCommand(`certutil -enterprise -f -v -AddStore "Root" ${certPath}`)
+
+    await runCommand(`certutil -f -v -addstore -enterprise Root ${certPath}`)
+
   else if (platform === 'linux') // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
-    await runCommand(`sudo cp ${certPath} /usr/local/share/ca-certificates/ && sudo update-ca-certificates`)
+    await runCommands([`sudo cp ${certPath} /usr/local/share/ca-certificates/`, `sudo update-ca-certificates`])
   else
     throw new Error(`Unsupported platform: ${platform}`)
-
   return certPath
 }
 
