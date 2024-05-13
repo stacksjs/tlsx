@@ -68,12 +68,8 @@
     "yaml",
     "toml"
   ],
-  "cSpell.ignorePaths": [
-    "node_modules"
-  ],
-  "cSpell.dictionaries": [
-    "custom-dictionary"
-  ],
+  "cSpell.ignorePaths": ["node_modules"],
+  "cSpell.dictionaries": ["custom-dictionary"],
   "cSpell.diagnosticLevel": "Hint",
   "cSpell.customDictionaries": {
     "bun-plugin-env": {

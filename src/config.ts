@@ -26,8 +26,7 @@ export async function resolveConfig(options?: GenerateCertOptions) {
     cwd: resolve(import.meta.dir, '..'),
   })
 
-  if (!config)
-    config = def
+  if (!config) config = def
 
   return config
 }

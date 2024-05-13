@@ -1,7 +1,7 @@
 import path from 'node:path'
+import { log } from '@stacksjs/logging'
 import { $ } from 'bun'
 import dts from 'bun-plugin-dts-auto'
-import { log } from '@stacksjs/logging'
 
 log.info('Building...')
 

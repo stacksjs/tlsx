@@ -23,35 +23,35 @@ export async function generateCert(options?: GenerateCertOptions) {
   cert.validity.notBefore = new Date()
   cert.validity.notAfter = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * (opts.validityDays ?? 1))
 
-  const attrs = [{
-    name: 'countryName',
-    value: opts.countryName ?? 'US',
-  }, {
-    shortName: 'ST',
-    value: opts.stateName ?? 'California',
-  }, {
-    name: 'organizationName',
-    value: opts.organizationName ?? 'tlsx stacks.localhost', // simply for a recognizable name
-  }]
+  const attrs = [
+    {
+      name: 'countryName',
+      value: opts.countryName ?? 'US',
+    },
+    {
+      shortName: 'ST',
+      value: opts.stateName ?? 'California',
+    },
+    {
+      name: 'organizationName',
+      value: opts.organizationName ?? 'tlsx stacks.localhost', // simply for a recognizable name
+    },
+  ]
 
   cert.setSubject(attrs)
   cert.setIssuer(attrs)
 
   // add alt names so that the browser won't complain
-  cert.setExtensions([{
-    name: 'subjectAltName',
-    altNames: [
-      ...(opts.altNameURIs !== undefined
-        ? opts.altNameURIs.map(uri => ({ type: 6, value: uri }))
-        : []
-      ),
+  cert.setExtensions([
+    {
+      name: 'subjectAltName',
+      altNames: [
+        ...(opts.altNameURIs !== undefined ? opts.altNameURIs.map((uri) => ({ type: 6, value: uri })) : []),
 
-      ...(opts.altNameIPs !== undefined
-        ? opts.altNameIPs.map(uri => ({ type: 7, ip: uri }))
-        : []
-      ),
-    ],
-  }])
+        ...(opts.altNameIPs !== undefined ? opts.altNameIPs.map((uri) => ({ type: 7, ip: uri })) : []),
+      ],
+    },
+  ])
 
   // self-sign certificate
   cert.sign(keys.privateKey)
@@ -74,17 +74,18 @@ export async function addCertToSystemTrustStore(cert: string, options?: AddCertO
   const certPath = storeCert(cert, options)
   const platform = os.platform()
 
-  if (platform === 'darwin') // macOS
+  if (platform === 'darwin')
+    // macOS
     await runCommand(`sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${certPath}`)
-  else if (platform === 'win32') // Windows
+  else if (platform === 'win32')
+    // Windows
 
     await runCommand(`certutil -f -v -addstore -enterprise Root ${certPath}`)
-
-  else if (platform === 'linux') // Linux (This might vary based on the distro)
+  else if (platform === 'linux')
+    // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
     await runCommands([`sudo cp ${certPath} /usr/local/share/ca-certificates/`, `sudo update-ca-certificates`])
-  else
-    throw new Error(`Unsupported platform: ${platform}`)
+  else throw new Error(`Unsupported platform: ${platform}`)
   return certPath
 }
 
@@ -94,8 +95,7 @@ export function storeCert(cert: string, options?: AddCertOptions) {
 
   // Ensure the directory exists before writing the file
   const certDir = path.dirname(certPath)
-  if (!fs.existsSync(certDir))
-    fs.mkdirSync(certDir, { recursive: true })
+  if (!fs.existsSync(certDir)) fs.mkdirSync(certDir, { recursive: true })
 
   fs.writeFileSync(certPath, cert)
 

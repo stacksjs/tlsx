@@ -1,6 +1,6 @@
 import os from 'node:os'
-import { CAC } from 'cac'
 import { log } from '@stacksjs/logging'
+import { CAC } from 'cac'
 import { version } from '../package.json'
 import { addCertToSystemTrustStore, generateCert } from '../src'
 
