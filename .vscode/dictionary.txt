@@ -1,4 +1,5 @@
 antfu
+biomejs
 booleanish
 bumpp
 bunx
@@ -29,6 +30,7 @@ Postcardware
 postcompile
 prefetch
 preinstall
+quickfix
 socio
 Solana
 sslx
