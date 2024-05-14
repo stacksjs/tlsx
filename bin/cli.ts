@@ -31,7 +31,7 @@ cli
     const CAcert = await CreateRootCA()
 
     // await generateCert()
-    const HostCert = await generateCert('Tlsx Stacks RootCA', domain, CAcert, options)
+    const HostCert = await generateCert('Tlsx Stacks RootCA', domain, CAcert)
 
     // await addCertToSystemTrustStoreAndSaveCerts()
     await addCertToSystemTrustStoreAndSaveCerts(HostCert.certificate, CAcert.certificate)
