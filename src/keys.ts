@@ -1,4 +1,3 @@
-import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -55,7 +54,7 @@ const DEFAULT_O = 'Tlsx Stacks RootCA'
 // Generate a new Root CA Certificate
 export async function CreateRootCA() {
   // Create a new Keypair for the Root CA
-  const { privateKey, publicKey } = forge.pki.rsa.generateKeyPair(2048)
+  const { privateKey, publicKey } = pki.rsa.generateKeyPair(2048)
 
   // Define the attributes for the new Root CA
   const attributes = [
@@ -90,31 +89,31 @@ export async function CreateRootCA() {
   ]
 
   // Create an empty Certificate
-  const cert = forge.pki.createCertificate()
+  const CAcert = pki.createCertificate()
 
   // Set the Certificate attributes for the new Root CA
-  cert.publicKey = publicKey
-  cert.privateKey = privateKey
-  cert.serialNumber = randomSerialNumber()
-  cert.validity.notBefore = getCertNotBefore()
-  cert.validity.notAfter = getCANotAfter(cert.validity.notBefore)
-  cert.setSubject(attributes)
-  cert.setIssuer(attributes)
-  cert.setExtensions(extensions)
+  CAcert.publicKey = publicKey
+  CAcert.privateKey = privateKey
+  CAcert.serialNumber = randomSerialNumber()
+  CAcert.validity.notBefore = getCertNotBefore()
+  CAcert.validity.notAfter = getCANotAfter(CAcert.validity.notBefore)
+  CAcert.setSubject(attributes)
+  CAcert.setIssuer(attributes)
+  CAcert.setExtensions(extensions)
 
   // Self-sign the Certificate
-  cert.sign(privateKey, forge.md.sha512.create())
+  CAcert.sign(privateKey, forge.md.sha512.create())
 
   // Convert to PEM format
-  const pemCert = forge.pki.certificateToPem(cert)
-  const pemKey = forge.pki.privateKeyToPem(privateKey)
+  const pemCert = pki.certificateToPem(CAcert)
+  const pemKey = pki.privateKeyToPem(privateKey)
 
   // Return the PEM encoded cert and private key
   return {
     certificate: pemCert,
     privateKey: pemKey,
-    notBefore: cert.validity.notBefore,
-    notAfter: cert.validity.notAfter,
+    notBefore: CAcert.validity.notBefore,
+    notAfter: CAcert.validity.notAfter,
   }
 }
 
@@ -188,12 +187,12 @@ export async function generateCert(
     },
     {
       name: 'subjectAltName',
-      altNames: { type: 2, value: domain },
+      altNames: [{ type: 2, value: domain }],
     },
   ]
 
   // Create an empty Certificate
-  const newHostCert = forge.pki.createCertificate()
+  const newHostCert = pki.createCertificate()
   newHostCert.publicKey = hostKeys.publicKey
 
   // Set the attributes for the new Host Certificate
@@ -222,7 +221,11 @@ export interface AddCertOptions {
   customCertPath?: string
 }
 
-export async function addCertToSystemTrustStoreAndSaveCerts(cert: string, CAcert: string, options?: AddCertOptions) {
+export async function addCertToSystemTrustStoreAndSaveCerts(
+  cert: { certificate: string; privateKey: string },
+  CAcert: string,
+  options?: AddCertOptions,
+) {
   const certPath = storeCert(cert, options)
   const CAcertPath = storeCACert(CAcert, options)
 
@@ -253,30 +256,37 @@ export async function addCertToSystemTrustStoreAndSaveCerts(cert: string, CAcert
   return certPath
 }
 
-export function storeCert(cert: string, options?: AddCertOptions) {
+export function storeCert(cert: { certificate: string; privateKey: string }, options?: AddCertOptions) {
   // Construct the path using os.homedir() and path.join()
   const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`)
+
+  const certKeyPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`)
 
   // Ensure the directory exists before writing the file
   const certDir = path.dirname(certPath)
   if (!fs.existsSync(certDir)) fs.mkdirSync(certDir, { recursive: true })
+  fs.writeFileSync(certPath, cert.certificate)
 
-  fs.writeFileSync(certPath, cert)
+  // Ensure the directory exists before writing the file
+  const certKeyDir = path.dirname(certKeyPath)
+  if (!fs.existsSync(certKeyDir)) fs.mkdirSync(certKeyDir, { recursive: true })
+
+  fs.writeFileSync(certKeyPath, cert.privateKey)
 
   return certPath
 }
 
 export function storeCACert(CAcert: string, options?: AddCertOptions) {
   // Construct the path using os.homedir() and path.join()
-  const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`)
+  const CAcertPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`)
 
   // Ensure the directory exists before writing the file
-  const certDir = path.dirname(certPath)
-  if (!fs.existsSync(certDir)) fs.mkdirSync(certDir, { recursive: true })
+  const CacertDir = path.dirname(CAcertPath)
+  if (!fs.existsSync(CacertDir)) fs.mkdirSync(CacertDir, { recursive: true })
 
-  fs.writeFileSync(certPath, CAcert)
+  fs.writeFileSync(CAcertPath, CAcert)
 
-  return certPath
+  return CAcertPath
 }
 
 export { tls, pki, forge }
