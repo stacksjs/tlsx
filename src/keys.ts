@@ -223,7 +223,6 @@ export interface AddCertOptions {
 }
 
 export async function addCertToSystemTrustStoreAndSaveCerts(cert: string, CAcert: string, options?: AddCertOptions) {
-  
   const certPath = storeCert(cert, options)
   const CAcertPath = storeCACert(CAcert, options)
 
@@ -245,6 +244,8 @@ export async function addCertToSystemTrustStoreAndSaveCerts(cert: string, CAcert
       `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
 
       `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
+
+      `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
 
       `sudo update-ca-certificates`,
     ])
