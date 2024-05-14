@@ -16,14 +16,11 @@ export interface TlsOptions {
 }
 
 export interface GenerateCertOptions {
-  altNameIPs?: string[]
-  altNameURIs?: string[]
-  validityDays?: number
-  organizationName?: string
-  countryName?: string
-  stateName?: string
-  localityName?: string
-  commonName?: string
+  output: string
+  key: string
+  cert: string
+  ca: string
+  verbose: boolean
 }
 
 export type TlsConfig = DeepPartial<TlsOptions>

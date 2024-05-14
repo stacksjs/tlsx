@@ -7,62 +7,214 @@ import forge, { pki, tls } from 'node-forge'
 import { resolveConfig } from './config'
 import type { GenerateCertOptions } from './types'
 
-export async function generateCert(options?: GenerateCertOptions) {
-  log.debug('generateCert', options)
+const makeNumberPositive = (hexString: string) => {
+  let mostSignificativeHexDigitAsInt = Number.parseInt(hexString[0], 16)
 
-  const opts = await resolveConfig(options)
-  const keys = pki.rsa.generateKeyPair(2048)
-  const cert = pki.createCertificate()
-  cert.publicKey = keys.publicKey
+  if (mostSignificativeHexDigitAsInt < 8) return hexString
 
-  // NOTE: serialNumber is the hex encoded value of an ASN.1 INTEGER.
-  // Conforming CAs should ensure serialNumber is:
-  // - no more than 20 octets
-  // - non-negative (prefix a '00' if your value starts with a '1' bit)
-  cert.serialNumber = `01${crypto.randomBytes(19).toString('hex')}` // 1 octet = 8 bits = 1 byte = 2 hex chars
-  cert.validity.notBefore = new Date()
-  cert.validity.notAfter = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * (opts.validityDays ?? 1))
+  mostSignificativeHexDigitAsInt -= 8
+  return mostSignificativeHexDigitAsInt.toString() + hexString.substring(1)
+}
 
-  const attrs = [
+// Generate a random serial number for the Certificate
+const randomSerialNumber = () => {
+  return makeNumberPositive(forge.util.bytesToHex(forge.random.getBytesSync(20)))
+}
+
+// Get the Not Before Date for a Certificate (will be valid from 2 days ago)
+const getCertNotBefore = () => {
+  const twoDaysAgo = new Date(Date.now() - 60 * 60 * 24 * 2 * 1000)
+  const year = twoDaysAgo.getFullYear()
+  const month = (twoDaysAgo.getMonth() + 1).toString().padStart(2, '0')
+  const day = twoDaysAgo.getDate()
+  return new Date(`${year}-${month}-${day} 00:00:00Z`)
+}
+
+// Get Certificate Expiration Date (Valid for 90 Days)
+const getCertNotAfter = (notBefore: any) => {
+  const ninetyDaysLater = new Date(notBefore.getTime() + 60 * 60 * 24 * 90 * 1000)
+  const year = ninetyDaysLater.getFullYear()
+  const month = (ninetyDaysLater.getMonth() + 1).toString().padStart(2, '0')
+  const day = ninetyDaysLater.getDate()
+  return new Date(`${year}-${month}-${day} 23:59:59Z`)
+}
+
+// Get CA Expiration Date (Valid for 100 Years)
+const getCANotAfter = (notBefore: any) => {
+  const year = notBefore.getFullYear() + 100
+  const month = (notBefore.getMonth() + 1).toString().padStart(2, '0')
+  const day = notBefore.getDate()
+  return new Date(`${year}-${month}-${day} 23:59:59Z`)
+}
+
+const DEFAULT_C = 'US'
+const DEFAULT_ST = 'California'
+const DEFAULT_L = 'Melbourne'
+const DEFAULT_O = 'Tlsx Stacks RootCA'
+
+// Generate a new Root CA Certificate
+export async function CreateRootCA() {
+  // Create a new Keypair for the Root CA
+  const { privateKey, publicKey } = forge.pki.rsa.generateKeyPair(2048)
+
+  // Define the attributes for the new Root CA
+  const attributes = [
     {
-      name: 'countryName',
-      value: opts.countryName ?? 'US',
+      shortName: 'C',
+      value: DEFAULT_C,
     },
     {
       shortName: 'ST',
-      value: opts.stateName ?? 'California',
+      value: DEFAULT_ST,
     },
     {
-      name: 'organizationName',
-      value: opts.organizationName ?? 'tlsx stacks.localhost', // simply for a recognizable name
+      shortName: 'L',
+      value: DEFAULT_L,
+    },
+    {
+      shortName: 'CN',
+      value: DEFAULT_O,
     },
   ]
 
-  cert.setSubject(attrs)
-  cert.setIssuer(attrs)
+  const extensions = [
+    {
+      name: 'basicConstraints',
+      cA: true,
+    },
+    {
+      name: 'keyUsage',
+      keyCertSign: true,
+      cRLSign: true,
+    },
+  ]
 
-  // add alt names so that the browser won't complain
-  cert.setExtensions([
+  // Create an empty Certificate
+  const cert = forge.pki.createCertificate()
+
+  // Set the Certificate attributes for the new Root CA
+  cert.publicKey = publicKey
+  cert.privateKey = privateKey
+  cert.serialNumber = randomSerialNumber()
+  cert.validity.notBefore = getCertNotBefore()
+  cert.validity.notAfter = getCANotAfter(cert.validity.notBefore)
+  cert.setSubject(attributes)
+  cert.setIssuer(attributes)
+  cert.setExtensions(extensions)
+
+  // Self-sign the Certificate
+  cert.sign(privateKey, forge.md.sha512.create())
+
+  // Convert to PEM format
+  const pemCert = forge.pki.certificateToPem(cert)
+  const pemKey = forge.pki.privateKeyToPem(privateKey)
+
+  // Return the PEM encoded cert and private key
+  return {
+    certificate: pemCert,
+    privateKey: pemKey,
+    notBefore: cert.validity.notBefore,
+    notAfter: cert.validity.notAfter,
+  }
+}
+
+export async function generateCert(
+  hostCertCN: string,
+  domain: string,
+  rootCAObject: { certificate: string; privateKey: string },
+  options?: GenerateCertOptions,
+) {
+  log.debug('generateCert', options)
+
+  if (!hostCertCN.toString().trim()) throw new Error('"hostCertCN" must be a String')
+  if (!domain.toString().trim()) throw new Error('"validDomain" must be a String')
+
+  if (!rootCAObject || !rootCAObject.certificate || !rootCAObject.privateKey)
+    throw new Error('"rootCAObject" must be an Object with the properties "certificate" & "privateKey"')
+
+  const opts = await resolveConfig(options)
+  // Convert the Root CA PEM details, to a forge Object
+  const caCert = pki.certificateFromPem(rootCAObject.certificate)
+  const caKey = pki.privateKeyFromPem(rootCAObject.privateKey)
+
+  // Create a new Keypair for the Host Certificate
+  const hostKeys = pki.rsa.generateKeyPair(2048)
+  // Define the attributes/properties for the Host Certificate
+  const attributes = [
+    {
+      shortName: 'C',
+      value: DEFAULT_C,
+    },
+    {
+      shortName: 'ST',
+      value: DEFAULT_ST,
+    },
+    {
+      shortName: 'L',
+      value: DEFAULT_L,
+    },
+    {
+      shortName: 'CN',
+      value: hostCertCN,
+    },
+  ]
+
+  const extensions = [
+    // 	{
+    // 	name: 'basicConstraints',
+    // 	cA: true
+    // },
+    {
+      name: 'nsCertType',
+      server: true,
+    },
+    {
+      name: 'subjectKeyIdentifier',
+    },
+    {
+      name: 'authorityKeyIdentifier',
+      authorityCertIssuer: true,
+      serialNumber: caCert.serialNumber,
+    },
+    {
+      name: 'keyUsage',
+      digitalSignature: true,
+      nonRepudiation: true,
+      keyEncipherment: true,
+    },
+    {
+      name: 'extKeyUsage',
+      serverAuth: true,
+    },
     {
       name: 'subjectAltName',
-      altNames: [
-        ...(opts.altNameURIs !== undefined ? opts.altNameURIs.map((uri) => ({ type: 6, value: uri })) : []),
-
-        ...(opts.altNameIPs !== undefined ? opts.altNameIPs.map((uri) => ({ type: 7, ip: uri })) : []),
-      ],
+      altNames: { type: 2, value: domain },
     },
-  ])
+  ]
 
-  // self-sign certificate
-  cert.sign(keys.privateKey)
+  // Create an empty Certificate
+  const newHostCert = forge.pki.createCertificate()
+  newHostCert.publicKey = hostKeys.publicKey
 
-  // convert a Forge certificate and private key to PEM
-  const pem = pki.certificateToPem(cert)
-  const privateKey = pki.privateKeyToPem(keys.privateKey)
+  // Set the attributes for the new Host Certificate
+  newHostCert.publicKey = hostKeys.publicKey
+  newHostCert.serialNumber = randomSerialNumber()
+  newHostCert.validity.notBefore = getCertNotBefore()
+  newHostCert.validity.notAfter = getCertNotAfter(newHostCert.validity.notBefore)
+  newHostCert.setSubject(attributes)
+  newHostCert.setIssuer(caCert.subject.attributes)
+  newHostCert.setExtensions(extensions)
+
+  // Sign the new Host Certificate using the CA
+  newHostCert.sign(caKey, forge.md.sha512.create())
+
+  // Convert to PEM format
+  const pemHostCert = pki.certificateToPem(newHostCert)
+  const pemHostKey = pki.privateKeyToPem(hostKeys.privateKey)
 
   return {
-    cert: pem,
-    privateKey,
+    certificate: pemHostCert,
+    privateKey: pemHostKey,
   }
 }
 
@@ -70,9 +222,13 @@ export interface AddCertOptions {
   customCertPath?: string
 }
 
-export async function addCertToSystemTrustStore(cert: string, options?: AddCertOptions) {
+export async function addCertToSystemTrustStoreAndSaveCerts(cert: string, CAcert: string, options?: AddCertOptions) {
+  
   const certPath = storeCert(cert, options)
+  const CAcertPath = storeCACert(CAcert, options)
+
   const platform = os.platform()
+  const args = 'TC, C, C'
 
   if (platform === 'darwin')
     // macOS
@@ -84,7 +240,14 @@ export async function addCertToSystemTrustStore(cert: string, options?: AddCertO
   else if (platform === 'linux')
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
-    await runCommands([`sudo cp ${certPath} /usr/local/share/ca-certificates/`, `sudo update-ca-certificates`])
+
+    await runCommands([
+      `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
+
+      `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
+
+      `sudo update-ca-certificates`,
+    ])
   else throw new Error(`Unsupported platform: ${platform}`)
   return certPath
 }
@@ -98,6 +261,19 @@ export function storeCert(cert: string, options?: AddCertOptions) {
   if (!fs.existsSync(certDir)) fs.mkdirSync(certDir, { recursive: true })
 
   fs.writeFileSync(certPath, cert)
+
+  return certPath
+}
+
+export function storeCACert(CAcert: string, options?: AddCertOptions) {
+  // Construct the path using os.homedir() and path.join()
+  const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`)
+
+  // Ensure the directory exists before writing the file
+  const certDir = path.dirname(certPath)
+  if (!fs.existsSync(certDir)) fs.mkdirSync(certDir, { recursive: true })
+
+  fs.writeFileSync(certPath, CAcert)
 
   return certPath
 }
