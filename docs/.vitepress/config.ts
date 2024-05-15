@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'Reverse Proxy',
+  title: 'TLSX Docs',
   description: 'A better developer environment.',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
