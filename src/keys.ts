@@ -234,11 +234,13 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
 
   if (platform === 'darwin')
     // macOS
-    await runCommand(`sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${certPath}`)
+    await runCommand(
+      `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${CAcertPath}`,
+    )
   else if (platform === 'win32')
     // Windows
 
-    await runCommand(`certutil -f -v -addstore -enterprise Root ${certPath}`)
+    await runCommand(`certutil -f -v -addstore -enterprise Root ${CAcertPath}`)
   else if (platform === 'linux')
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
