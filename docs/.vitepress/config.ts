@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import os from 'node:os'
 import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
@@ -22,5 +24,13 @@ export default defineConfig({
     ],
 
     socialLinks: [{ icon: 'github', link: 'https://github.com/vuejs/vitepress' }],
+  },
+  vite: {
+    server: {
+      https: {
+        cert: fs.readFileSync(`${os.homedir()}/.stacks/ssl/stacks.localhost.crt`),
+        key: fs.readFileSync(`${os.homedir()}/.stacks/ssl/stacks.localhost.crt.key`),
+      },
+    },
   },
 })
