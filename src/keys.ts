@@ -50,7 +50,6 @@ const getCANotAfter = (notBefore: any) => {
 
 // Function to check if a certificate file has expired
 export const isCertificateExpired = async (certFilePath: string): Promise<boolean> => {
-  
   return new Promise((resolve, reject) => {
     try {
       // Read the certificate file
@@ -78,9 +77,8 @@ export const isCertificateExpired = async (certFilePath: string): Promise<boolea
   })
 }
 
-// Function to check if a domain exists in the certificate 
+// Function to check if a domain exists in the certificate
 export const isDomainExists = async (domainToCheck: string, certificatePath: string) => {
-
   // Read the certificate file
   const certificateContents = fs.readFileSync(certificatePath, 'utf8')
 
@@ -97,7 +95,6 @@ export const isDomainExists = async (domainToCheck: string, certificatePath: str
   const extractedValue = altName.altNames[0]?.value
 
   if (extractedValue && extractedValue === domainToCheck) {
-
     console.log(`Domain ${domainToCheck} exists in the certificate.`)
     return true
   }
