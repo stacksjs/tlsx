@@ -35,11 +35,14 @@ cli
     log.debug(`Generating a self-signed SSL certificate for domain: ${domain}`)
     log.debug('Options:', options)
 
-    const certFilePath = `${os.homedir()}/.stacks/ssl/stacks.localhost.crt`
+    const certFilePath = options?.output ?? `${os.homedir()}/.stacks/ssl/stacks.localhost.crt`
+
+    console.log();
 
     // Check if the certificate is expired or domain already exists
 
     if ((await isCertificateExpired(certFilePath)) || !(await isDomainExists(domain, certFilePath))) {
+      
       log.debug(`Start to generate a new certificate for domain: ${domain}`)
 
       console.log('Start to generate a new certificate for domain:', domain)
