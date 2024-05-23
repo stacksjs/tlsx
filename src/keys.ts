@@ -51,9 +51,17 @@ const getCANotAfter = (notBefore: any) => {
 // Function to check if a certificate file has expired
 export const isCertificateExpired = async (certFilePath: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
+
     try {
+        // Check if the file exists
+        if (!fs.existsSync(certFilePath)) {
+          reject('Certificate not found')
+        }
+        
       // Read the certificate file
       const certData = fs.readFileSync(certFilePath, 'utf8')
+
+    
 
       // check if cert exists
       if (!certData) {
@@ -69,10 +77,11 @@ export const isCertificateExpired = async (certFilePath: string): Promise<boolea
       const isExpired = expiryDate < new Date()
 
       resolve(isExpired)
+
     } catch (error) {
       // Handle errors
       console.error(`Error checking certificate expiry: ${error}`)
-      reject(error) // Reject the promise with the error
+      // reject(error) // Reject the promise with the error
     }
   })
 }
@@ -81,6 +90,12 @@ export const isCertificateExpired = async (certFilePath: string): Promise<boolea
 export const isDomainExists = async (domainToCheck: string, certificatePath: string) => {
   // Read the certificate file
   const certificateContents = fs.readFileSync(certificatePath, 'utf8')
+
+  
+  if(!certificateContents) {
+  
+    throw new Error('Certificate not found')
+  }
 
   // Parse the certificate data
   const certificate = forge.pki.certificateFromPem(certificateContents)
