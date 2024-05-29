@@ -1,17 +1,9 @@
-import crypto from 'node:crypto'
 import os from 'node:os'
 import { log } from '@stacksjs/logging'
 import { CAC } from 'cac'
 import { version } from '../package.json'
 
-import { fs } from '@stacksjs/storage'
-import {
-  CreateRootCA,
-  addCertToSystemTrustStoreAndSaveCerts,
-  generateCert,
-  isCertificateExpired,
-  isDomainExists,
-} from '../src'
+import { CreateRootCA, addCertToSystemTrustStoreAndSaveCerts, generateCert } from '../src'
 const cli = new CAC('tlsx')
 
 interface Options {
@@ -35,28 +27,23 @@ cli
     log.debug(`Generating a self-signed SSL certificate for domain: ${domain}`)
     log.debug('Options:', options)
 
-    const certFilePath = options?.output ?? `${os.homedir()}/.stacks/ssl/stacks.localhost.crt`
+    const certFilePath = `${os.homedir()}/.stacks/ssl/stacks.localhost.crt`
 
     // Check if the certificate is expired or domain already exists
 
-    if ((await isCertificateExpired(certFilePath)) || !(await isDomainExists(domain, certFilePath))) {
-      log.debug(`Start to generate a new certificate for domain: ${domain}`)
+    log.debug(`Start to generate a new certificate for domain: ${domain}`)
 
-      console.log('Start to generate a new certificate for domain:', domain)
-      // Create a new Root CA
-      const CAcert = await CreateRootCA()
+    console.log('Start to generate a new certificate for domain:', domain)
+    // Create a new Root CA
+    const CAcert = await CreateRootCA()
 
-      // await generateCert()
-      const HostCert = await generateCert('Tlsx Stacks RootCA', domain, CAcert)
+    // await generateCert()
+    const HostCert = await generateCert('Tlsx Stacks RootCA', domain, CAcert)
 
-      // await addCertToSystemTrustStoreAndSaveCerts()
-      await addCertToSystemTrustStoreAndSaveCerts(HostCert, CAcert.certificate)
+    // await addCertToSystemTrustStoreAndSaveCerts()
+    await addCertToSystemTrustStoreAndSaveCerts(HostCert, CAcert.certificate)
 
-      console.log('Certificate generated successfully!')
-    } else {
-      log.debug('Certificate already exists and is not expired')
-      console.log('Certificate already exists and is not expired')
-    }
+    console.log('Certificate generated successfully!')
   })
 
 cli.version(version)

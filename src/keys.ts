@@ -49,67 +49,70 @@ const getCANotAfter = (notBefore: any) => {
 }
 
 // Function to check if a certificate file has expired
-export const isCertificateExpired = async (certFilePath: string): Promise<boolean> => {
-  return new Promise((resolve, reject) => {
-    try {
-      // Check if the file exists
-      if (!fs.existsSync(certFilePath)) {
-        reject('Certificate not found')
-      }
+// export const isCertificateExpired = async (certFilePath: string): Promise<boolean> => {
+//   return new Promise((resolve, reject) => {
+//     try {
+//       // Check if the file exists
+//       if (!fs.existsSync(certFilePath)) {
+//         reject('Certificate not found')
+//       }
 
-      // Read the certificate file
-      const certData = fs.readFileSync(certFilePath, 'utf8')
+//       // Read the certificate file
+//       const certData = fs.readFileSync(certFilePath, 'utf8')
 
-      // check if cert exists
-      if (!certData) {
-        reject('Certificate not found')
-      }
-      // Parse the certificate data
-      const cert = forge.pki.certificateFromPem(certData)
+//       // check if cert exists
+//       if (!certData) {
+//         reject('Certificate not found')
+//       }
+//       // Parse the certificate data
+//       const cert = forge.pki.certificateFromPem(certData)
 
-      // Get the expiry date of the certificate
-      const expiryDate = cert.validity.notAfter
+//       // Get the expiry date of the certificate
+//       const expiryDate = cert.validity.notAfter
 
-      // Check if the certificate has expired
-      const isExpired = expiryDate < new Date()
+//       // Check if the certificate has expired
+//       const isExpired = expiryDate < new Date()
 
-      resolve(isExpired)
-    } catch (error) {
-      // Handle errors
-      console.error(`Error checking certificate expiry: ${error}`)
-      // reject(error) // Reject the promise with the error
-    }
-  })
-}
+//       resolve(isExpired)
+//     } catch (error) {
+//       // Handle errors
+//       console.error(`Error checking certificate expiry: ${error}`)
+//       // reject(error) // Reject the promise with the error
+//     }
+//   })
+// }
 
 // Function to check if a domain exists in the certificate
-export const isDomainExists = async (domainToCheck: string, certificatePath: string) => {
-  // Read the certificate file
-  const certificateContents = fs.readFileSync(certificatePath, 'utf8')
+// export const isDomainExists = async (domainToCheck: string, certificatePath: string) => {
+//   if (!fs.existsSync(certificatePath)) {
+//   }
 
-  if (!certificateContents) {
-    throw new Error('Certificate not found')
-  }
+//   // Read the certificate file
+//   const certificateContents = fs.readFileSync(certificatePath, 'utf8')
 
-  // Parse the certificate data
-  const certificate = forge.pki.certificateFromPem(certificateContents)
+//   if (!certificateContents) {
+//     throw new Error('Certificate not found')
+//   }
 
-  // Get the alt name of the certificate
-  const subject = certificate.extensions
+//   // Parse the certificate data
+//   const certificate = forge.pki.certificateFromPem(certificateContents)
 
-  // Check if the domain exists in the alt name
-  const altName = subject.find((attr: any) => attr.name === 'subjectAltName')
+//   // Get the alt name of the certificate
+//   const subject = certificate.extensions
 
-  // Extract the domain from the alt name
-  const extractedValue = altName.altNames[0]?.value
+//   // Check if the domain exists in the alt name
+//   const altName = subject.find((attr: any) => attr.name === 'subjectAltName')
 
-  if (extractedValue && extractedValue === domainToCheck) {
-    console.log(`Domain ${domainToCheck} exists in the certificate.`)
-    return true
-  }
+//   // Extract the domain from the alt name
+//   const extractedValue = altName.altNames[0]?.value
 
-  return false
-}
+//   if (extractedValue && extractedValue === domainToCheck) {
+//     console.log(`Domain ${domainToCheck} exists in the certificate.`)
+//     return true
+//   }
+
+//   return false
+// }
 
 const DEFAULT_C = 'US'
 const DEFAULT_ST = 'California'
@@ -287,6 +290,7 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
   CAcert: string,
   options?: AddCertOptions,
 ) {
+  // console.log((await runCommand(`certutil -d sql:${os.homedir()}/.pki/nssdb -L -n ${DEFAULT_O}`)).isOk())
   const certPath = storeCert(cert, options)
   const CAcertPath = storeCACert(CAcert, options)
 
@@ -307,10 +311,15 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
     await runCommands([
       `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
 
+      // delete old CA cert
+      `certutil -d sql:${os.homedir()}/.pki/nssdb -D -n "Tlsx"`,
+
+      // add new cert to system trust store
       `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
 
       `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
 
+      // reload system trust store
       `sudo update-ca-certificates`,
     ])
   else throw new Error(`Unsupported platform: ${platform}`)
@@ -318,6 +327,7 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
   return certPath
 }
 
+//
 export function storeCert(cert: { certificate: string; privateKey: string }, options?: AddCertOptions) {
   // Construct the path using os.homedir() and path.join()
   const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`)
