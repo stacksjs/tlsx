@@ -299,11 +299,9 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
     await runCommand(
       `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${CAcertPath}`,
     )
-
   else if (platform === 'win32')
     // Windows
     await runCommand(`certutil -f -v -addstore -enterprise Root ${CAcertPath}`)
-
   else if (platform === 'linux')
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
@@ -321,7 +319,6 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
       // reload system trust store
       `sudo update-ca-certificates`,
     ])
-
   else throw new Error(`Unsupported platform: ${platform}`)
 
   return certPath
