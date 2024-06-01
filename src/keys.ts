@@ -120,7 +120,7 @@ const DEFAULT_L = 'Melbourne'
 const DEFAULT_O = 'Tlsx Stacks RootCA'
 
 // Generate a new Root CA Certificate
-export async function CreateRootCA() {
+export async function createRootCA() {
   // Create a new Keypair for the Root CA
   const { privateKey, publicKey } = pki.rsa.generateKeyPair(2048)
 

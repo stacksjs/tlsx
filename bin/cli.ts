@@ -3,7 +3,7 @@ import { log } from '@stacksjs/logging'
 import { CAC } from 'cac'
 import { version } from '../package.json'
 
-import { CreateRootCA, addCertToSystemTrustStoreAndSaveCerts, generateCert } from '../src'
+import { addCertToSystemTrustStoreAndSaveCerts, createRootCA, generateCert } from '../src'
 const cli = new CAC('tlsx')
 
 interface Options {
@@ -28,22 +28,11 @@ cli
   .action(async (domain: string, options?: Options) => {
     domain = domain ?? options?.domain
 
-    log.debug(`Generating a self-signed SSL certificate for domain: ${domain}`)
+    log.info(`Generating a self-signed SSL certificate for: ${domain}`)
     log.debug('Options:', options)
 
-    const certFilePath = `${os.homedir()}/.stacks/ssl/stacks.localhost.crt`
-
-    // Check if the certificate is expired or domain already exists
-
-    log.info(`Start to generate a new certificate for domain: ${domain}`)
-
-    // Create a new Root CA
-    const CAcert = await CreateRootCA()
-
-    // await generateCert()
+    const CAcert = await createRootCA()
     const HostCert = await generateCert('Tlsx Stacks RootCA', domain, CAcert)
-
-    // await addCertToSystemTrustStoreAndSaveCerts()
     await addCertToSystemTrustStoreAndSaveCerts(HostCert, CAcert.certificate)
 
     log.success('Certificate generated')
