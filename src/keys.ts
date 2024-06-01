@@ -185,24 +185,19 @@ export async function createRootCA() {
   }
 }
 
-export async function generateCert(
-  hostCertCN: string,
-  domain: string,
-  rootCAObject: { certificate: string; privateKey: string },
-  options?: GenerateCertOptions,
-) {
+export async function generateCert(options?: GenerateCertOptions) {
   log.debug('generateCert', options)
 
-  if (!hostCertCN.toString().trim()) throw new Error('"hostCertCN" must be a String')
-  if (!domain.toString().trim()) throw new Error('"validDomain" must be a String')
+  if (!options?.hostCertCN.toString().trim()) throw new Error('"hostCertCN" must be a String')
+  if (!options.domain.toString().trim()) throw new Error('"domain" must be a String')
 
-  if (!rootCAObject || !rootCAObject.certificate || !rootCAObject.privateKey)
+  if (!options.rootCAObject || !options.rootCAObject.certificate || !options.rootCAObject.privateKey)
     throw new Error('"rootCAObject" must be an Object with the properties "certificate" & "privateKey"')
 
   const opts = await resolveConfig(options)
   // Convert the Root CA PEM details, to a forge Object
-  const caCert = pki.certificateFromPem(rootCAObject.certificate)
-  const caKey = pki.privateKeyFromPem(rootCAObject.privateKey)
+  const caCert = pki.certificateFromPem(options.rootCAObject.certificate)
+  const caKey = pki.privateKeyFromPem(options.rootCAObject.privateKey)
 
   // Create a new Keypair for the Host Certificate
   const hostKeys = pki.rsa.generateKeyPair(2048)
@@ -222,7 +217,7 @@ export async function generateCert(
     },
     {
       shortName: 'CN',
-      value: hostCertCN,
+      value: options.hostCertCN,
     },
   ]
 
@@ -251,7 +246,7 @@ export async function generateCert(
     },
     {
       name: 'subjectAltName',
-      altNames: [{ type: 2, value: domain }],
+      altNames: [{ type: 2, value: options.domain }],
     },
   ]
 

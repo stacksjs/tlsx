@@ -16,6 +16,9 @@ export interface TlsOptions {
 }
 
 export interface GenerateCertOptions {
+  hostCertCN: string
+  domain: string
+  rootCAObject: { certificate: string; privateKey: string }
   altNameIPs?: string[]
   altNameURIs?: string[]
   validityDays?: number
