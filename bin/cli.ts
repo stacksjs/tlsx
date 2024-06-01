@@ -35,9 +35,8 @@ cli
 
     // Check if the certificate is expired or domain already exists
 
-    log.debug(`Start to generate a new certificate for domain: ${domain}`)
+    log.info(`Start to generate a new certificate for domain: ${domain}`)
 
-    console.log('Start to generate a new certificate for domain:', domain)
     // Create a new Root CA
     const CAcert = await CreateRootCA()
 
@@ -47,7 +46,7 @@ cli
     // await addCertToSystemTrustStoreAndSaveCerts()
     await addCertToSystemTrustStoreAndSaveCerts(HostCert, CAcert.certificate)
 
-    console.log('Certificate generated successfully!')
+    log.success('Certificate generated')
   })
 
 cli.version(version)
