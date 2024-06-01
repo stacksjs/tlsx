@@ -194,7 +194,9 @@ export async function generateCert(options?: GenerateCertOptions) {
   if (!options.rootCAObject || !options.rootCAObject.certificate || !options.rootCAObject.privateKey)
     throw new Error('"rootCAObject" must be an Object with the properties "certificate" & "privateKey"')
 
+  // options should have higher priority than config
   const opts = await resolveConfig(options)
+
   // Convert the Root CA PEM details, to a forge Object
   const caCert = pki.certificateFromPem(options.rootCAObject.certificate)
   const caKey = pki.privateKeyFromPem(options.rootCAObject.privateKey)

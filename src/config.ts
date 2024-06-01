@@ -9,6 +9,12 @@ const { config } = await loadConfig({
 
 export async function resolveConfig(options?: GenerateCertOptions) {
   const def: GenerateCertOptions = {
+    hostCertCN: 'Tlsx Stacks RootCA',
+    domain: 'stacks.localhost',
+    rootCAObject: {
+      certificate: '',
+      privateKey: '',
+    },
     altNameIPs: ['127.0.0.1'],
     altNameURIs: ['localhost'],
     validityDays: 1,
