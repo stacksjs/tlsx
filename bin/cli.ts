@@ -15,11 +15,12 @@ interface Options {
 }
 
 cli
-  .command('secure <domain>', 'Auto generate a self-signed SSL certificate/s')
-  .option('--output <output>', 'Output directory', { default: os.tmpdir() })
-  .option('--key <key>', 'Output key file name', { default: 'key.pem' })
-  .option('--cert <cert>', 'Output certificate file name', { default: 'cert.pem' })
-  .option('--ca <ca>', 'Output CA file name', { default: 'ca.pem' })
+  .command('secure [domain]', 'Auto generate a self-signed SSL certificate/s')
+  .option('-d, --domain [domain]', 'Domain name', { default: true })
+  .option('-o, --output <output>', 'Output directory', { default: os.tmpdir() })
+  .option('-k, --key <key>', 'Output key file name', { default: 'key.pem' })
+  .option('-c, --cert <cert>', 'Output certificate file name', { default: 'cert.pem' })
+  .option('-ca, --ca <ca>', 'Output CA file name', { default: 'ca.pem' })
   .option('--verbose', 'Enable verbose logging', { default: false })
   .usage('tlsx secure <domain> [options]')
   .example('tlsx secure example.com --output /etc/ssl')
