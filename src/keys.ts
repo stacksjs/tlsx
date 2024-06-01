@@ -302,9 +302,11 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
     await runCommand(
       `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${CAcertPath}`,
     )
+
   else if (platform === 'win32')
     // Windows
     await runCommand(`certutil -f -v -addstore -enterprise Root ${CAcertPath}`)
+
   else if (platform === 'linux')
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
@@ -322,16 +324,15 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
       // reload system trust store
       `sudo update-ca-certificates`,
     ])
+
   else throw new Error(`Unsupported platform: ${platform}`)
 
   return certPath
 }
 
-//
 export function storeCert(cert: { certificate: string; privateKey: string }, options?: AddCertOptions) {
   // Construct the path using os.homedir() and path.join()
   const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`)
-
   const certKeyPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`)
 
   // Ensure the directory exists before writing the file

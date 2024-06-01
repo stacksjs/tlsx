@@ -7,6 +7,7 @@ import { CreateRootCA, addCertToSystemTrustStoreAndSaveCerts, generateCert } fro
 const cli = new CAC('tlsx')
 
 interface Options {
+  domain: string
   output: string
   key: string
   cert: string
@@ -25,6 +26,8 @@ cli
   .usage('tlsx secure <domain> [options]')
   .example('tlsx secure example.com --output /etc/ssl')
   .action(async (domain: string, options?: Options) => {
+    domain = domain ?? options?.domain
+
     log.debug(`Generating a self-signed SSL certificate for domain: ${domain}`)
     log.debug('Options:', options)
 
