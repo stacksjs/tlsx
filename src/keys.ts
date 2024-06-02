@@ -117,7 +117,7 @@ const getCANotAfter = (notBefore: any) => {
 const DEFAULT_C = 'US'
 const DEFAULT_ST = 'California'
 const DEFAULT_L = 'Melbourne'
-const DEFAULT_O = 'Tlsx Stacks RootCA'
+const DEFAULT_O = 'Tlsx-Stacks-RootCA'
 
 // Generate a new Root CA Certificate
 export async function createRootCA() {
@@ -294,22 +294,29 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
   const platform = os.platform()
   const args = 'TC, C, C'
 
-  if (platform === 'darwin')
+  if (platform === 'darwin') {
     // macOS
     await runCommand(
       `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${CAcertPath}`,
     )
-  else if (platform === 'win32')
+  } else if (platform === 'win32') {
     // Windows
     await runCommand(`certutil -f -v -addstore -enterprise Root ${CAcertPath}`)
-  else if (platform === 'linux') {
+  } else if (platform === 'linux') {
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
+
+    // delete existing cert from system trust store
+    console.warn = async () => {
+      // ignore error if no cert exists
+      await runCommand(`certutil -d sql:${os.homedir()}/.pki/nssdb -D -n ${DEFAULT_O}`)
+      await runCommand(
+        `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -D -n ${DEFAULT_O}`,
+      )
+    }
+
     await runCommands([
       `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
-
-      // delete old CA cert
-      //`certutil -d sql:${os.homedir()}/.pki/nssdb -D -n ${DEFAULT_O}`,
 
       // add new cert to system trust store
       `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
@@ -318,7 +325,9 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
 
       // reload system trust store
       `sudo update-ca-certificates`,
-    ])
+    ]).catch((err) => {
+      throw new Error(err)
+    })
   } else throw new Error(`Unsupported platform: ${platform}`)
 
   return certPath
