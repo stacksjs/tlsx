@@ -32,7 +32,15 @@ cli
     log.debug('Options:', options)
 
     const CAcert = await createRootCA()
-    const HostCert = await generateCert('Tlsx Stacks RootCA', domain, CAcert)
+
+    const HostCert = await generateCert({
+      hostCertCN: domain,
+      domain,
+      rootCAObject: {
+        certificate: CAcert.certificate,
+        privateKey: CAcert.privateKey,
+      },
+    })
     await addCertToSystemTrustStoreAndSaveCerts(HostCert, CAcert.certificate)
 
     log.success('Certificate generated')

@@ -302,14 +302,14 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
   else if (platform === 'win32')
     // Windows
     await runCommand(`certutil -f -v -addstore -enterprise Root ${CAcertPath}`)
-  else if (platform === 'linux')
+  else if (platform === 'linux') {
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
     await runCommands([
       `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
 
       // delete old CA cert
-      `certutil -d sql:${os.homedir()}/.pki/nssdb -D -n "Tlsx"`,
+      //`certutil -d sql:${os.homedir()}/.pki/nssdb -D -n ${DEFAULT_O}`,
 
       // add new cert to system trust store
       `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
@@ -319,7 +319,7 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
       // reload system trust store
       `sudo update-ca-certificates`,
     ])
-  else throw new Error(`Unsupported platform: ${platform}`)
+  } else throw new Error(`Unsupported platform: ${platform}`)
 
   return certPath
 }
