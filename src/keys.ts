@@ -1,10 +1,7 @@
-import dns from 'node:dns'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import type { Readable, Writable } from 'node:stream'
 import { exec, log, runCommand, runCommands } from '@stacksjs/cli'
-import { glob } from '@stacksjs/storage'
 import forge, { pki, tls } from 'node-forge'
 import { resolveConfig } from './config'
 import type { GenerateCertOptions } from './types'
@@ -48,72 +45,6 @@ const getCANotAfter = (notBefore: any) => {
   const day = notBefore.getDate()
   return new Date(`${year}-${month}-${day} 23:59:59Z`)
 }
-
-// Function to check if a certificate file has expired
-// export const isCertificateExpired = async (certFilePath: string): Promise<boolean> => {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       // Check if the file exists
-//       if (!fs.existsSync(certFilePath)) {
-//         reject('Certificate not found')
-//       }
-
-//       // Read the certificate file
-//       const certData = fs.readFileSync(certFilePath, 'utf8')
-
-//       // check if cert exists
-//       if (!certData) {
-//         reject('Certificate not found')
-//       }
-//       // Parse the certificate data
-//       const cert = forge.pki.certificateFromPem(certData)
-
-//       // Get the expiry date of the certificate
-//       const expiryDate = cert.validity.notAfter
-
-//       // Check if the certificate has expired
-//       const isExpired = expiryDate < new Date()
-
-//       resolve(isExpired)
-//     } catch (error) {
-//       // Handle errors
-//       console.error(`Error checking certificate expiry: ${error}`)
-//       // reject(error) // Reject the promise with the error
-//     }
-//   })
-// }
-
-// Function to check if a domain exists in the certificate
-// export const isDomainExists = async (domainToCheck: string, certificatePath: string) => {
-//   if (!fs.existsSync(certificatePath)) {
-//   }
-
-//   // Read the certificate file
-//   const certificateContents = fs.readFileSync(certificatePath, 'utf8')
-
-//   if (!certificateContents) {
-//     throw new Error('Certificate not found')
-//   }
-
-//   // Parse the certificate data
-//   const certificate = forge.pki.certificateFromPem(certificateContents)
-
-//   // Get the alt name of the certificate
-//   const subject = certificate.extensions
-
-//   // Check if the domain exists in the alt name
-//   const altName = subject.find((attr: any) => attr.name === 'subjectAltName')
-
-//   // Extract the domain from the alt name
-//   const extractedValue = altName.altNames[0]?.value
-
-//   if (extractedValue && extractedValue === domainToCheck) {
-//     console.log(`Domain ${domainToCheck} exists in the certificate.`)
-//     return true
-//   }
-
-//   return false
-// }
 
 const DEFAULT_C = 'US'
 const DEFAULT_ST = 'California'
@@ -307,7 +238,6 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
     // for Ubuntu/Debian based systems
 
     // return all directories that contain cert9.db file using fs.readdirSync
-
     function findFoldersWithFile(rootDir: string, fileName: string): string[] {
       const result: string[] = []
 
@@ -327,12 +257,14 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
           }
         } catch (error) {
           // Handle any errors (e.g., broken links, permission issues)
+          console.warn(`Error reading directory ${dir}: ${error}`)
         }
       }
 
       search(rootDir)
       return result
     }
+
     //
     const rootDirectory = `${os.homedir()}`
     const targetFileName = 'cert9.db'
