@@ -276,25 +276,28 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
         // ignore error if no cert exists
         await runCommand(`certutil -d sql:${folder} -D -n ${DEFAULT_O}`)
       }
+      await runCommand(`certutil -d sql:${folder} -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`)
+
+      console.log(folder)
     })
 
-    await runCommands([
-      `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
+    // await runCommands([
+    //   `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
 
-      // add new cert to system trust store
-      `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
+    //   // add new cert to system trust store
+    //   `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
 
-      // add new cert to system trust store for Brave
-      `certutil -d sql:${os.homedir()}/snap/brave/411/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
+    //   // add new cert to system trust store for Brave
+    //   `certutil -d sql:${os.homedir()}/snap/brave/411/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
 
-      // add new cert to system trust store for Firefox
-      `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
+    //   // add new cert to system trust store for Firefox
+    //   `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
 
-      // reload system trust store
-      `sudo update-ca-certificates`,
-    ]).catch((err) => {
-      throw new Error(err)
-    })
+    //   // reload system trust store
+    //   `sudo update-ca-certificates`,
+    // ]).catch((err) => {
+    //   throw new Error(err)
+    // })
   } else throw new Error(`Unsupported platform: ${platform}`)
 
   return certPath

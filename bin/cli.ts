@@ -30,7 +30,7 @@ cli
 
     log.info(`Generating a self-signed SSL certificate for: ${domain}`)
     log.debug('Options:', options)
-    
+
     console.log('Options:', config)
 
     const CAcert = await createRootCA()
