@@ -3,7 +3,7 @@ import { log } from '@stacksjs/logging'
 import { CAC } from 'cac'
 import { version } from '../package.json'
 import { addCertToSystemTrustStoreAndSaveCerts, createRootCA, generateCert } from '../src'
-import {config} from '../src/config'
+import { config } from '../src/config'
 
 const cli = new CAC('tlsx')
 
@@ -27,7 +27,6 @@ cli
   .usage('tlsx secure <domain> [options]')
   .example('tlsx secure example.com --output /etc/ssl')
   .action(async (domain: string, options?: Options) => {
-
     domain = domain ?? config?.ssl?.altNameURIs[0]
 
     log.info(`Generating a self-signed SSL certificate for: ${domain}`)
