@@ -1,9 +1,9 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { exec, log, runCommand, runCommands } from '@stacksjs/cli'
+import { log, runCommand } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
-import { resolveConfig } from './config'
+import { config, resolveConfig } from './config'
 import type { GenerateCertOptions } from './types'
 
 const makeNumberPositive = (hexString: string) => {
@@ -49,7 +49,7 @@ const getCANotAfter = (notBefore: any) => {
 const DEFAULT_C = 'US'
 const DEFAULT_ST = 'California'
 const DEFAULT_L = 'Melbourne'
-const DEFAULT_O = 'Tlsx-Stacks-RootCA'
+const DEFAULT_O = config.ssl?.organizationName
 
 // Generate a new Root CA Certificate
 export async function createRootCA() {
@@ -66,13 +66,15 @@ export async function createRootCA() {
       shortName: 'ST',
       value: DEFAULT_ST,
     },
+
     {
       shortName: 'L',
       value: DEFAULT_L,
     },
+    
     {
       shortName: 'CN',
-      value: DEFAULT_O,
+      value: config?.ssl?.organizationName,
     },
   ]
 
@@ -149,9 +151,10 @@ export async function generateCert(options?: GenerateCertOptions) {
       shortName: 'L',
       value: DEFAULT_L,
     },
+
     {
       shortName: 'CN',
-      value: options.hostCertCN,
+      value: config?.ssl?.organizationName,
     },
   ]
 

@@ -27,17 +27,17 @@ cli
   .usage('tlsx secure <domain> [options]')
   .example('tlsx secure example.com --output /etc/ssl')
   .action(async (domain: string, options?: Options) => {
+
     domain = domain ?? config?.ssl?.altNameURIs[0]
+
 
     log.info(`Generating a self-signed SSL certificate for: ${domain}`)
     log.debug('Options:', options)
 
-    console.log(domain)
-
     const CAcert = await createRootCA()
 
     const HostCert = await generateCert({
-      hostCertCN: domain,
+      hostCertCN: config?.ssl?.commonName ?? domain,
       domain,
       rootCAObject: {
         certificate: CAcert.certificate,
