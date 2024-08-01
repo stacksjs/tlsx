@@ -2,7 +2,8 @@ import os from 'node:os'
 import { log } from '@stacksjs/logging'
 import { CAC } from 'cac'
 import { version } from '../package.json'
-import { type TlsConfig, addCertToSystemTrustStoreAndSaveCerts, createRootCA, generateCert } from '../src'
+import { addCertToSystemTrustStoreAndSaveCerts, createRootCA, generateCert } from '../src'
+import {config} from '../src/config'
 
 const cli = new CAC('tlsx')
 
@@ -25,13 +26,14 @@ cli
   .option('--verbose', 'Enable verbose logging', { default: false })
   .usage('tlsx secure <domain> [options]')
   .example('tlsx secure example.com --output /etc/ssl')
-  .action(async (domain: string, options?: Options, config?: TlsConfig) => {
-    domain = domain ?? options?.domain
+  .action(async (domain: string, options?: Options) => {
+
+    domain = domain ?? config?.ssl?.altNameURIs[0]
 
     log.info(`Generating a self-signed SSL certificate for: ${domain}`)
     log.debug('Options:', options)
 
-    console.log('Options:', config)
+    console.log(domain)
 
     const CAcert = await createRootCA()
 
