@@ -1,5 +1,5 @@
 {
-  "name": "sslx",
+  "name": "@stacksjs/tlsx",
   "type": "module",
   "version": "0.0.4",
   "description": "A TLS library with automation.",

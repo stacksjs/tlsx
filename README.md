@@ -13,16 +13,17 @@
 ## Features
 
 - SSL Support _(HTTPS by default)_
+- Automatically Renews Expired Certificates
 - Configurable
 
 ## Install
 
 ```bash
-bun install -d sslx
+bun install -d @stacksjs/tlsx
 
 # or, invoke immediately
-bunx sslx
-npx sslx
+bunx @stacksjs/tlsx
+npx @stacksjs/tlsx
 ```
 
 Please note, we are looking to publish this package to npm under the name `tlsx`. _Hoping npm will release the name for us._
@@ -43,8 +44,8 @@ There are two ways of using this reverse proxy: _as a library or as a CLI._
 Given the npm package is installed:
 
 ```ts
-import { config, generateCert, addCertToSystemTrustStore, storeCert, tls, pki, forge } from 'sslx'
-import type { AddCertOptions, GenerateCertOptions, TlsConfig, TlsOptions } from 'sslx'
+import { config, generateCert, addCertToSystemTrustStore, storeCert, tls, pki, forge } from '@stacksjs/tlsx'
+import type { AddCertOptions, GenerateCertOptions, TlsConfig, TlsOptions } from '@stacksjs/tlsx'
 
 // ...
 ```
@@ -115,7 +116,7 @@ For casual chit-chat with others using this package:
 
 Two things are true: Stacks OSS will always stay open-source, and we do love to receive postcards from wherever Stacks is used! 🌍 _We also publish them on our website._
 
-Our address: Stacks.js, 5710 Crescent Park #107, Playa Vista 90094, CA.
+Our address: Stacks.js, 12665 Village Ln #2306, Playa Vista, CA 90094, United States 🌎
 
 ## Sponsors
 
