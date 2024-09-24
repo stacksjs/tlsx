@@ -51,7 +51,7 @@
   "files": ["dist", "scripts", "src"],
   "scripts": {
     "build": "bun scripts/build.ts && bun run compile",
-    "compile": "bun build ./bin/cli.ts --compile --external rollup --minify --sourcemap --outfile dist/tlsx",
+    "compile": "bun build ./bin/cli.ts --compile --minify --outfile dist/tlsx",
     "postcompile": "bun ./scripts/post-compile.ts",
     "lint": "bunx biome check .",
     "lint:fix": "bunx biome check --write .",
