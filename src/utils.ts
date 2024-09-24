@@ -15,6 +15,7 @@ export function isCertValidForDomain(certPemOrPath: string, domain: string): boo
   const altNames = cert.getExtension('subjectAltName')
 
   if (altNames) {
+    // @ts-expect-error - altNames is not yet typed at lib level
     for (const altName of altNames.altNames) {
       if (altName.value === domain) {
         return true
