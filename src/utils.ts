@@ -111,11 +111,19 @@ export function listCertsInDirectory(dirPath?: string): string[] {
     defaultDir = dirPath
   }
 
-  const certFiles = fs.readdirSync(defaultDir).filter(file => file.endsWith('.crt')).map(file => path.join(defaultDir, file))
+  const certFiles = fs
+    .readdirSync(defaultDir)
+    .filter((file) => file.endsWith('.crt'))
+    .map((file) => path.join(defaultDir, file))
 
   // If no certificates are found in the default directory, check the fallback path
   const stacksDir = path.join(os.homedir(), '.stacks', 'ssl')
-  certFiles.push(...(fs.readdirSync(stacksDir).filter(file => file.endsWith('.crt')).map(file => path.join(stacksDir, file))))
+  certFiles.push(
+    ...fs
+      .readdirSync(stacksDir)
+      .filter((file) => file.endsWith('.crt'))
+      .map((file) => path.join(stacksDir, file)),
+  )
 
   return certFiles
 }
