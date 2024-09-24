@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.1.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.0...main)
+
+### 🏡 Chore
+
+- Adjust compile script ([8d43394](https://github.com/stacksjs/tlsx/commit/8d43394))
+
+### ❤️ Contributors
+
+- Chris <chrisbreuer93@gmail.com>
+
 ## v0.0.4...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.0.4...main)
