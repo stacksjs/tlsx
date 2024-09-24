@@ -44,7 +44,7 @@ There are two ways of using this reverse proxy: _as a library or as a CLI._
 Given the npm package is installed:
 
 ```ts
-import { config, generateCert, addCertToSystemTrustStore, storeCert, tls, pki, forge } from '@stacksjs/tlsx'
+import { config, generateCert, addCertToSystemTrustStoreAndSaveCerts, storeCert, tls, pki, forge } from '@stacksjs/tlsx'
 import type { AddCertOptions, CertOptions, TlsConfig, TlsOptions } from '@stacksjs/tlsx'
 
 // ...
