@@ -4,7 +4,7 @@ import path from 'node:path'
 import { log, runCommand } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
 import { config, resolveConfig } from './config'
-import type { AddCertOptions, CertOptions } from './types'
+import type { AddCertOptions, CertOptions, GenerateCertReturn } from './types'
 
 /**
  * Generate a random serial number for the Certificate
@@ -105,13 +105,6 @@ export async function createRootCA(): Promise<GenerateCertReturn> {
     notBefore: CAcert.validity.notBefore,
     notAfter: CAcert.validity.notAfter,
   }
-}
-
-type GenerateCertReturn = {
-  certificate: string
-  privateKey: string
-  notBefore: Date
-  notAfter: Date
 }
 
 /**
