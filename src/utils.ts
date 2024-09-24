@@ -52,12 +52,23 @@ export function parseCertDetails(certPem: string) {
 
 /**
  * Checks if a certificate is expired.
- * @param certPem - The certificate in PEM format.
+ * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
  * @returns {boolean} - True if the certificate is expired, false otherwise.
  */
-export function isCertExpired(certPem: string): boolean {
+export function isCertExpired(certPemOrPath: string): boolean {
+let certPem: string
+
+  if (certPemOrPath.startsWith('-----BEGIN CERTIFICATE-----')) {
+    // If the input is a PEM string
+    certPem = certPemOrPath
+  } else {
+    // If the input is a path to the certificate file
+    certPem = fs.readFileSync(certPemOrPath, 'utf8')
+  }
+
   const cert = pki.certificateFromPem(certPem)
   const now = new Date()
+
   return now > cert.validity.notAfter
 }
 
