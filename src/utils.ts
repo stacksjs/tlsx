@@ -5,13 +5,12 @@ import { pki } from 'node-forge'
 
 /**
  * Checks if a certificate is valid for a given domain.
- * @param certPath - Path to the certificate file.
+ * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
  * @param domain - The domain to check.
  * @returns {boolean} - True if the certificate is valid for the domain, false otherwise.
  */
-export function isCertValidForDomain(certPath: string, domain: string): boolean {
-  const certPem = fs.readFileSync(certPath, 'utf8')
-  const cert = pki.certificateFromPem(certPem)
+export function isCertValidForDomain(certPemOrPath: string, domain: string): boolean {
+  const cert = getCertificateFromCertPemOrPath(certPemOrPath)
   const altNames = cert.getExtension('subjectAltName')
 
   if (altNames) {
@@ -34,13 +33,22 @@ export function readCertFromFile(certPath: string): string {
   return fs.readFileSync(certPath, 'utf8')
 }
 
+export type CertDetails = {
+  subject: any
+  issuer: any
+  validFrom: Date
+  validTo: Date
+  serialNumber: string
+}
+
 /**
  * Parses and extracts details from a certificate.
- * @param certPem - The certificate in PEM format.
- * @returns {object} - An object containing certificate details.
+ * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
+ * @returns {CertDetails} - An object containing certificate details.
  */
-export function parseCertDetails(certPem: string) {
-  const cert = pki.certificateFromPem(certPem)
+export function parseCertDetails(certPemOrPath: string): CertDetails {
+  const cert = getCertificateFromCertPemOrPath(certPemOrPath)
+
   return {
     subject: cert.subject.attributes,
     issuer: cert.issuer.attributes,
@@ -56,20 +64,29 @@ export function parseCertDetails(certPem: string) {
  * @returns {boolean} - True if the certificate is expired, false otherwise.
  */
 export function isCertExpired(certPemOrPath: string): boolean {
-let certPem: string
+  const cert = getCertificateFromCertPemOrPath(certPemOrPath)
+  const now = new Date()
+
+  return now > cert.validity.notAfter
+}
+
+/**
+ * Gets a certificate from a PEM string or a path to a certificate file.
+ * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
+ * @returns {pki.Certificate} - The certificate object.
+ */
+export function getCertificateFromCertPemOrPath(certPemOrPath: string): pki.Certificate {
+  let certPem: string
 
   if (certPemOrPath.startsWith('-----BEGIN CERTIFICATE-----')) {
     // If the input is a PEM string
     certPem = certPemOrPath
   } else {
     // If the input is a path to the certificate file
-    certPem = fs.readFileSync(certPemOrPath, 'utf8')
+    certPem = readCertFromFile(certPemOrPath)
   }
 
-  const cert = pki.certificateFromPem(certPem)
-  const now = new Date()
-
-  return now > cert.validity.notAfter
+  return pki.certificateFromPem(certPem)
 }
 
 /**
