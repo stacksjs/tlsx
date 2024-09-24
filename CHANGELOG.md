@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.1.1...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.1...main)
+
+### 🏡 Chore
+
+- Adjust post-compile ([8099adf](https://github.com/stacksjs/tlsx/commit/8099adf))
+
+### ❤️ Contributors
+
+- Chris <chrisbreuer93@gmail.com>
+
 ## v0.1.0...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.0...main)
