@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.1.2...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.2...main)
+
+### 🩹 Fixes
+
+- Remove bu ([19ec3d1](https://github.com/stacksjs/tlsx/commit/19ec3d1))
+
+### ❤️ Contributors
+
+- Chris <chrisbreuer93@gmail.com>
+
 ## v0.1.1...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.1...main)
