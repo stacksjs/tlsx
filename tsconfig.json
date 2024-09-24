@@ -13,6 +13,7 @@
     "declaration": true,
     "noEmit": true,
     "outDir": "./dist",
+    "isolatedDeclarations": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": true,

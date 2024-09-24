@@ -4,24 +4,21 @@ import path from 'node:path'
 import { log, runCommand } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
 import { config, resolveConfig } from './config'
-import type { GenerateCertOptions } from './types'
+import type { AddCertOptions, GenerateCertOptions } from './types'
 
-const makeNumberPositive = (hexString: string) => {
-  let mostSignificativeHexDigitAsInt = Number.parseInt(hexString[0], 16)
-
-  if (mostSignificativeHexDigitAsInt < 8) return hexString
-
-  mostSignificativeHexDigitAsInt -= 8
-  return mostSignificativeHexDigitAsInt.toString() + hexString.substring(1)
-}
-
-// Generate a random serial number for the Certificate
-const randomSerialNumber = () => {
+/**
+ * Generate a random serial number for the Certificate
+ * @returns The serial number for the Certificate
+ */
+export const randomSerialNumber = (): string => {
   return makeNumberPositive(forge.util.bytesToHex(forge.random.getBytesSync(20)))
 }
 
-// Get the Not Before Date for a Certificate (will be valid from 2 days ago)
-const getCertNotBefore = () => {
+/**
+ * Get the Not Before Date for a Certificate (will be valid from 2 days ago)
+ * @returns The Not Before Date for the Certificate
+ */
+export const getCertNotBefore = (): Date => {
   const twoDaysAgo = new Date(Date.now() - 60 * 60 * 24 * 2 * 1000)
   const year = twoDaysAgo.getFullYear()
   const month = (twoDaysAgo.getMonth() + 1).toString().padStart(2, '0')
@@ -29,30 +26,43 @@ const getCertNotBefore = () => {
   return new Date(`${year}-${month}-${day} 00:00:00Z`)
 }
 
-// Get Certificate Expiration Date (Valid for 90 Days)
-const getCertNotAfter = (notBefore: any) => {
+/**
+ * Get the Not After Date for a Certificate (Valid for 90 Days)
+ * @param notBefore - The Not Before Date for the Certificate
+ * @returns The Not After Date for the Certificate
+ */
+export const getCertNotAfter = (notBefore: Date): Date => {
   const ninetyDaysLater = new Date(notBefore.getTime() + 60 * 60 * 24 * 90 * 1000)
   const year = ninetyDaysLater.getFullYear()
   const month = (ninetyDaysLater.getMonth() + 1).toString().padStart(2, '0')
   const day = ninetyDaysLater.getDate()
+
   return new Date(`${year}-${month}-${day} 23:59:59Z`)
 }
 
-// Get CA Expiration Date (Valid for 100 Years)
-const getCANotAfter = (notBefore: any) => {
+/**
+ * Get the CA Not After Date (Valid for 100 Years)
+ * @param notBefore - The Not Before Date for the CA
+ * @returns The Not After Date for the CA
+ */
+export const getCANotAfter = (notBefore: Date): Date => {
   const year = notBefore.getFullYear() + 100
   const month = (notBefore.getMonth() + 1).toString().padStart(2, '0')
   const day = notBefore.getDate()
+
   return new Date(`${year}-${month}-${day} 23:59:59Z`)
 }
 
-const DEFAULT_C = 'US'
-const DEFAULT_ST = 'California'
-const DEFAULT_L = 'Playa Vista'
-const DEFAULT_O = config?.ssl?.organizationName ?? 'Stacks.js'
+export const DEFAULT_C = 'US'
+export const DEFAULT_ST = 'California'
+export const DEFAULT_L = 'Playa Vista'
+export const DEFAULT_O: string = config?.ssl?.organizationName ?? 'Stacks.js'
 
-// Generate a new Root CA Certificate
-export async function createRootCA() {
+/**
+ * Create a new Root CA Certificate
+ * @returns The Root CA Certificate
+ */
+export async function createRootCA(): Promise<GenerateCertReturn> {
   // Create a new Keypair for the Root CA
   const { privateKey, publicKey } = pki.rsa.generateKeyPair(2048)
 
@@ -119,7 +129,19 @@ export async function createRootCA() {
   }
 }
 
-export async function generateCert(options?: GenerateCertOptions) {
+type GenerateCertReturn = {
+  certificate: string
+  privateKey: string
+  notBefore: Date
+  notAfter: Date
+}
+
+/**
+ * Generate a new Host Certificate
+ * @param options - The options for generating the certificate
+ * @returns The generated certificate
+ */
+export async function generateCert(options?: GenerateCertOptions): Promise<GenerateCertReturn> {
   log.debug('generateCert', options)
 
   if (!options?.hostCertCN.toString().trim()) throw new Error('"hostCertCN" must be a String')
@@ -210,18 +232,16 @@ export async function generateCert(options?: GenerateCertOptions) {
   return {
     certificate: pemHostCert,
     privateKey: pemHostKey,
+    notBefore: newHostCert.validity.notBefore,
+    notAfter: newHostCert.validity.notAfter,
   }
-}
-
-export interface AddCertOptions {
-  customCertPath?: string
 }
 
 export async function addCertToSystemTrustStoreAndSaveCerts(
   cert: { certificate: string; privateKey: string },
   CAcert: string,
   options?: AddCertOptions,
-) {
+): Promise<string> {
   const certPath = storeCert(cert, options)
   const CAcertPath = storeCACert(CAcert, options)
 
@@ -240,35 +260,6 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
 
-    // return all directories that contain cert9.db file using fs.readdirSync
-    function findFoldersWithFile(rootDir: string, fileName: string): string[] {
-      const result: string[] = []
-
-      function search(dir: string) {
-        try {
-          const files = fs.readdirSync(dir)
-
-          for (const file of files) {
-            const filePath = path.join(dir, file)
-            const stats = fs.lstatSync(filePath) // Use fs.lstatSync instead
-
-            if (stats.isDirectory()) {
-              search(filePath)
-            } else if (file === fileName) {
-              result.push(dir)
-            }
-          }
-        } catch (error) {
-          // Handle any errors (e.g., broken links, permission issues)
-          console.warn(`Error reading directory ${dir}: ${error}`)
-        }
-      }
-
-      search(rootDir)
-      return result
-    }
-
-    //
     const rootDirectory = `${os.homedir()}`
     const targetFileName = 'cert9.db'
     const foldersWithFile = findFoldersWithFile(rootDirectory, targetFileName)
@@ -306,7 +297,7 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
   return certPath
 }
 
-export function storeCert(cert: { certificate: string; privateKey: string }, options?: AddCertOptions) {
+export function storeCert(cert: { certificate: string; privateKey: string }, options?: AddCertOptions): string {
   // Construct the path using os.homedir() and path.join()
   const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`)
   const certKeyPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`)
@@ -325,7 +316,13 @@ export function storeCert(cert: { certificate: string; privateKey: string }, opt
   return certPath
 }
 
-export function storeCACert(CAcert: string, options?: AddCertOptions) {
+/**
+ * Store the CA Certificate
+ * @param CAcert - The CA Certificate
+ * @param options - The options for storing the CA Certificate
+ * @returns The path to the CA Certificate
+ */
+export function storeCACert(CAcert: string, options?: AddCertOptions): string {
   // Construct the path using os.homedir() and path.join()
   const CAcertPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`)
 
@@ -336,6 +333,42 @@ export function storeCACert(CAcert: string, options?: AddCertOptions) {
   fs.writeFileSync(CAcertPath, CAcert)
 
   return CAcertPath
+}
+
+function findFoldersWithFile(rootDir: string, fileName: string): string[] {
+  const result: string[] = []
+
+  function search(dir: string) {
+    try {
+      const files = fs.readdirSync(dir)
+
+      for (const file of files) {
+        const filePath = path.join(dir, file)
+        const stats = fs.lstatSync(filePath) // Use fs.lstatSync instead
+
+        if (stats.isDirectory()) {
+          search(filePath)
+        } else if (file === fileName) {
+          result.push(dir)
+        }
+      }
+    } catch (error) {
+      // Handle any errors (e.g., broken links, permission issues)
+      console.warn(`Error reading directory ${dir}: ${error}`)
+    }
+  }
+
+  search(rootDir)
+  return result
+}
+
+const makeNumberPositive = (hexString: string) => {
+  let mostSignificativeHexDigitAsInt = Number.parseInt(hexString[0], 16)
+
+  if (mostSignificativeHexDigitAsInt < 8) return hexString
+
+  mostSignificativeHexDigitAsInt -= 8
+  return mostSignificativeHexDigitAsInt.toString() + hexString.substring(1)
 }
 
 export { tls, pki, forge }

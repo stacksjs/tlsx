@@ -37,4 +37,8 @@ export type CertDetails = {
   serialNumber: string
 }
 
+export interface AddCertOptions {
+  customCertPath?: string
+}
+
 export type TlsConfig = DeepPartial<TlsOptions>
