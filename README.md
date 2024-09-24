@@ -45,7 +45,7 @@ Given the npm package is installed:
 
 ```ts
 import { config, generateCert, addCertToSystemTrustStore, storeCert, tls, pki, forge } from '@stacksjs/tlsx'
-import type { AddCertOptions, GenerateCertOptions, TlsConfig, TlsOptions } from '@stacksjs/tlsx'
+import type { AddCertOptions, CertOptions, TlsConfig, TlsOptions } from '@stacksjs/tlsx'
 
 // ...
 ```

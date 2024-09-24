@@ -15,7 +15,7 @@ export interface TlsOptions {
   }
 }
 
-export interface GenerateCertOptions {
+export interface CertOptions {
   hostCertCN: string
   domain: string
   rootCAObject: { certificate: string; privateKey: string }

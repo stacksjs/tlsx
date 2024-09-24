@@ -4,7 +4,7 @@ import path from 'node:path'
 import { log, runCommand } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
 import { config, resolveConfig } from './config'
-import type { AddCertOptions, GenerateCertOptions } from './types'
+import type { AddCertOptions, CertOptions } from './types'
 
 /**
  * Generate a random serial number for the Certificate
@@ -119,7 +119,7 @@ type GenerateCertReturn = {
  * @param options - The options for generating the certificate
  * @returns The generated certificate
  */
-export async function generateCert(options?: GenerateCertOptions): Promise<GenerateCertReturn> {
+export async function generateCert(options?: CertOptions): Promise<GenerateCertReturn> {
   log.debug('generateCert', options)
 
   if (!options?.hostCertCN?.trim()) throw new Error('"hostCertCN" must be a String')
@@ -216,10 +216,12 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
         // ignore error if no cert exists
         console.warn(`Error deleting existing cert: ${error}`)
       }
+
+      // add new cert to system trust store
       await runCommand(`certutil -d sql:${folder} -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`)
 
-      console.log(folder)
-    })
+      log.info(`Cert added to ${folder}`)
+    }
 
     // await runCommands([
     //   `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
