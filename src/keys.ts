@@ -22,8 +22,8 @@ export const getCertNotBefore = (): Date => {
   const twoDaysAgo = new Date(Date.now() - 60 * 60 * 24 * 2 * 1000)
   const year = twoDaysAgo.getFullYear()
   const month = (twoDaysAgo.getMonth() + 1).toString().padStart(2, '0')
-  const day = twoDaysAgo.getDate()
-  return new Date(`${year}-${month}-${day} 00:00:00Z`)
+  const day = twoDaysAgo.getDate().toString().padStart(2, '0')
+  return new Date(`${year}-${month}-${day}T00:00:00Z`)
 }
 
 /**
@@ -35,9 +35,9 @@ export const getCertNotAfter = (notBefore: Date): Date => {
   const ninetyDaysLater = new Date(notBefore.getTime() + 60 * 60 * 24 * 90 * 1000)
   const year = ninetyDaysLater.getFullYear()
   const month = (ninetyDaysLater.getMonth() + 1).toString().padStart(2, '0')
-  const day = ninetyDaysLater.getDate()
+  const day = ninetyDaysLater.getDate().toString().padStart(2, '0')
 
-  return new Date(`${year}-${month}-${day} 23:59:59Z`)
+  return new Date(`${year}-${month}-${day}T23:59:59Z`)
 }
 
 /**
@@ -48,9 +48,9 @@ export const getCertNotAfter = (notBefore: Date): Date => {
 export const getCANotAfter = (notBefore: Date): Date => {
   const year = notBefore.getFullYear() + 100
   const month = (notBefore.getMonth() + 1).toString().padStart(2, '0')
-  const day = notBefore.getDate()
+  const day = notBefore.getDate().toString().padStart(2, '0')
 
-  return new Date(`${year}-${month}-${day} 23:59:59Z`)
+  return new Date(`${year}-${month}-${day}T23:59:59Z`)
 }
 
 export const DEFAULT_C = 'US'
@@ -68,36 +68,15 @@ export async function createRootCA(): Promise<GenerateCertReturn> {
 
   // Define the attributes for the new Root CA
   const attributes = [
-    {
-      shortName: 'C',
-      value: DEFAULT_C,
-    },
-    {
-      shortName: 'ST',
-      value: DEFAULT_ST,
-    },
-
-    {
-      shortName: 'L',
-      value: DEFAULT_L,
-    },
-
-    {
-      shortName: 'CN',
-      value: DEFAULT_O,
-    },
+    { shortName: 'C', value: DEFAULT_C },
+    { shortName: 'ST', value: DEFAULT_ST },
+    { shortName: 'L', value: DEFAULT_L },
+    { shortName: 'CN', value: DEFAULT_O },
   ]
 
   const extensions = [
-    {
-      name: 'basicConstraints',
-      cA: true,
-    },
-    {
-      name: 'keyUsage',
-      keyCertSign: true,
-      cRLSign: true,
-    },
+    { name: 'basicConstraints', cA: true },
+    { name: 'keyUsage', keyCertSign: true, cRLSign: true },
   ]
 
   // Create an empty Certificate
@@ -105,7 +84,6 @@ export async function createRootCA(): Promise<GenerateCertReturn> {
 
   // Set the Certificate attributes for the new Root CA
   CAcert.publicKey = publicKey
-  CAcert.privateKey = privateKey
   CAcert.serialNumber = randomSerialNumber()
   CAcert.validity.notBefore = getCertNotBefore()
   CAcert.validity.notAfter = getCANotAfter(CAcert.validity.notBefore)
@@ -144,8 +122,8 @@ type GenerateCertReturn = {
 export async function generateCert(options?: GenerateCertOptions): Promise<GenerateCertReturn> {
   log.debug('generateCert', options)
 
-  if (!options?.hostCertCN.toString().trim()) throw new Error('"hostCertCN" must be a String')
-  if (!options.domain.toString().trim()) throw new Error('"domain" must be a String')
+  if (!options?.hostCertCN?.trim()) throw new Error('"hostCertCN" must be a String')
+  if (!options.domain?.trim()) throw new Error('"domain" must be a String')
 
   if (!options.rootCAObject || !options.rootCAObject.certificate || !options.rootCAObject.privateKey)
     throw new Error('"rootCAObject" must be an Object with the properties "certificate" & "privateKey"')
@@ -161,52 +139,19 @@ export async function generateCert(options?: GenerateCertOptions): Promise<Gener
   const hostKeys = pki.rsa.generateKeyPair(2048)
   // Define the attributes/properties for the Host Certificate
   const attributes = [
-    {
-      shortName: 'C',
-      value: DEFAULT_C,
-    },
-    {
-      shortName: 'ST',
-      value: DEFAULT_ST,
-    },
-    {
-      shortName: 'L',
-      value: DEFAULT_L,
-    },
-
-    {
-      shortName: 'CN',
-      value: DEFAULT_O,
-    },
+    { shortName: 'C', value: DEFAULT_C },
+    { shortName: 'ST', value: DEFAULT_ST },
+    { shortName: 'L', value: DEFAULT_L },
+    { shortName: 'CN', value: DEFAULT_O },
   ]
 
   const extensions = [
-    {
-      name: 'nsCertType',
-      server: true,
-    },
-    {
-      name: 'subjectKeyIdentifier',
-    },
-    {
-      name: 'authorityKeyIdentifier',
-      authorityCertIssuer: true,
-      serialNumber: caCert.serialNumber,
-    },
-    {
-      name: 'keyUsage',
-      digitalSignature: true,
-      nonRepudiation: true,
-      keyEncipherment: true,
-    },
-    {
-      name: 'extKeyUsage',
-      serverAuth: true,
-    },
-    {
-      name: 'subjectAltName',
-      altNames: [{ type: 2, value: options.domain }],
-    },
+    { name: 'nsCertType', server: true },
+    { name: 'subjectKeyIdentifier' },
+    { name: 'authorityKeyIdentifier', authorityCertIssuer: true, serialNumber: caCert.serialNumber },
+    { name: 'keyUsage', digitalSignature: true, nonRepudiation: true, keyEncipherment: true },
+    { name: 'extKeyUsage', serverAuth: true },
+    { name: 'subjectAltName', altNames: [{ type: 2, value: options.domain }] },
   ]
 
   // Create an empty Certificate
@@ -214,7 +159,6 @@ export async function generateCert(options?: GenerateCertOptions): Promise<Gener
   newHostCert.publicKey = hostKeys.publicKey
 
   // Set the attributes for the new Host Certificate
-  newHostCert.publicKey = hostKeys.publicKey
   newHostCert.serialNumber = randomSerialNumber()
   newHostCert.validity.notBefore = getCertNotBefore()
   newHostCert.validity.notAfter = getCertNotAfter(newHostCert.validity.notBefore)
@@ -260,15 +204,17 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
 
-    const rootDirectory = `${os.homedir()}`
+    const rootDirectory = os.homedir()
     const targetFileName = 'cert9.db'
     const foldersWithFile = findFoldersWithFile(rootDirectory, targetFileName)
 
-    foldersWithFile.map(async (folder) => {
-      // delete existing cert from system trust store
-      console.warn = async () => {
-        // ignore error if no cert exists
+    for (const folder of foldersWithFile) {
+      try {
+        // delete existing cert from system trust store
         await runCommand(`certutil -d sql:${folder} -D -n ${DEFAULT_O}`)
+      } catch (error) {
+        // ignore error if no cert exists
+        console.warn(`Error deleting existing cert: ${error}`)
       }
       await runCommand(`certutil -d sql:${folder} -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`)
 
@@ -310,7 +256,6 @@ export function storeCert(cert: { certificate: string; privateKey: string }, opt
   // Ensure the directory exists before writing the file
   const certKeyDir = path.dirname(certKeyPath)
   if (!fs.existsSync(certKeyDir)) fs.mkdirSync(certKeyDir, { recursive: true })
-
   fs.writeFileSync(certKeyPath, cert.privateKey)
 
   return certPath
@@ -329,7 +274,6 @@ export function storeCACert(CAcert: string, options?: AddCertOptions): string {
   // Ensure the directory exists before writing the file
   const CacertDir = path.dirname(CAcertPath)
   if (!fs.existsSync(CacertDir)) fs.mkdirSync(CacertDir, { recursive: true })
-
   fs.writeFileSync(CAcertPath, CAcert)
 
   return CAcertPath
@@ -344,7 +288,7 @@ function findFoldersWithFile(rootDir: string, fileName: string): string[] {
 
       for (const file of files) {
         const filePath = path.join(dir, file)
-        const stats = fs.lstatSync(filePath) // Use fs.lstatSync instead
+        const stats = fs.lstatSync(filePath)
 
         if (stats.isDirectory()) {
           search(filePath)
@@ -353,7 +297,6 @@ function findFoldersWithFile(rootDir: string, fileName: string): string[] {
         }
       }
     } catch (error) {
-      // Handle any errors (e.g., broken links, permission issues)
       console.warn(`Error reading directory ${dir}: ${error}`)
     }
   }
@@ -362,7 +305,7 @@ function findFoldersWithFile(rootDir: string, fileName: string): string[] {
   return result
 }
 
-const makeNumberPositive = (hexString: string) => {
+const makeNumberPositive = (hexString: string): string => {
   let mostSignificativeHexDigitAsInt = Number.parseInt(hexString[0], 16)
 
   if (mostSignificativeHexDigitAsInt < 8) return hexString
