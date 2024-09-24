@@ -48,8 +48,8 @@ const getCANotAfter = (notBefore: any) => {
 
 const DEFAULT_C = 'US'
 const DEFAULT_ST = 'California'
-const DEFAULT_L = 'Melbourne'
-const DEFAULT_O = config.ssl?.organizationName
+const DEFAULT_L = 'Playa Vista'
+const DEFAULT_O = config?.ssl?.organizationName ?? 'Stacks.js'
 
 // Generate a new Root CA Certificate
 export async function createRootCA() {
@@ -71,10 +71,10 @@ export async function createRootCA() {
       shortName: 'L',
       value: DEFAULT_L,
     },
-    
+
     {
       shortName: 'CN',
-      value: config?.ssl?.organizationName,
+      value: DEFAULT_O,
     },
   ]
 
@@ -154,7 +154,7 @@ export async function generateCert(options?: GenerateCertOptions) {
 
     {
       shortName: 'CN',
-      value: config?.ssl?.organizationName,
+      value: DEFAULT_O,
     },
   ]
 
