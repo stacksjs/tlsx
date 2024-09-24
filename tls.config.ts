@@ -1,6 +1,6 @@
 import type { TlsConfig } from './src/types'
 
-export default {
+const config: TlsConfig = {
   ssl: {
     altNameIPs: ['127.0.0.1'],
     altNameURIs: ['localhost'],
@@ -11,4 +11,6 @@ export default {
     commonName: 'stacks.localhost',
     validityDays: 1,
   },
-} satisfies TlsConfig
+}
+
+export default config

@@ -9,7 +9,7 @@ const { config } = await loadConfig({
 
 export async function resolveConfig(options?: CertOptions): Promise<CertOptions> {
   const def: CertOptions = {
-    hostCertCN: 'Tlsx Stacks RootCA',
+    hostCertCN: 'Stacks tlsx RootCA',
     domain: 'stacks.localhost',
     rootCAObject: {
       certificate: '',
@@ -18,7 +18,7 @@ export async function resolveConfig(options?: CertOptions): Promise<CertOptions>
     altNameIPs: ['127.0.0.1'],
     altNameURIs: ['localhost'],
     validityDays: 1,
-    organizationName: 'tlsx stacks.localhost',
+    organizationName: 'Stacks.js',
     countryName: 'US',
     stateName: 'California',
     localityName: 'Playa Vista',
