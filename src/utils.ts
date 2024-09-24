@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { pki } from 'node-forge'
+import type { CertDetails } from './types'
 
 /**
  * Checks if a certificate is valid for a given domain.
@@ -31,14 +32,6 @@ export function isCertValidForDomain(certPemOrPath: string, domain: string): boo
  */
 export function readCertFromFile(certPath: string): string {
   return fs.readFileSync(certPath, 'utf8')
-}
-
-export type CertDetails = {
-  subject: any
-  issuer: any
-  validFrom: Date
-  validTo: Date
-  serialNumber: string
 }
 
 /**

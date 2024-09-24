@@ -29,4 +29,12 @@ export interface GenerateCertOptions {
   commonName?: string
 }
 
+export type CertDetails = {
+  subject: any
+  issuer: any
+  validFrom: Date
+  validTo: Date
+  serialNumber: string
+}
+
 export type TlsConfig = DeepPartial<TlsOptions>
