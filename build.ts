@@ -5,7 +5,6 @@ import dts from 'bun-plugin-dts-auto'
 
 log.info('Building...')
 
-$.cwd(path.resolve(import.meta.dir, '..'))
 await $`rm -rf ./dist`
 
 await Bun.build({
