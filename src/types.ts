@@ -2,23 +2,21 @@ export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>
 }
 
-export interface TlsOptions {
-  ssl: {
-    hostCertCN: string
-    domain: string
-    rootCAObject: { certificate: string; privateKey: string }
-    altNameIPs: string[]
-    altNameURIs: string[]
-    commonName: string
-    countryName: string
-    stateName: string
-    localityName: string
-    organizationName: string
-    validityDays: number
-  }
+export interface TlsConfig {
+  hostCertCN: string
+  domain: string
+  rootCAObject: { certificate: string; privateKey: string }
+  altNameIPs: string[]
+  altNameURIs: string[]
+  commonName: string
+  countryName: string
+  stateName: string
+  localityName: string
+  organizationName: string
+  validityDays: number
 }
 
-export interface CertOptions {
+export interface CertOption {
   hostCertCN: string
   domain: string
   rootCAObject: { certificate: string; privateKey: string }
@@ -40,7 +38,7 @@ export interface CertDetails {
   serialNumber: string
 }
 
-export interface AddCertOptions {
+export interface AddCertOption {
   customCertPath?: string
 }
 
@@ -51,4 +49,4 @@ export interface GenerateCertReturn {
   notAfter: Date
 }
 
-export type TlsConfig = DeepPartial<TlsOptions>
+export type TlsOption = DeepPartial<TlsConfig>

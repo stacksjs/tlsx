@@ -3,8 +3,8 @@ import os from 'node:os'
 import path from 'node:path'
 import { log, runCommand } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
-import { config, resolveConfig } from './config'
-import type { AddCertOptions, CertOptions, GenerateCertReturn } from './types'
+import { config } from './config'
+import type { AddCertOption, CertOption, GenerateCertReturn } from './types'
 
 /**
  * Generate a random serial number for the Certificate
@@ -112,7 +112,7 @@ export async function createRootCA(): Promise<GenerateCertReturn> {
  * @param options - The options for generating the certificate
  * @returns The generated certificate
  */
-export async function generateCert(options?: CertOptions): Promise<GenerateCertReturn> {
+export async function generateCert(options?: CertOption): Promise<GenerateCertReturn> {
   log.debug('generateCert', options)
 
   if (!options?.hostCertCN?.trim()) throw new Error('"hostCertCN" must be a String')
@@ -120,9 +120,6 @@ export async function generateCert(options?: CertOptions): Promise<GenerateCertR
 
   if (!options.rootCAObject || !options.rootCAObject.certificate || !options.rootCAObject.privateKey)
     throw new Error('"rootCAObject" must be an Object with the properties "certificate" & "privateKey"')
-
-  // options should have higher priority than config
-  const opts = await resolveConfig(options)
 
   // Convert the Root CA PEM details, to a forge Object
   const caCert = pki.certificateFromPem(options.rootCAObject.certificate)
@@ -177,7 +174,7 @@ export async function generateCert(options?: CertOptions): Promise<GenerateCertR
 export async function addCertToSystemTrustStoreAndSaveCerts(
   cert: { certificate: string; privateKey: string },
   CAcert: string,
-  options?: AddCertOptions,
+  options?: AddCertOption,
 ): Promise<string> {
   const certPath = storeCert(cert, options)
   const CAcertPath = storeCACert(CAcert, options)
@@ -238,7 +235,7 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
   return certPath
 }
 
-export function storeCert(cert: { certificate: string; privateKey: string }, options?: AddCertOptions): string {
+export function storeCert(cert: { certificate: string; privateKey: string }, options?: AddCertOption): string {
   // Construct the path using os.homedir() and path.join()
   const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`)
   const certKeyPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`)
@@ -262,9 +259,9 @@ export function storeCert(cert: { certificate: string; privateKey: string }, opt
  * @param options - The options for storing the CA Certificate
  * @returns The path to the CA Certificate
  */
-export function storeCACert(CAcert: string, options?: AddCertOptions): string {
+export function storeCACert(CAcert: string, options?: AddCertOption): string {
   // Construct the path using os.homedir() and path.join()
-  const CAcertPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`)
+  const CAcertPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`)
 
   // Ensure the directory exists before writing the file
   const CacertDir = path.dirname(CAcertPath)

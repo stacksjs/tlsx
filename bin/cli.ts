@@ -1,5 +1,5 @@
 import os from 'node:os'
-import { log } from '@stacksjs/logging'
+import { log } from '@stacksjs/cli'
 import { CAC } from 'cac'
 import { version } from '../package.json'
 import { addCertToSystemTrustStoreAndSaveCerts, createRootCA, generateCert } from '../src'
@@ -18,7 +18,7 @@ interface Options {
 
 cli
   .command('secure [domain]', 'Auto generate a self-signed SSL certificate/s')
-  .option('-d, --domain [domain]', 'Domain name', { default: true })
+  .option('-d, --domain [domain]', 'Domain name', { default: 'localhost' })
   .option('-o, --output <output>', 'Output directory', { default: os.tmpdir() })
   .option('-k, --key <key>', 'Output key file name', { default: 'key.pem' })
   .option('-c, --cert <cert>', 'Output certificate file name', { default: 'cert.pem' })
@@ -33,7 +33,6 @@ cli
     log.debug('Options:', options)
 
     const CAcert = await createRootCA()
-
     const HostCert = await generateCert({
       hostCertCN: config?.ssl?.commonName ?? domain,
       domain,

@@ -28,8 +28,8 @@ export default defineConfig({
   vite: {
     server: {
       https: {
-        cert: fs.readFileSync(`${os.homedir()}/.stacks/ssl/stacks.localhost.crt`),
-        key: fs.readFileSync(`${os.homedir()}/.stacks/ssl/stacks.localhost.crt.key`),
+        cert: fs.readFileSync(`${os.homedir()}/.stacks/ssl/tlsx.localhost.crt`),
+        key: fs.readFileSync(`${os.homedir()}/.stacks/ssl/tlsx.localhost.crt.key`),
       },
     },
   },
