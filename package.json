@@ -50,48 +50,40 @@
   },
   "files": ["dist", "scripts", "src"],
   "scripts": {
-    "build": "bun scripts/build.ts && bun run compile",
+    "build": "bun build.ts && bun run compile",
     "compile": "bun build ./bin/cli.ts --compile --minify --outfile dist/tlsx",
     "postcompile": "bun ./scripts/post-compile.ts",
-    "lint": "bunx biome check .",
-    "lint:fix": "bunx biome check --write .",
+    "lint": "bunx --bun eslint .",
+    "lint:fix": "bunx --bun eslint . --fix",
     "lint:fix-unsafe": "bunx biome check --write-unsafe .",
     "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
-    "commit": "git cz",
     "changelog": "bunx changelogen --output CHANGELOG.md",
     "prepublishOnly": "bun run build",
     "release": "bun run changelog && bunx bumpp package.json --all",
     "test": "bun test",
     "typecheck": "bun --bun tsc --noEmit",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "dev:docs": "vitepress dev docs",
+    "build:docs": "vitepress build docs",
+    "preview:docs": "vitepress preview docs"
   },
   "dependencies": {
-    "@stacksjs/cli": "^0.64.6",
-    "@stacksjs/storage": "^0.64.6",
-    "c12": "^2.0.1",
+    "@stacksjs/cli": "^0.68.2",
+    "@stacksjs/storage": "^0.68.2",
     "node-forge": "^1.3.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.3",
-    "@stacksjs/biome-config": "^0.1.5",
-    "@stacksjs/development": "^0.64.6",
+    "@stacksjs/eslint-config": "^3.8.1-beta.2",
     "@types/bun": "^1.1.10",
     "@types/node-forge": "^1.3.11",
-    "bun-plugin-dts-auto": "^0.18.19",
+    "bun-config": "^0.2.0",
+    "bun-plugin-dtsx": "^0.21.8",
+    "typescript": "^5.6.3",
     "vitepress": "^1.3.4"
   },
   "simple-git-hooks": {
-    "pre-commit": "bun lint-staged",
-    "commit-msg": "bunx --no -- commitlint --edit $1"
+    "pre-commit": "bun lint-staged"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,vue}": "bunx biome check --write ."
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-git"
-    }
+    "*.{js,ts}": "bunx --bun eslint . --fix"
   }
 }
