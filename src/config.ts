@@ -16,7 +16,7 @@ export const config: TlsConfig = await loadConfig({
     stateName: 'California',
     localityName: 'Playa Vista',
     commonName: 'stacks.localhost',
-    validityDays: 1,
+    validityDays: 180,
     hostCertCN: 'stacks.localhost',
     domain: 'localhost',
     rootCAObject: { certificate: '', privateKey: '' },

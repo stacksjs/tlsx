@@ -33,10 +33,12 @@ export function getCertNotBefore(): Date {
  * @returns The Not After Date for the Certificate
  */
 export function getCertNotAfter(notBefore: Date): Date {
-  const ninetyDaysLater = new Date(notBefore.getTime() + 60 * 60 * 24 * 90 * 1000)
-  const year = ninetyDaysLater.getFullYear()
-  const month = (ninetyDaysLater.getMonth() + 1).toString().padStart(2, '0')
-  const day = ninetyDaysLater.getDate().toString().padStart(2, '0')
+  const validityDays = config.validityDays // defaults to 180 days
+  const daysInMillis = validityDays * 60 * 60 * 24 * 1000
+  const notAfterDate = new Date(notBefore.getTime() + daysInMillis)
+  const year = notAfterDate.getFullYear()
+  const month = (notAfterDate.getMonth() + 1).toString().padStart(2, '0')
+  const day = notAfterDate.getDate().toString().padStart(2, '0')
 
   return new Date(`${year}-${month}-${day}T23:59:59Z`)
 }
@@ -54,11 +56,6 @@ export function getCANotAfter(notBefore: Date): Date {
   return new Date(`${year}-${month}-${day}T23:59:59Z`)
 }
 
-export const DEFAULT_C = 'US'
-export const DEFAULT_ST = 'California'
-export const DEFAULT_L = 'Playa Vista'
-export const DEFAULT_O: string = config?.organizationName ?? 'stacksjs.org'
-
 /**
  * Create a new Root CA Certificate
  * @returns The Root CA Certificate
@@ -69,10 +66,10 @@ export async function createRootCA(): Promise<GenerateCertReturn> {
 
   // Define the attributes for the new Root CA
   const attributes = [
-    { shortName: 'C', value: DEFAULT_C },
-    { shortName: 'ST', value: DEFAULT_ST },
-    { shortName: 'L', value: DEFAULT_L },
-    { shortName: 'CN', value: DEFAULT_O },
+    { shortName: 'C', value: config.countryName },
+    { shortName: 'ST', value: config.stateName },
+    { shortName: 'L', value: config.localityName },
+    { shortName: 'CN', value: config.commonName },
   ]
 
   const extensions = [
@@ -132,10 +129,10 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
 
   // Define the attributes/properties for the Host Certificate
   const attributes = [
-    { shortName: 'C', value: DEFAULT_C },
-    { shortName: 'ST', value: DEFAULT_ST },
-    { shortName: 'L', value: DEFAULT_L },
-    { shortName: 'CN', value: DEFAULT_O },
+    { shortName: 'C', value: config.countryName },
+    { shortName: 'ST', value: config.stateName },
+    { shortName: 'L', value: config.localityName },
+    { shortName: 'CN', value: config.commonName },
   ]
 
   const extensions = [
@@ -205,7 +202,7 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
     for (const folder of foldersWithFile) {
       try {
         // delete existing cert from system trust store
-        await runCommand(`certutil -d sql:${folder} -D -n ${DEFAULT_O}`)
+        await runCommand(`certutil -d sql:${folder} -D -n ${config.commonName}`)
       }
       catch (error) {
         // ignore error if no cert exists
@@ -213,7 +210,7 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
       }
 
       // add new cert to system trust store
-      await runCommand(`certutil -d sql:${folder} -A -t ${args} -n ${DEFAULT_O} -i ${caCertPath}`)
+      await runCommand(`certutil -d sql:${folder} -A -t ${args} -n ${config.commonName} -i ${caCertPath}`)
 
       log.info(`Cert added to ${folder}`)
     }
@@ -222,13 +219,13 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
     //   `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
 
     //   // add new cert to system trust store
-    //   `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${caCertPath}`,
+    //   `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${config.commonName} -i ${caCertPath}`,
 
     //   // add new cert to system trust store for Brave
-    //   `certutil -d sql:${os.homedir()}/snap/brave/411/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${caCertPath}`,
+    //   `certutil -d sql:${os.homedir()}/snap/brave/411/.pki/nssdb -A -t ${args} -n ${config.commonName} -i ${caCertPath}`,
 
     //   // add new cert to system trust store for Firefox
-    //   `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -A -t ${args} -n ${DEFAULT_O} -i ${caCertPath}`,
+    //   `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -A -t ${args} -n ${config.commonName} -i ${caCertPath}`,
 
     //   // reload system trust store
     //   `sudo update-ca-certificates`,
