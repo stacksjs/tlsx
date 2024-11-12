@@ -1,6 +1,32 @@
 # Changelog
 
 
+## v0.1.3...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.3...main)
+
+### 🚀 Enhancements
+
+- Add caCertPath, certPath and keyPath ([62a4fa3](https://github.com/stacksjs/tlsx/commit/62a4fa3))
+
+### 🏡 Chore
+
+- Remove due to prepublishOnly ([12991d6](https://github.com/stacksjs/tlsx/commit/12991d6))
+- Lint ([705f5c6](https://github.com/stacksjs/tlsx/commit/705f5c6))
+- Use `bun publish` ([13a370f](https://github.com/stacksjs/tlsx/commit/13a370f))
+- Move build.ts file ([37ebeb7](https://github.com/stacksjs/tlsx/commit/37ebeb7))
+- Use eslint ([3604896](https://github.com/stacksjs/tlsx/commit/3604896))
+- Housecleaning ([14f0503](https://github.com/stacksjs/tlsx/commit/14f0503))
+- Config adjustments ([eee5ca4](https://github.com/stacksjs/tlsx/commit/eee5ca4))
+- Several updates ([611d755](https://github.com/stacksjs/tlsx/commit/611d755))
+- Add social links ([38eb2f1](https://github.com/stacksjs/tlsx/commit/38eb2f1))
+- Make use of config ([bea49da](https://github.com/stacksjs/tlsx/commit/bea49da))
+- Several improvements ([174ff4e](https://github.com/stacksjs/tlsx/commit/174ff4e))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.1.2...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.2...main)
