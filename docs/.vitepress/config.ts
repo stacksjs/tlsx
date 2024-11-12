@@ -23,7 +23,10 @@ export default defineConfig({
       },
     ],
 
-    socialLinks: [{ icon: 'github', link: 'https://github.com/vuejs/vitepress' }],
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/stacksjs/stacks' },
+      { icon: 'twitter', link: 'https://twitter.com/stacksjs' },
+    ],
   },
   vite: {
     server: {
