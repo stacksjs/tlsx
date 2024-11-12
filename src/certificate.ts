@@ -198,7 +198,6 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
   else if (platform === 'linux') {
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
-
     const rootDirectory = os.homedir()
     const targetFileName = 'cert9.db'
     const foldersWithFile = findFoldersWithFile(rootDirectory, targetFileName)
@@ -246,8 +245,8 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
 
 export function storeCert(cert: { certificate: string, privateKey: string }, options?: AddCertOption): string {
   // Construct the path using os.homedir() and path.join()
-  const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`)
-  const certKeyPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`)
+  const certPath = options?.customCertPath || config.certPath
+  const certKeyPath = options?.customCertPath || config.keyPath
 
   // Ensure the directory exists before writing the file
   const certDir = path.dirname(certPath)
@@ -274,7 +273,7 @@ export function storeCert(cert: { certificate: string, privateKey: string }, opt
  */
 export function storeCACert(CAcert: string, options?: AddCertOption): string {
   // Construct the path using os.homedir() and path.join()
-  const caCertPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`)
+  const caCertPath = options?.customCertPath || config.caCertPath
 
   // Ensure the directory exists before writing the file
   const caCertDir = path.dirname(caCertPath)

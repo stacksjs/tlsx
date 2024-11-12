@@ -1,6 +1,9 @@
 export interface TlsConfig {
   hostCertCN: string
   domain: string
+  caCertPath: string
+  certPath: string
+  keyPath: string
   rootCAObject: { certificate: string, privateKey: string }
   altNameIPs: string[]
   altNameURIs: string[]

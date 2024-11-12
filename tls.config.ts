@@ -1,8 +1,13 @@
 import type { TlsConfig } from './src/types'
+import os from 'node:os'
+import path from 'node:path'
 
 const config: TlsConfig = {
   domain: 'localhost',
   hostCertCN: 'stacks.localhost',
+  caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`),
+  certPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`),
+  keyPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`),
   rootCAObject: {
     certificate: '',
     privateKey: '',

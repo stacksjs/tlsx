@@ -1,6 +1,6 @@
 import fs from 'node:fs'
-import os from 'node:os'
 import { defineConfig } from 'vitepress'
+import { config } from '../../src/config'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -31,8 +31,8 @@ export default defineConfig({
   vite: {
     server: {
       https: {
-        cert: fs.readFileSync(`${os.homedir()}/.stacks/ssl/tlsx.localhost.crt`),
-        key: fs.readFileSync(`${os.homedir()}/.stacks/ssl/tlsx.localhost.crt.key`),
+        cert: fs.readFileSync(config.certPath),
+        key: fs.readFileSync(config.keyPath),
       },
     },
   },

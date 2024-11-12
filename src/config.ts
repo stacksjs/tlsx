@@ -1,4 +1,6 @@
 import type { TlsConfig } from './types'
+import os from 'node:os'
+import path from 'node:path'
 import process from 'node:process'
 import { loadConfig } from 'bun-config'
 
@@ -18,5 +20,8 @@ export const config: TlsConfig = await loadConfig({
     hostCertCN: 'stacks.localhost',
     domain: 'localhost',
     rootCAObject: { certificate: '', privateKey: '' },
+    caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`),
+    certPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`),
+    keyPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`),
   },
 })
