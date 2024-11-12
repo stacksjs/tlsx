@@ -24,7 +24,7 @@ export function getCertNotBefore(): Date {
   const year = twoDaysAgo.getFullYear()
   const month = (twoDaysAgo.getMonth() + 1).toString().padStart(2, '0')
   const day = twoDaysAgo.getDate().toString().padStart(2, '0')
-  return new Date(`${year}-${month}-${day}T00:00:00Z`)
+  return new Date(`${year}-${month}-${day}T23:59:59Z`)
 }
 
 /**

@@ -4,7 +4,7 @@ export interface TlsConfig {
   caCertPath: string
   certPath: string
   keyPath: string
-  rootCAObject: { certificate: string, privateKey: string }
+  rootCAObject?: { certificate: string, privateKey: string }
   altNameIPs: string[]
   altNameURIs: string[]
   commonName: string
@@ -13,6 +13,7 @@ export interface TlsConfig {
   localityName: string
   organizationName: string
   validityDays: number
+  verbose: boolean
 }
 
 export interface CertOption {

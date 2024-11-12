@@ -62,9 +62,9 @@
     "release": "bun run changelog && bunx bumpp package.json --all",
     "test": "bun test",
     "typecheck": "bun --bun tsc --noEmit",
-    "dev:docs": "vitepress dev docs",
-    "build:docs": "vitepress build docs",
-    "preview:docs": "vitepress preview docs"
+    "dev:docs": "bunx --bun vitepress dev docs",
+    "build:docs": "bunx --bun vitepress build docs",
+    "preview:docs": "bunx --bun vitepress preview docs"
   },
   "dependencies": {
     "@stacksjs/cli": "^0.68.2",

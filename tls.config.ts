@@ -8,10 +8,6 @@ const config: TlsConfig = {
   caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`),
   certPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`),
   keyPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`),
-  rootCAObject: {
-    certificate: '',
-    privateKey: '',
-  },
   altNameIPs: ['127.0.0.1'],
   altNameURIs: ['localhost'],
   organizationName: 'stacksjs.org',
