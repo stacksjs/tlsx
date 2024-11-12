@@ -1,5 +1,4 @@
 import type { TlsOption } from '../src/types'
-import os from 'node:os'
 import { log } from '@stacksjs/cli'
 import { CAC } from 'cac'
 import { version } from '../package.json'

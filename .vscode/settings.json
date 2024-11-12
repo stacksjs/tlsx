@@ -141,5 +141,5 @@
   ],
   "grammarly.files.exclude": [
     "**/dictionary.txt"
-  ],
+  ]
 }

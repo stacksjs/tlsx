@@ -13,9 +13,9 @@
     "declaration": true,
     "noEmit": true,
     "outDir": "./dist",
-    "isolatedDeclarations": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "isolatedDeclarations": true,
     "verbatimModuleSyntax": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
