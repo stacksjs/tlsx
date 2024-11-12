@@ -1,6 +1,6 @@
+import type { CertOption } from '../src/types'
 import { describe, expect, it } from 'bun:test'
 import { createRootCA, generateCert, isCertExpired, isCertValidForDomain, parseCertDetails } from '../src'
-import type { CertOptions } from '../src/types'
 
 describe('@stacksjs/tlsx', () => {
   it('should create a Root CA certificate', async () => {
@@ -13,7 +13,7 @@ describe('@stacksjs/tlsx', () => {
 
   it('should generate a host certificate', async () => {
     const rootCA = await createRootCA()
-    const options: CertOptions = {
+    const options: CertOption = {
       hostCertCN: 'localhost',
       domain: 'localhost',
       rootCAObject: {
@@ -30,7 +30,7 @@ describe('@stacksjs/tlsx', () => {
 
   it('should validate a certificate for a domain', async () => {
     const rootCA = await createRootCA()
-    const options: CertOptions = {
+    const options: CertOption = {
       hostCertCN: 'localhost',
       domain: 'localhost',
       rootCAObject: {

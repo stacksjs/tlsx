@@ -1,3 +1,4 @@
+addstore
 antfu
 biomejs
 booleanish
@@ -15,10 +16,12 @@ dbaeumer
 degit
 deps
 destructurable
+dtsx
 entrypoints
 heroicons
 keychain
 Keychains
+Keypair
 lockb
 mkcert
 openweb

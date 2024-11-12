@@ -1,5 +1,6 @@
 import { $ } from 'bun'
-import { dts } from 'bun-plugin-dts-auto'
+import process from 'node:process'
+import { dts } from 'bun-plugin-dtsx'
 
 console.log('Building...')
 
@@ -10,15 +11,9 @@ const result = await Bun.build({
   outdir: './dist',
   format: 'esm',
   target: 'bun',
-  // minify: true,
-  // sourcemap: 'inline',
-  // external: ['bun-plugin-dts-auto'],
-  // plugins: [
-  //   dts({
-  //     root: './src',
-  //     outdir: './dist',
-  //   }),
-  // ],
+  plugins: [
+    dts(),
+  ],
 })
 
 if (!result.success) {
@@ -32,7 +27,6 @@ if (!result.success) {
   process.exit(1)
 }
 
-// eslint-disable-next-line no-console
 console.log('Build complete')
 
 await $`cp ./dist/src/index.js ./dist/index.js`

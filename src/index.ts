@@ -1,4 +1,4 @@
+export * from './certificate'
 export { config } from './config'
-export * from './keys'
-export * from './utils'
 export * from './types'
+export * from './utils'

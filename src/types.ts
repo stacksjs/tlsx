@@ -1,11 +1,7 @@
-export type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>
-}
-
 export interface TlsConfig {
   hostCertCN: string
   domain: string
-  rootCAObject: { certificate: string; privateKey: string }
+  rootCAObject: { certificate: string, privateKey: string }
   altNameIPs: string[]
   altNameURIs: string[]
   commonName: string
@@ -19,7 +15,7 @@ export interface TlsConfig {
 export interface CertOption {
   hostCertCN: string
   domain: string
-  rootCAObject: { certificate: string; privateKey: string }
+  rootCAObject: { certificate: string, privateKey: string }
   altNameIPs?: string[]
   altNameURIs?: string[]
   validityDays?: number
@@ -50,3 +46,7 @@ export interface GenerateCertReturn {
 }
 
 export type TlsOption = DeepPartial<TlsConfig>
+
+export type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>
+}

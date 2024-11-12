@@ -1,8 +1,8 @@
+import type { CertDetails } from './types'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { pki } from 'node-forge'
-import type { CertDetails } from './types'
 
 /**
  * Checks if a certificate is valid for a given domain.
@@ -75,7 +75,8 @@ export function getCertificateFromCertPemOrPath(certPemOrPath: string): pki.Cert
   if (certPemOrPath.startsWith('-----BEGIN CERTIFICATE-----')) {
     // If the input is a PEM string
     certPem = certPemOrPath
-  } else {
+  }
+  else {
     // If the input is a path to the certificate file
     certPem = readCertFromFile(certPemOrPath)
   }
@@ -98,32 +99,75 @@ export function listCertsInDirectory(dirPath?: string): string[] {
     if (platform === 'darwin') {
       // macOS default certificate directory
       defaultDir = '/etc/ssl/certs'
-    } else if (platform === 'win32') {
+    }
+    else if (platform === 'win32') {
       // Windows default certificate directory
       defaultDir = 'C:\\Windows\\System32\\certsrv\\CertEnroll'
-    } else if (platform === 'linux') {
+    }
+    else if (platform === 'linux') {
       // Linux default certificate directory
       defaultDir = '/etc/ssl/certs'
-    } else {
+    }
+    else {
       throw new Error(`Unsupported platform: ${platform}`)
     }
-  } else {
+  }
+  else {
     defaultDir = dirPath
   }
 
   const certFiles = fs
     .readdirSync(defaultDir)
-    .filter((file) => file.endsWith('.crt'))
-    .map((file) => path.join(defaultDir, file))
+    .filter(file => file.endsWith('.crt'))
+    .map(file => path.join(defaultDir, file))
 
   // If no certificates are found in the default directory, check the fallback path
   const stacksDir = path.join(os.homedir(), '.stacks', 'ssl')
   certFiles.push(
     ...fs
       .readdirSync(stacksDir)
-      .filter((file) => file.endsWith('.crt'))
-      .map((file) => path.join(stacksDir, file)),
+      .filter(file => file.endsWith('.crt'))
+      .map(file => path.join(stacksDir, file)),
   )
 
   return certFiles
+}
+
+export function makeNumberPositive(hexString: string): string {
+  let mostSignificativeHexDigitAsInt = Number.parseInt(hexString[0], 16)
+
+  if (mostSignificativeHexDigitAsInt < 8)
+    return hexString
+
+  mostSignificativeHexDigitAsInt -= 8
+
+  return mostSignificativeHexDigitAsInt.toString() + hexString.substring(1)
+}
+
+export function findFoldersWithFile(rootDir: string, fileName: string): string[] {
+  const result: string[] = []
+
+  function search(dir: string) {
+    try {
+      const files = fs.readdirSync(dir)
+
+      for (const file of files) {
+        const filePath = path.join(dir, file)
+        const stats = fs.lstatSync(filePath)
+
+        if (stats.isDirectory()) {
+          search(filePath)
+        }
+        else if (file === fileName) {
+          result.push(dir)
+        }
+      }
+    }
+    catch (error) {
+      console.warn(`Error reading directory ${dir}: ${error}`)
+    }
+  }
+
+  search(rootDir)
+  return result
 }

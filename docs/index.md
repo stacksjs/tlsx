@@ -3,9 +3,9 @@
 layout: home
 
 hero:
-  name: "Reverse Proxy"
-  text: "A better developer environment."
-  tagline: My great project tagline
+  name: "tlsx"
+  text: "HTTPS for your dev environment"
+  tagline: Automatically ensure your local development environment uses HTTPS
   actions:
     - theme: brand
       text: Markdown Examples

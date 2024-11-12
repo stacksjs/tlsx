@@ -1,6 +1,8 @@
 import type { TlsConfig } from './types'
+import process from 'node:process'
 import { loadConfig } from 'bun-config'
 
+// eslint-disable-next-line antfu/no-top-level-await
 export const config: TlsConfig = await loadConfig({
   name: 'tls',
   cwd: process.cwd(),
@@ -16,5 +18,5 @@ export const config: TlsConfig = await loadConfig({
     hostCertCN: 'stacks.localhost',
     domain: 'localhost',
     rootCAObject: { certificate: '', privateKey: '' },
-  }
+  },
 })

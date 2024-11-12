@@ -1,16 +1,17 @@
+import type { AddCertOption, CertOption, GenerateCertReturn } from './types'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { log, runCommand } from '@stacksjs/cli'
 import forge, { pki, tls } from 'node-forge'
 import { config } from './config'
-import type { AddCertOption, CertOption, GenerateCertReturn } from './types'
+import { findFoldersWithFile, makeNumberPositive } from './utils'
 
 /**
  * Generate a random serial number for the Certificate
  * @returns The serial number for the Certificate
  */
-export const randomSerialNumber = (): string => {
+export function randomSerialNumber(): string {
   return makeNumberPositive(forge.util.bytesToHex(forge.random.getBytesSync(20)))
 }
 
@@ -18,7 +19,7 @@ export const randomSerialNumber = (): string => {
  * Get the Not Before Date for a Certificate (will be valid from 2 days ago)
  * @returns The Not Before Date for the Certificate
  */
-export const getCertNotBefore = (): Date => {
+export function getCertNotBefore(): Date {
   const twoDaysAgo = new Date(Date.now() - 60 * 60 * 24 * 2 * 1000)
   const year = twoDaysAgo.getFullYear()
   const month = (twoDaysAgo.getMonth() + 1).toString().padStart(2, '0')
@@ -31,7 +32,7 @@ export const getCertNotBefore = (): Date => {
  * @param notBefore - The Not Before Date for the Certificate
  * @returns The Not After Date for the Certificate
  */
-export const getCertNotAfter = (notBefore: Date): Date => {
+export function getCertNotAfter(notBefore: Date): Date {
   const ninetyDaysLater = new Date(notBefore.getTime() + 60 * 60 * 24 * 90 * 1000)
   const year = ninetyDaysLater.getFullYear()
   const month = (ninetyDaysLater.getMonth() + 1).toString().padStart(2, '0')
@@ -45,7 +46,7 @@ export const getCertNotAfter = (notBefore: Date): Date => {
  * @param notBefore - The Not Before Date for the CA
  * @returns The Not After Date for the CA
  */
-export const getCANotAfter = (notBefore: Date): Date => {
+export function getCANotAfter(notBefore: Date): Date {
   const year = notBefore.getFullYear() + 100
   const month = (notBefore.getMonth() + 1).toString().padStart(2, '0')
   const day = notBefore.getDate().toString().padStart(2, '0')
@@ -56,7 +57,7 @@ export const getCANotAfter = (notBefore: Date): Date => {
 export const DEFAULT_C = 'US'
 export const DEFAULT_ST = 'California'
 export const DEFAULT_L = 'Playa Vista'
-export const DEFAULT_O: string = config?.ssl?.organizationName ?? 'Stacks.js'
+export const DEFAULT_O: string = config?.organizationName ?? 'stacksjs.org'
 
 /**
  * Create a new Root CA Certificate
@@ -80,30 +81,30 @@ export async function createRootCA(): Promise<GenerateCertReturn> {
   ]
 
   // Create an empty Certificate
-  const CAcert = pki.createCertificate()
+  const caCert = pki.createCertificate()
 
   // Set the Certificate attributes for the new Root CA
-  CAcert.publicKey = publicKey
-  CAcert.serialNumber = randomSerialNumber()
-  CAcert.validity.notBefore = getCertNotBefore()
-  CAcert.validity.notAfter = getCANotAfter(CAcert.validity.notBefore)
-  CAcert.setSubject(attributes)
-  CAcert.setIssuer(attributes)
-  CAcert.setExtensions(extensions)
+  caCert.publicKey = publicKey
+  caCert.serialNumber = randomSerialNumber()
+  caCert.validity.notBefore = getCertNotBefore()
+  caCert.validity.notAfter = getCANotAfter(caCert.validity.notBefore)
+  caCert.setSubject(attributes)
+  caCert.setIssuer(attributes)
+  caCert.setExtensions(extensions)
 
   // Self-sign the Certificate
-  CAcert.sign(privateKey, forge.md.sha512.create())
+  caCert.sign(privateKey, forge.md.sha512.create())
 
   // Convert to PEM format
-  const pemCert = pki.certificateToPem(CAcert)
+  const pemCert = pki.certificateToPem(caCert)
   const pemKey = pki.privateKeyToPem(privateKey)
 
   // Return the PEM encoded cert and private key
   return {
     certificate: pemCert,
     privateKey: pemKey,
-    notBefore: CAcert.validity.notBefore,
-    notAfter: CAcert.validity.notAfter,
+    notBefore: caCert.validity.notBefore,
+    notAfter: caCert.validity.notAfter,
   }
 }
 
@@ -115,9 +116,10 @@ export async function createRootCA(): Promise<GenerateCertReturn> {
 export async function generateCert(options?: CertOption): Promise<GenerateCertReturn> {
   log.debug('generateCert', options)
 
-  if (!options?.hostCertCN?.trim()) throw new Error('"hostCertCN" must be a String')
-  if (!options.domain?.trim()) throw new Error('"domain" must be a String')
-
+  if (!options?.hostCertCN?.trim())
+    throw new Error('"hostCertCN" must be a String')
+  if (!options.domain?.trim())
+    throw new Error('"domain" must be a String')
   if (!options.rootCAObject || !options.rootCAObject.certificate || !options.rootCAObject.privateKey)
     throw new Error('"rootCAObject" must be an Object with the properties "certificate" & "privateKey"')
 
@@ -127,6 +129,7 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
 
   // Create a new Keypair for the Host Certificate
   const hostKeys = pki.rsa.generateKeyPair(2048)
+
   // Define the attributes/properties for the Host Certificate
   const attributes = [
     { shortName: 'C', value: DEFAULT_C },
@@ -172,12 +175,12 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
 }
 
 export async function addCertToSystemTrustStoreAndSaveCerts(
-  cert: { certificate: string; privateKey: string },
+  cert: { certificate: string, privateKey: string },
   CAcert: string,
   options?: AddCertOption,
 ): Promise<string> {
   const certPath = storeCert(cert, options)
-  const CAcertPath = storeCACert(CAcert, options)
+  const caCertPath = storeCACert(CAcert, options)
 
   const platform = os.platform()
   const args = 'TC, C, C'
@@ -185,12 +188,14 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
   if (platform === 'darwin') {
     // macOS
     await runCommand(
-      `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${CAcertPath}`,
+      `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${caCertPath}`,
     )
-  } else if (platform === 'win32') {
+  }
+  else if (platform === 'win32') {
     // Windows
-    await runCommand(`certutil -f -v -addstore -enterprise Root ${CAcertPath}`)
-  } else if (platform === 'linux') {
+    await runCommand(`certutil -f -v -addstore -enterprise Root ${caCertPath}`)
+  }
+  else if (platform === 'linux') {
     // Linux (This might vary based on the distro)
     // for Ubuntu/Debian based systems
 
@@ -202,13 +207,14 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
       try {
         // delete existing cert from system trust store
         await runCommand(`certutil -d sql:${folder} -D -n ${DEFAULT_O}`)
-      } catch (error) {
+      }
+      catch (error) {
         // ignore error if no cert exists
         console.warn(`Error deleting existing cert: ${error}`)
       }
 
       // add new cert to system trust store
-      await runCommand(`certutil -d sql:${folder} -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`)
+      await runCommand(`certutil -d sql:${folder} -A -t ${args} -n ${DEFAULT_O} -i ${caCertPath}`)
 
       log.info(`Cert added to ${folder}`)
     }
@@ -217,37 +223,44 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
     //   `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
 
     //   // add new cert to system trust store
-    //   `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
+    //   `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${caCertPath}`,
 
     //   // add new cert to system trust store for Brave
-    //   `certutil -d sql:${os.homedir()}/snap/brave/411/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
+    //   `certutil -d sql:${os.homedir()}/snap/brave/411/.pki/nssdb -A -t ${args} -n ${DEFAULT_O} -i ${caCertPath}`,
 
     //   // add new cert to system trust store for Firefox
-    //   `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -A -t ${args} -n ${DEFAULT_O} -i ${CAcertPath}`,
+    //   `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -A -t ${args} -n ${DEFAULT_O} -i ${caCertPath}`,
 
     //   // reload system trust store
     //   `sudo update-ca-certificates`,
     // ]).catch((err) => {
     //   throw new Error(err)
     // })
-  } else throw new Error(`Unsupported platform: ${platform}`)
+  }
+  else {
+    throw new Error(`Unsupported platform: ${platform}`)
+  }
 
   return certPath
 }
 
-export function storeCert(cert: { certificate: string; privateKey: string }, options?: AddCertOption): string {
+export function storeCert(cert: { certificate: string, privateKey: string }, options?: AddCertOption): string {
   // Construct the path using os.homedir() and path.join()
-  const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`)
-  const certKeyPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`)
+  const certPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`)
+  const certKeyPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`)
 
   // Ensure the directory exists before writing the file
   const certDir = path.dirname(certPath)
-  if (!fs.existsSync(certDir)) fs.mkdirSync(certDir, { recursive: true })
+  if (!fs.existsSync(certDir))
+    fs.mkdirSync(certDir, { recursive: true })
+
   fs.writeFileSync(certPath, cert.certificate)
 
   // Ensure the directory exists before writing the file
   const certKeyDir = path.dirname(certKeyPath)
-  if (!fs.existsSync(certKeyDir)) fs.mkdirSync(certKeyDir, { recursive: true })
+  if (!fs.existsSync(certKeyDir))
+    fs.mkdirSync(certKeyDir, { recursive: true })
+
   fs.writeFileSync(certKeyPath, cert.privateKey)
 
   return certPath
@@ -261,49 +274,16 @@ export function storeCert(cert: { certificate: string; privateKey: string }, opt
  */
 export function storeCACert(CAcert: string, options?: AddCertOption): string {
   // Construct the path using os.homedir() and path.join()
-  const CAcertPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`)
+  const caCertPath = options?.customCertPath || path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`)
 
   // Ensure the directory exists before writing the file
-  const CacertDir = path.dirname(CAcertPath)
-  if (!fs.existsSync(CacertDir)) fs.mkdirSync(CacertDir, { recursive: true })
-  fs.writeFileSync(CAcertPath, CAcert)
+  const caCertDir = path.dirname(caCertPath)
+  if (!fs.existsSync(caCertDir))
+    fs.mkdirSync(caCertDir, { recursive: true })
 
-  return CAcertPath
+  fs.writeFileSync(caCertPath, CAcert)
+
+  return caCertPath
 }
 
-function findFoldersWithFile(rootDir: string, fileName: string): string[] {
-  const result: string[] = []
-
-  function search(dir: string) {
-    try {
-      const files = fs.readdirSync(dir)
-
-      for (const file of files) {
-        const filePath = path.join(dir, file)
-        const stats = fs.lstatSync(filePath)
-
-        if (stats.isDirectory()) {
-          search(filePath)
-        } else if (file === fileName) {
-          result.push(dir)
-        }
-      }
-    } catch (error) {
-      console.warn(`Error reading directory ${dir}: ${error}`)
-    }
-  }
-
-  search(rootDir)
-  return result
-}
-
-const makeNumberPositive = (hexString: string): string => {
-  let mostSignificativeHexDigitAsInt = Number.parseInt(hexString[0], 16)
-
-  if (mostSignificativeHexDigitAsInt < 8) return hexString
-
-  mostSignificativeHexDigitAsInt -= 8
-  return mostSignificativeHexDigitAsInt.toString() + hexString.substring(1)
-}
-
-export { tls, pki, forge }
+export { forge, pki, tls }
