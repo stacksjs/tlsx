@@ -1,6 +1,20 @@
 # Changelog
 
 
+## v0.2.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.2.0...main)
+
+### 🏡 Chore
+
+- Lint ([2c50c25](https://github.com/stacksjs/tlsx/commit/2c50c25))
+- Update cert generation ([8e9e8e1](https://github.com/stacksjs/tlsx/commit/8e9e8e1))
+- Adjust default validityDays ([ed67220](https://github.com/stacksjs/tlsx/commit/ed67220))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.1.3...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.3...main)
