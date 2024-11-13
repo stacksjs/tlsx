@@ -198,13 +198,14 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
   }
 }
 
-export async function addCertToSystemTrustStoreAndSaveCerts(
-  cert: { certificate: string, privateKey: string },
-  CAcert: string,
-  options?: AddCertOption,
-): Promise<string> {
+interface Cert {
+  certificate: string
+  privateKey: string
+}
+
+export async function addCertToSystemTrustStoreAndSaveCerts(cert: Cert, caCert: string, options?: AddCertOption): Promise<string> {
   const certPath = storeCert(cert, options)
-  const caCertPath = storeCACert(CAcert, options)
+  const caCertPath = storeCACert(caCert, options)
 
   const platform = os.platform()
   const args = 'TC, C, C'
@@ -241,24 +242,6 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
 
       log.info(`Cert added to ${folder}`)
     }
-
-    // await runCommands([
-    //   `sudo cp ${certPath} /usr/local/share/ca-certificates/`,
-
-    //   // add new cert to system trust store
-    //   `certutil -d sql:${os.homedir()}/.pki/nssdb -A -t ${args} -n ${config.commonName} -i ${caCertPath}`,
-
-    //   // add new cert to system trust store for Brave
-    //   `certutil -d sql:${os.homedir()}/snap/brave/411/.pki/nssdb -A -t ${args} -n ${config.commonName} -i ${caCertPath}`,
-
-    //   // add new cert to system trust store for Firefox
-    //   `certutil -d sql:${os.homedir()}/snap/firefox/common/.mozilla/firefox/3l148raz.default -A -t ${args} -n ${config.commonName} -i ${caCertPath}`,
-
-    //   // reload system trust store
-    //   `sudo update-ca-certificates`,
-    // ]).catch((err) => {
-    //   throw new Error(err)
-    // })
   }
   else {
     throw new Error(`Unsupported platform: ${platform}`)
@@ -267,7 +250,7 @@ export async function addCertToSystemTrustStoreAndSaveCerts(
   return certPath
 }
 
-export function storeCert(cert: { certificate: string, privateKey: string }, options?: AddCertOption): string {
+export function storeCert(cert: Cert, options?: AddCertOption): string {
   // Construct the path using os.homedir() and path.join()
   const certPath = options?.customCertPath || config.certPath
   const certKeyPath = options?.customCertPath || config.keyPath
@@ -295,7 +278,7 @@ export function storeCert(cert: { certificate: string, privateKey: string }, opt
  * @param options - The options for storing the CA Certificate
  * @returns The path to the CA Certificate
  */
-export function storeCACert(CAcert: string, options?: AddCertOption): string {
+export function storeCACert(caCert: string, options?: AddCertOption): string {
   // Construct the path using os.homedir() and path.join()
   const caCertPath = options?.customCertPath || config.caCertPath
 
@@ -304,7 +287,7 @@ export function storeCACert(CAcert: string, options?: AddCertOption): string {
   if (!fs.existsSync(caCertDir))
     fs.mkdirSync(caCertDir, { recursive: true })
 
-  fs.writeFileSync(caCertPath, CAcert)
+  fs.writeFileSync(caCertPath, caCert)
 
   return caCertPath
 }
