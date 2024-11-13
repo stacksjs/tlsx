@@ -21,5 +21,6 @@ export const config: TlsConfig = await loadConfig({
     caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`),
     certPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`),
     keyPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`),
+    verbose: false,
   },
 })

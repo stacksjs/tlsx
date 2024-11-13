@@ -61,26 +61,34 @@ export function getCANotAfter(notBefore: Date): Date {
  * @returns The Root CA Certificate
  */
 export async function createRootCA(): Promise<GenerateCertReturn> {
-  // Create a new Keypair for the Root CA
   const { privateKey, publicKey } = pki.rsa.generateKeyPair(2048)
 
-  // Define the attributes for the new Root CA
   const attributes = [
     { shortName: 'C', value: config.countryName },
     { shortName: 'ST', value: config.stateName },
     { shortName: 'L', value: config.localityName },
-    { shortName: 'CN', value: config.commonName },
+    { shortName: 'O', value: 'Local Development CA' },
+    { shortName: 'CN', value: 'Local Development Root CA' },
   ]
 
   const extensions = [
-    { name: 'basicConstraints', cA: true },
-    { name: 'keyUsage', keyCertSign: true, cRLSign: true },
+    {
+      name: 'basicConstraints',
+      cA: true,
+      critical: true,
+    },
+    {
+      name: 'keyUsage',
+      keyCertSign: true,
+      cRLSign: true,
+      critical: true,
+    },
+    {
+      name: 'subjectKeyIdentifier',
+    },
   ]
 
-  // Create an empty Certificate
   const caCert = pki.createCertificate()
-
-  // Set the Certificate attributes for the new Root CA
   caCert.publicKey = publicKey
   caCert.serialNumber = randomSerialNumber()
   caCert.validity.notBefore = getCertNotBefore()
@@ -89,14 +97,12 @@ export async function createRootCA(): Promise<GenerateCertReturn> {
   caCert.setIssuer(attributes)
   caCert.setExtensions(extensions)
 
-  // Self-sign the Certificate
-  caCert.sign(privateKey, forge.md.sha512.create())
+  // Sign with SHA-256 for better compatibility
+  caCert.sign(privateKey, forge.md.sha256.create())
 
-  // Convert to PEM format
   const pemCert = pki.certificateToPem(caCert)
   const pemKey = pki.privateKeyToPem(privateKey)
 
-  // Return the PEM encoded cert and private key
   return {
     certificate: pemCert,
     privateKey: pemKey,
@@ -120,28 +126,49 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
   if (!options.rootCAObject || !options.rootCAObject.certificate || !options.rootCAObject.privateKey)
     throw new Error('"rootCAObject" must be an Object with the properties "certificate" & "privateKey"')
 
-  // Convert the Root CA PEM details, to a forge Object
+  // Convert the Root CA PEM details to forge Objects
   const caCert = pki.certificateFromPem(options.rootCAObject.certificate)
   const caKey = pki.privateKeyFromPem(options.rootCAObject.privateKey)
 
   // Create a new Keypair for the Host Certificate
   const hostKeys = pki.rsa.generateKeyPair(2048)
 
-  // Define the attributes/properties for the Host Certificate
+  // Define the attributes for the Host Certificate
   const attributes = [
     { shortName: 'C', value: config.countryName },
     { shortName: 'ST', value: config.stateName },
     { shortName: 'L', value: config.localityName },
-    { shortName: 'CN', value: config.commonName },
+    { shortName: 'O', value: 'Local Development' },
+    { shortName: 'CN', value: '*.localhost' }, // Changed to wildcard localhost
   ]
 
+  // Enhanced extensions for local development
   const extensions = [
-    { name: 'nsCertType', server: true },
-    { name: 'subjectKeyIdentifier' },
-    { name: 'authorityKeyIdentifier', authorityCertIssuer: true, serialNumber: caCert.serialNumber },
-    { name: 'keyUsage', digitalSignature: true, nonRepudiation: true, keyEncipherment: true },
-    { name: 'extKeyUsage', serverAuth: true },
-    { name: 'subjectAltName', altNames: [{ type: 2, value: options.domain }] },
+    {
+      name: 'basicConstraints',
+      cA: false,
+      critical: true,
+    },
+    {
+      name: 'keyUsage',
+      digitalSignature: true,
+      keyEncipherment: true,
+      critical: true,
+    },
+    {
+      name: 'extKeyUsage',
+      serverAuth: true,
+      clientAuth: false,
+    },
+    {
+      name: 'subjectAltName',
+      altNames: [
+        { type: 2, value: '*.localhost' }, // Wildcard for all .localhost domains
+        { type: 2, value: 'localhost' }, // Basic localhost
+        { type: 2, value: 'stacks.localhost' }, // Your specific domain
+        { type: 2, value: options.domain }, // The domain passed in options
+      ],
+    },
   ]
 
   // Create an empty Certificate
@@ -156,8 +183,8 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
   newHostCert.setIssuer(caCert.subject.attributes)
   newHostCert.setExtensions(extensions)
 
-  // Sign the new Host Certificate using the CA
-  newHostCert.sign(caKey, forge.md.sha512.create())
+  // Sign with SHA-256 instead of SHA-512 for better compatibility
+  newHostCert.sign(caKey, forge.md.sha256.create())
 
   // Convert to PEM format
   const pemHostCert = pki.certificateToPem(newHostCert)

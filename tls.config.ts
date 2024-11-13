@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 
 const config: TlsConfig = {
-  domain: 'localhost',
+  domain: 'stacks.localhost',
   hostCertCN: 'stacks.localhost',
   caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`),
   certPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`),
@@ -16,6 +16,7 @@ const config: TlsConfig = {
   localityName: 'Playa Vista',
   commonName: 'stacks.localhost',
   validityDays: 1,
+  verbose: false,
 }
 
 export default config
