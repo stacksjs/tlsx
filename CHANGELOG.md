@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.3.3...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.3...main)
+
+### 🚀 Enhancements
+
+- Compile & release bin for all OS ([338502a](https://github.com/stacksjs/tlsx/commit/338502a))
+
+### 🏡 Chore
+
+- Lint ([461ff31](https://github.com/stacksjs/tlsx/commit/461ff31))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.3.2...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.2...main)
