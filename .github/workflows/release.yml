@@ -38,3 +38,16 @@ jobs:
         run: bunx changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Attach Binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: CHANGELOG.md
+          files: |
+            bin/tlsx-linux-x64
+            bin/tlsx-linux-arm64
+            bin/tlsx-windows-x64.exe
+            bin/tlsx-darwin-x64
+            bin/tlsx-darwin-arm64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
