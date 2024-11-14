@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.4.2...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.2...main)
+
+### 🚀 Enhancements
+
+- Dummy feature test ([8298433](https://github.com/stacksjs/tlsx/commit/8298433))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.4.1...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.1...main)
