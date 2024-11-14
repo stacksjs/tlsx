@@ -210,7 +210,7 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
  * @param options
  * @returns The path to the stored certificate
  */
-export async function addCertToSystemTrustStoreAndSaveCerts(cert: Cert, caCert: string, options?: AddCertOption): Promise<string> {
+export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: string, options?: AddCertOption): Promise<string> {
   const certPath = storeCert(cert, options)
   const caCertPath = storeCACert(caCert, options)
 
