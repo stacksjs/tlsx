@@ -1,6 +1,20 @@
 # Changelog
 
 
+## v0.4.1...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.1...main)
+
+### 🏡 Chore
+
+- Remove unused scripts ([d3c5b41](https://github.com/stacksjs/tlsx/commit/d3c5b41))
+- Adjust prepublish script ([acbe75d](https://github.com/stacksjs/tlsx/commit/acbe75d))
+- Remove `body_path` ([96c65a0](https://github.com/stacksjs/tlsx/commit/96c65a0))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.4.0...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.0...main)
