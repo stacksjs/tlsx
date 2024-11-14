@@ -42,7 +42,6 @@ jobs:
       - name: Attach Binaries
         uses: softprops/action-gh-release@v2
         with:
-          body_path: CHANGELOG.md
           files: |
             bin/tlsx-linux-x64
             bin/tlsx-linux-arm64
