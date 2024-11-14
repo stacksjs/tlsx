@@ -7,6 +7,11 @@ import forge, { pki, tls } from 'node-forge'
 import { config } from './config'
 import { findFoldersWithFile, makeNumberPositive } from './utils'
 
+export interface Cert {
+  certificate: string
+  privateKey: string
+}
+
 /**
  * Generate a random serial number for the Certificate
  * @returns The serial number for the Certificate
@@ -198,11 +203,13 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
   }
 }
 
-interface Cert {
-  certificate: string
-  privateKey: string
-}
-
+/**
+ * Add a certificate to the system trust store and save the certificate to a file
+ * @param cert
+ * @param caCert
+ * @param options
+ * @returns The path to the stored certificate
+ */
 export async function addCertToSystemTrustStoreAndSaveCerts(cert: Cert, caCert: string, options?: AddCertOption): Promise<string> {
   const certPath = storeCert(cert, options)
   const caCertPath = storeCACert(caCert, options)
@@ -274,7 +281,7 @@ export function storeCert(cert: Cert, options?: AddCertOption): string {
 
 /**
  * Store the CA Certificate
- * @param CAcert - The CA Certificate
+ * @param caCert - The CA Certificate
  * @param options - The options for storing the CA Certificate
  * @returns The path to the CA Certificate
  */

@@ -1,8 +1,7 @@
 import type { TlsOption } from '../src/types'
-import { log } from '@stacksjs/cli'
-import { CAC } from 'cac'
+import { CAC, log } from '@stacksjs/cli'
 import { version } from '../package.json'
-import { addCertToSystemTrustStoreAndSaveCerts, createRootCA, generateCert } from '../src/certificate'
+import { addCertToSystemTrustStoreAndSaveCert, createRootCA, generateCert } from '../src/certificate'
 import { config } from '../src/config'
 
 const cli = new CAC('tlsx')
@@ -46,7 +45,7 @@ cli
       },
     })
 
-    await addCertToSystemTrustStoreAndSaveCerts(hostCert, caCert.certificate)
+    await addCertToSystemTrustStoreAndSaveCert(hostCert, caCert.certificate)
 
     log.success('Certificate generated')
   })
