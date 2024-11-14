@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.3.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.0...main)
+
+### 🏡 Chore
+
+- Add Cert interface ([f96689a](https://github.com/stacksjs/tlsx/commit/f96689a))
+- Minor updates ([f4bc353](https://github.com/stacksjs/tlsx/commit/f4bc353))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.2.0...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.2.0...main)
