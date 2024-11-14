@@ -46,7 +46,7 @@
   "bin": {
     "tlsx": "./dist/bin/cli.js"
   },
-  "files": ["dist", "README.md"],
+  "files": ["README.md", "dist"],
   "scripts": {
     "build": "bun build.ts && bun run compile",
     "compile": "bun build ./bin/cli.ts --compile --minify --outfile bin/tlsx",
@@ -60,7 +60,7 @@
     "lint:fix": "bunx --bun eslint . --fix",
     "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
     "changelog": "bunx changelogen --output CHANGELOG.md",
-    "prepublishOnly": "bun run build",
+    "prepublishOnly": "bun --bun run build && bun run compile:all",
     "release": "bun run changelog && bunx bumpp package.json --all",
     "test": "bun test",
     "typecheck": "bun --bun tsc --noEmit",
