@@ -75,7 +75,7 @@ export default {
     stateName: 'California',
     localityName: 'Playa Vista',
     commonName: 'stacks.localhost',
-    validityDays: 1,
+    validityDays: 180,
   },
 } satisfies TlsConfig
 ```
