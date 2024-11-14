@@ -1,6 +1,21 @@
 # Changelog
 
 
+## v0.4.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.0...main)
+
+### 🏡 Chore
+
+- Adjust links ([07e45ca](https://github.com/stacksjs/tlsx/commit/07e45ca))
+- Remove postcompile ([8e8315e](https://github.com/stacksjs/tlsx/commit/8e8315e))
+- Adjust bin logic ([bcf4781](https://github.com/stacksjs/tlsx/commit/bcf4781))
+- Adjust package.json ([332ef74](https://github.com/stacksjs/tlsx/commit/332ef74))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.3.3...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.3...main)
