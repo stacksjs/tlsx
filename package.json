@@ -35,20 +35,18 @@
   ],
   "exports": {
     ".": {
-      "bun": "./src/index.ts",
       "import": "./dist/index.js"
     },
     "./*": {
-      "bun": "./src/*",
       "import": "./dist/*"
     }
   },
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "tlsx": "./dist/cli.js"
+    "tlsx": "./dist/bin/cli.js"
   },
-  "files": ["dist", "scripts", "src"],
+  "files": ["dist", "README.md"],
   "scripts": {
     "build": "bun build.ts && bun run compile",
     "compile": "bun build ./bin/cli.ts --compile --minify --outfile bin/tlsx",
