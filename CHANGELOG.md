@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.3.1...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.1...main)
+
+### 🩹 Fixes
+
+- Export name ([9ae58ce](https://github.com/stacksjs/tlsx/commit/9ae58ce))
+
+### 🏡 Chore
+
+- Remove unused calls ([5f8b22d](https://github.com/stacksjs/tlsx/commit/5f8b22d))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.3.0...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.0...main)
