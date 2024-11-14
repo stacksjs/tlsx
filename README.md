@@ -137,8 +137,8 @@ The MIT License (MIT). Please see [LICENSE](https://github.com/stacksjs/stacks/t
 Made with 💙
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/tlsx?style=flat-square
-[npm-version-href]: https://npmjs.com/package/tlsx
+[npm-version-src]: https://img.shields.io/npm/v/@stacksjs/tlsx?style=flat-square
+[npm-version-href]: https://npmjs.com/package/@stacksjs/tlsx
 [github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/tlsx/ci.yml?style=flat-square&branch=main
 [github-actions-href]: https://github.com/stacksjs/tlsx/actions?query=workflow%3Aci
 
