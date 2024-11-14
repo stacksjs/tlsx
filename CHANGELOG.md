@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.3.2...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.2...main)
+
+### 🏡 Chore
+
+- Add bunfig ([2935d40](https://github.com/stacksjs/tlsx/commit/2935d40))
+- Use devdeps ([9eaf06a](https://github.com/stacksjs/tlsx/commit/9eaf06a))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.3.1...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.1...main)
