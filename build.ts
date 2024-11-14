@@ -31,5 +31,3 @@ console.log('Build complete')
 
 await $`cp ./dist/src/index.js ./dist/index.js`
 await $`rm -rf ./dist/src`
-await $`cp ./dist/bin/cli.js ./dist/cli.js`
-await $`rm -rf ./dist/bin`

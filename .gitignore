@@ -6,6 +6,7 @@
 *.pem
 coverage
 dist
+bin/tlsx*
 lib-cov
 logs
 node_modules
