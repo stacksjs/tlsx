@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.4.3...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.3...main)
+
+### 🚀 Enhancements
+
+- Add debug logs ([27b5da2](https://github.com/stacksjs/tlsx/commit/27b5da2))
+
+### 🏡 Chore
+
+- Adjust vscode settings ([03066d2](https://github.com/stacksjs/tlsx/commit/03066d2))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.4.2...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.2...main)
