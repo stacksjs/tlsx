@@ -332,9 +332,9 @@ export function storeCert(cert: Cert, options?: TlsOption): string {
  * @param options - The options for storing the CA Certificate
  * @returns The path to the CA Certificate
  */
-export function storeCACert(caCert: string, options?: AddCertOption): string {
+export function storeCACert(caCert: string, options?: TlsOption): string {
   debugLog('storage', 'Storing CA certificate', options?.verbose)
-  const caCertPath = options?.customCertPath || config.caCertPath
+  const caCertPath = options?.caCertPath || config.caCertPath
 
   debugLog('storage', `CA certificate path: ${caCertPath}`, options?.verbose)
 
