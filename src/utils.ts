@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { pki } from 'node-forge'
+import { config } from './config'
 
 /**
  * Checks if a certificate is valid for a given domain.
@@ -170,4 +171,11 @@ export function findFoldersWithFile(rootDir: string, fileName: string): string[]
 
   search(rootDir)
   return result
+}
+
+export function debugLog(category: string, message: string): void {
+  if (config.verbose) {
+    // eslint-disable-next-line no-console
+    console.debug(`[rpx:${category}] ${message}`)
+  }
 }
