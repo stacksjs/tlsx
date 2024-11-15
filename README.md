@@ -28,12 +28,12 @@ npx @stacksjs/tlsx
 
 Please note, we are looking to publish this package to npm under the name `tlsx`. _Hoping npm will release the name for us._
 
-Alternatively, you can install:
+<!-- _Alternatively, you can install:_
 
 ```bash
 brew install tlsx # wip
 pkgx install tlsx # wip
-```
+``` -->
 
 ## Get Started
 
@@ -64,19 +64,23 @@ The Reverse Proxy can be configured using a `tls.config.ts` _(or `tls.config.js`
 
 ```ts
 // tlsx.config.ts (or tlsx.config.js)
-import type { TlsConfig } from './src/types'
+import type { TlsConfig } from '@stacksjs/tlsx'
 
 export default {
-  ssl: {
-    altNameIPs: ['127.0.0.1'],
-    altNameURIs: ['localhost'],
-    organizationName: 'tlsx stacks.localhost',
-    countryName: 'US',
-    stateName: 'California',
-    localityName: 'Playa Vista',
-    commonName: 'stacks.localhost',
-    validityDays: 180,
-  },
+  domain: 'stacks.localhost',
+  hostCertCN: 'stacks.localhost',
+  caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`),
+  certPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`),
+  keyPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`),
+  altNameIPs: ['127.0.0.1'],
+  altNameURIs: ['localhost'],
+  organizationName: 'stacksjs.org',
+  countryName: 'US',
+  stateName: 'California',
+  localityName: 'Playa Vista',
+  commonName: 'stacks.localhost',
+  validityDays: 180,
+  verbose: false,
 } satisfies TlsConfig
 ```
 
