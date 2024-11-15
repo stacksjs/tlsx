@@ -28,6 +28,7 @@ export interface CertOption {
   stateName?: string
   localityName?: string
   commonName?: string
+  verbose?: boolean
 }
 
 export interface CertDetails {
