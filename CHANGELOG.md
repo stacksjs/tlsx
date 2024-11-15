@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.3...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.3...main)
+
+### 🩹 Fixes
+
+- Remove AddCertOption ([3b9aed2](https://github.com/stacksjs/tlsx/commit/3b9aed2))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.5.2...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.2...main)
