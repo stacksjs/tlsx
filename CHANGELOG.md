@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.5.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.0...main)
+
+### 🏡 Chore
+
+- Update readme ([dc7bafe](https://github.com/stacksjs/tlsx/commit/dc7bafe))
+- Ensure verbose output is configurable ([b225a04](https://github.com/stacksjs/tlsx/commit/b225a04))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.4.3...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.3...main)
