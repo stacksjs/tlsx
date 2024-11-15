@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.4...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.4...main)
+
+### 🏡 Chore
+
+- Improve storeCert debug log ([0b7682e](https://github.com/stacksjs/tlsx/commit/0b7682e))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.5.3...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.3...main)
