@@ -1,4 +1,4 @@
-import type { AddCertOption, CertOption, GenerateCertReturn, TlsOption } from './types'
+import type { CertOption, GenerateCertReturn, TlsOption } from './types'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -16,10 +16,10 @@ export interface Cert {
  * Generate a random serial number for the Certificate
  * @returns The serial number for the Certificate
  */
-export function randomSerialNumber(): string {
-  debugLog('cert', 'Generating random serial number')
+export function randomSerialNumber(verbose?: boolean): string {
+  debugLog('cert', 'Generating random serial number', verbose)
   const serialNumber = makeNumberPositive(forge.util.bytesToHex(forge.random.getBytesSync(20)))
-  debugLog('cert', `Generated serial number: ${serialNumber}`)
+  debugLog('cert', `Generated serial number: ${serialNumber}`, verbose)
   return serialNumber
 }
 
@@ -115,8 +115,8 @@ export async function createRootCA(options?: TlsOption): Promise<GenerateCertRet
   debugLog('ca', 'Creating CA certificate', options?.verbose)
   const caCert = pki.createCertificate()
   caCert.publicKey = publicKey
-  caCert.serialNumber = randomSerialNumber()
-  caCert.validity.notBefore = getCertNotBefore()
+  caCert.serialNumber = randomSerialNumber(options?.verbose)
+  caCert.validity.notBefore = getCertNotBefore(options?.verbose)
   caCert.validity.notAfter = getCANotAfter(caCert.validity.notBefore, options?.verbose)
   caCert.setSubject(attributes)
   caCert.setIssuer(attributes)
@@ -209,8 +209,8 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
   newHostCert.publicKey = hostKeys.publicKey
 
   debugLog('cert', 'Setting certificate properties', options?.verbose)
-  newHostCert.serialNumber = randomSerialNumber()
-  newHostCert.validity.notBefore = getCertNotBefore()
+  newHostCert.serialNumber = randomSerialNumber(options?.verbose)
+  newHostCert.validity.notBefore = getCertNotBefore(options?.verbose)
   newHostCert.validity.notAfter = getCertNotAfter(newHostCert.validity.notBefore, options?.verbose)
   newHostCert.setSubject(attributes)
   newHostCert.setIssuer(caCert.subject.attributes)
@@ -239,9 +239,8 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
  * @param options
  * @returns The path to the stored certificate
  */
-export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: string, options?: AddCertOption): Promise<string> {
-  debugLog('trust', 'Adding certificate to system trust store', options?.verbose)
-
+export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: string, options?: TlsOption): Promise<string> {
+  debugLog('trust', `Adding certificate to system trust store with options: ${JSON.stringify(options)}`, options?.verbose)
   debugLog('trust', 'Storing certificate and private key', options?.verbose)
   const certPath = storeCert(cert, options)
 
@@ -295,10 +294,10 @@ export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: s
   return certPath
 }
 
-export function storeCert(cert: Cert, options?: AddCertOption): string {
+export function storeCert(cert: Cert, options?: TlsOption): string {
   debugLog('storage', 'Storing certificate and private key', options?.verbose)
-  const certPath = options?.customCertPath || config.certPath
-  const certKeyPath = options?.customCertPath || config.keyPath
+  const certPath = options?.certPath || config.certPath
+  const certKeyPath = options?.keyPath || config.keyPath
 
   debugLog('storage', `Certificate path: ${certPath}`, options?.verbose)
   debugLog('storage', `Private key path: ${certKeyPath}`, options?.verbose)
