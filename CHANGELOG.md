@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.1...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.1...main)
+
+### 🩹 Fixes
+
+- Use tlsx debug prefix ([6796d0a](https://github.com/stacksjs/tlsx/commit/6796d0a))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.5.0...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.0...main)
