@@ -295,7 +295,7 @@ export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: s
 }
 
 export function storeCert(cert: Cert, options?: TlsOption): string {
-  debugLog('storage', 'Storing certificate and private key', options?.verbose)
+  debugLog('storage', `Storing certificate and private key with options: ${JSON.stringify(options)}`, options?.verbose)
   const certPath = options?.certPath || config.certPath
   const certKeyPath = options?.keyPath || config.keyPath
 
