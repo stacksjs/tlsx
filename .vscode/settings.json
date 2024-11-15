@@ -1,16 +1,11 @@
 {
-  // Disable the default formatter, use eslint instead
   "prettier.enable": false,
   "biome.enabled": false,
   "editor.formatOnSave": false,
-
-  // Auto fix
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "never"
   },
-
-  // Silent the stylistic rules in you IDE, but still auto fix them
   "eslint.rules.customizations": [
     { "rule": "style/*", "severity": "off", "fixable": true },
     { "rule": "format/*", "severity": "off", "fixable": true },
@@ -23,14 +18,9 @@
     { "rule": "*quotes", "severity": "off", "fixable": true },
     { "rule": "*semi", "severity": "off", "fixable": true }
   ],
-
-  // Enable eslint for all supported languages
   "eslint.validate": [
     "javascript",
-    "javascriptreact",
     "typescript",
-    "typescriptreact",
-    "vue",
     "html",
     "markdown",
     "json",
@@ -38,39 +28,19 @@
     "yaml",
     "toml",
     "xml",
-    "gql",
-    "graphql",
-    "astro",
-    "svelte",
-    "css",
-    "less",
-    "scss",
-    "pcss",
-    "postcss"
+    "css"
   ],
-
-  "[stx]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-
-  // TypeScript
   "typescript.tsdk": "${workspaceFolder}/node_modules/typescript/lib",
-  "unocss.root": "${workspaceFolder}/storage/framework/core/ui/src/uno.config.ts",
-  // Shell
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
-
-  // Markdown
   "[markdown]": {
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
     "editor.formatOnSave": true
   },
-
   "[dockerfile]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
-
   "markdownlint.config": {
     "default": true,
     "MD033": {
@@ -86,39 +56,26 @@
     "MD041": false
   },
 
-  // Stacks
-  "vue.inlayHints.missingProps": true,
   "typescript.preferGoToSourceDefinition": true,
   "files.associations": {
-    "buddy": "typescript",
-    "*.stx": "vue"
+    "tlsx": "typescript"
   },
   "editor.quickSuggestions": {
     "strings": true
   },
-  "vsicons.associations.files": [
-    {
-      "icon": "${workspaceFolder}/public/favicon.svg",
-      "extensions": ["stx"],
-      "format": "svg"
-    }
-  ],
   "git.enableSmartCommit": true,
   "npm.enableRunFromFolder": true,
   "npm.packageManager": "bun",
   "editor.gotoLocation.multipleDefinitions": "goto",
   "search.exclude": {
     "**/node_modules": true,
-    "**/cdk.out": true,
     "**/dist": true,
-    "**/storage/public": true,
     "CHANGELOG.md": true
   },
   "explorer.confirmDragAndDrop": false,
   "todo-tree.highlights.enabled": true,
   "cSpell.ignorePaths": [
-    "node_modules",
-    "lang/de.yml"
+    "node_modules"
   ],
   "cSpell.dictionaries": [
     "custom-dictionary"
@@ -131,7 +88,7 @@
       "scope": "user",
       "addWords": true
     },
-    "custom": true // enable the `custom` dictionary
+    "custom": true
   },
   "terminal.integrated.scrollback": 10000,
   "grammarly.files.include": [
