@@ -173,8 +173,8 @@ export function findFoldersWithFile(rootDir: string, fileName: string): string[]
   return result
 }
 
-export function debugLog(category: string, message: string): void {
-  if (config.verbose) {
+export function debugLog(category: string, message: string, verbose?: boolean): void {
+  if (verbose || config.verbose) {
     // eslint-disable-next-line no-console
     console.debug(`[rpx:${category}] ${message}`)
   }

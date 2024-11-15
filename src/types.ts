@@ -40,6 +40,7 @@ export interface CertDetails {
 
 export interface AddCertOption {
   customCertPath?: string
+  verbose?: boolean
 }
 
 export interface GenerateCertReturn {

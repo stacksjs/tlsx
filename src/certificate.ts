@@ -27,14 +27,14 @@ export function randomSerialNumber(): string {
  * Get the Not Before Date for a Certificate (will be valid from 2 days ago)
  * @returns The Not Before Date for the Certificate
  */
-export function getCertNotBefore(): Date {
-  debugLog('cert', 'Calculating certificate not-before date')
+export function getCertNotBefore(verbose?: boolean): Date {
+  debugLog('cert', 'Calculating certificate not-before date', verbose)
   const twoDaysAgo = new Date(Date.now() - 60 * 60 * 24 * 2 * 1000)
   const year = twoDaysAgo.getFullYear()
   const month = (twoDaysAgo.getMonth() + 1).toString().padStart(2, '0')
   const day = twoDaysAgo.getDate().toString().padStart(2, '0')
   const date = new Date(`${year}-${month}-${day}T23:59:59Z`)
-  debugLog('cert', `Certificate not-before date: ${date.toISOString()}`)
+  debugLog('cert', `Certificate not-before date: ${date.toISOString()}`, verbose)
   return date
 }
 
@@ -43,8 +43,8 @@ export function getCertNotBefore(): Date {
  * @param notBefore - The Not Before Date for the Certificate
  * @returns The Not After Date for the Certificate
  */
-export function getCertNotAfter(notBefore: Date): Date {
-  debugLog('cert', 'Calculating certificate not-after date')
+export function getCertNotAfter(notBefore: Date, verbose?: boolean): Date {
+  debugLog('cert', 'Calculating certificate not-after date', verbose)
   const validityDays = config.validityDays // defaults to 180 days
   const daysInMillis = validityDays * 60 * 60 * 24 * 1000
   const notAfterDate = new Date(notBefore.getTime() + daysInMillis)
@@ -52,7 +52,7 @@ export function getCertNotAfter(notBefore: Date): Date {
   const month = (notAfterDate.getMonth() + 1).toString().padStart(2, '0')
   const day = notAfterDate.getDate().toString().padStart(2, '0')
   const date = new Date(`${year}-${month}-${day}T23:59:59Z`)
-  debugLog('cert', `Certificate not-after date: ${date.toISOString()} (${validityDays} days validity)`)
+  debugLog('cert', `Certificate not-after date: ${date.toISOString()} (${validityDays} days validity)`, verbose)
   return date
 }
 
@@ -61,13 +61,13 @@ export function getCertNotAfter(notBefore: Date): Date {
  * @param notBefore - The Not Before Date for the CA
  * @returns The Not After Date for the CA
  */
-export function getCANotAfter(notBefore: Date): Date {
-  debugLog('cert', 'Calculating CA not-after date')
+export function getCANotAfter(notBefore: Date, verbose?: boolean): Date {
+  debugLog('cert', 'Calculating CA not-after date', verbose)
   const year = notBefore.getFullYear() + 100
   const month = (notBefore.getMonth() + 1).toString().padStart(2, '0')
   const day = notBefore.getDate().toString().padStart(2, '0')
   const date = new Date(`${year}-${month}-${day}T23:59:59Z`)
-  debugLog('cert', `CA not-after date: ${date.toISOString()} (100 years validity)`)
+  debugLog('cert', `CA not-after date: ${date.toISOString()} (100 years validity)`, verbose)
   return date
 }
 
@@ -76,8 +76,8 @@ export function getCANotAfter(notBefore: Date): Date {
  * @returns The Root CA Certificate
  */
 export async function createRootCA(options?: TlsOption): Promise<GenerateCertReturn> {
-  debugLog('ca', 'Creating new Root CA Certificate')
-  debugLog('ca', 'Generating 2048-bit RSA key pair')
+  debugLog('ca', 'Creating new Root CA Certificate', options?.verbose)
+  debugLog('ca', 'Generating 2048-bit RSA key pair', options?.verbose)
   const { privateKey, publicKey } = pki.rsa.generateKeyPair(2048)
 
   const mergedOptions = {
@@ -85,7 +85,7 @@ export async function createRootCA(options?: TlsOption): Promise<GenerateCertRet
     ...(options || {}),
   }
 
-  debugLog('ca', 'Setting certificate attributes')
+  debugLog('ca', 'Setting certificate attributes', options?.verbose)
   const attributes = [
     { shortName: 'C', value: mergedOptions.countryName },
     { shortName: 'ST', value: mergedOptions.stateName },
@@ -94,7 +94,7 @@ export async function createRootCA(options?: TlsOption): Promise<GenerateCertRet
     { shortName: 'CN', value: 'Local Development Root CA' },
   ]
 
-  debugLog('ca', 'Setting certificate extensions')
+  debugLog('ca', 'Setting certificate extensions', options?.verbose)
   const extensions = [
     {
       name: 'basicConstraints',
@@ -112,23 +112,23 @@ export async function createRootCA(options?: TlsOption): Promise<GenerateCertRet
     },
   ]
 
-  debugLog('ca', 'Creating CA certificate')
+  debugLog('ca', 'Creating CA certificate', options?.verbose)
   const caCert = pki.createCertificate()
   caCert.publicKey = publicKey
   caCert.serialNumber = randomSerialNumber()
   caCert.validity.notBefore = getCertNotBefore()
-  caCert.validity.notAfter = getCANotAfter(caCert.validity.notBefore)
+  caCert.validity.notAfter = getCANotAfter(caCert.validity.notBefore, options?.verbose)
   caCert.setSubject(attributes)
   caCert.setIssuer(attributes)
   caCert.setExtensions(extensions)
 
-  debugLog('ca', 'Signing certificate with SHA-256')
+  debugLog('ca', 'Signing certificate with SHA-256', options?.verbose)
   caCert.sign(privateKey, forge.md.sha256.create())
 
   const pemCert = pki.certificateToPem(caCert)
   const pemKey = pki.privateKeyToPem(privateKey)
 
-  debugLog('ca', 'Root CA Certificate created successfully')
+  debugLog('ca', 'Root CA Certificate created successfully', options?.verbose)
   return {
     certificate: pemCert,
     privateKey: pemKey,
@@ -143,30 +143,30 @@ export async function createRootCA(options?: TlsOption): Promise<GenerateCertRet
  * @returns The generated certificate
  */
 export async function generateCert(options?: CertOption): Promise<GenerateCertReturn> {
-  debugLog('cert', 'Generating new host certificate')
-  debugLog('cert', `Options: ${JSON.stringify(options)}`)
+  debugLog('cert', 'Generating new host certificate', options?.verbose)
+  debugLog('cert', `Options: ${JSON.stringify(options)}`, options?.verbose)
 
   if (!options?.hostCertCN?.trim()) {
-    debugLog('cert', 'Error: hostCertCN is required')
+    debugLog('cert', 'Error: hostCertCN is required', options?.verbose)
     throw new Error('"hostCertCN" must be a String')
   }
   if (!options.domain?.trim()) {
-    debugLog('cert', 'Error: domain is required')
+    debugLog('cert', 'Error: domain is required', options?.verbose)
     throw new Error('"domain" must be a String')
   }
   if (!options.rootCAObject || !options.rootCAObject.certificate || !options.rootCAObject.privateKey) {
-    debugLog('cert', 'Error: rootCAObject is invalid or missing')
+    debugLog('cert', 'Error: rootCAObject is invalid or missing', options?.verbose)
     throw new Error('"rootCAObject" must be an Object with the properties "certificate" & "privateKey"')
   }
 
-  debugLog('cert', 'Converting Root CA PEM to forge objects')
+  debugLog('cert', 'Converting Root CA PEM to forge objects', options?.verbose)
   const caCert = pki.certificateFromPem(options.rootCAObject.certificate)
   const caKey = pki.privateKeyFromPem(options.rootCAObject.privateKey)
 
-  debugLog('cert', 'Generating 2048-bit RSA key pair for host certificate')
+  debugLog('cert', 'Generating 2048-bit RSA key pair for host certificate', options?.verbose)
   const hostKeys = pki.rsa.generateKeyPair(2048)
 
-  debugLog('cert', 'Setting certificate attributes')
+  debugLog('cert', 'Setting certificate attributes', options?.verbose)
   const attributes = [
     { shortName: 'C', value: config.countryName },
     { shortName: 'ST', value: config.stateName },
@@ -175,7 +175,7 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
     { shortName: 'CN', value: '*.localhost' },
   ]
 
-  debugLog('cert', 'Setting certificate extensions')
+  debugLog('cert', 'Setting certificate extensions', options?.verbose)
   const extensions = [
     {
       name: 'basicConstraints',
@@ -204,26 +204,26 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
     },
   ]
 
-  debugLog('cert', 'Creating new host certificate')
+  debugLog('cert', 'Creating new host certificate', options?.verbose)
   const newHostCert = pki.createCertificate()
   newHostCert.publicKey = hostKeys.publicKey
 
-  debugLog('cert', 'Setting certificate properties')
+  debugLog('cert', 'Setting certificate properties', options?.verbose)
   newHostCert.serialNumber = randomSerialNumber()
   newHostCert.validity.notBefore = getCertNotBefore()
-  newHostCert.validity.notAfter = getCertNotAfter(newHostCert.validity.notBefore)
+  newHostCert.validity.notAfter = getCertNotAfter(newHostCert.validity.notBefore, options?.verbose)
   newHostCert.setSubject(attributes)
   newHostCert.setIssuer(caCert.subject.attributes)
   newHostCert.setExtensions(extensions)
 
-  debugLog('cert', 'Signing certificate with SHA-256')
+  debugLog('cert', 'Signing certificate with SHA-256', options?.verbose)
   newHostCert.sign(caKey, forge.md.sha256.create())
 
-  debugLog('cert', 'Converting certificate to PEM format')
+  debugLog('cert', 'Converting certificate to PEM format', options?.verbose)
   const pemHostCert = pki.certificateToPem(newHostCert)
   const pemHostKey = pki.privateKeyToPem(hostKeys.privateKey)
 
-  debugLog('cert', 'Host certificate generated successfully')
+  debugLog('cert', 'Host certificate generated successfully', options?.verbose)
   return {
     certificate: pemHostCert,
     privateKey: pemHostKey,
@@ -240,90 +240,90 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
  * @returns The path to the stored certificate
  */
 export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: string, options?: AddCertOption): Promise<string> {
-  debugLog('trust', 'Adding certificate to system trust store')
+  debugLog('trust', 'Adding certificate to system trust store', options?.verbose)
 
-  debugLog('trust', 'Storing certificate and private key')
+  debugLog('trust', 'Storing certificate and private key', options?.verbose)
   const certPath = storeCert(cert, options)
 
-  debugLog('trust', 'Storing CA certificate')
+  debugLog('trust', 'Storing CA certificate', options?.verbose)
   const caCertPath = storeCACert(caCert, options)
 
   const platform = os.platform()
-  debugLog('trust', `Detected platform: ${platform}`)
+  debugLog('trust', `Detected platform: ${platform}`, options?.verbose)
   const args = 'TC, C, C'
 
   if (platform === 'darwin') {
-    debugLog('trust', 'Adding certificate to macOS keychain')
+    debugLog('trust', 'Adding certificate to macOS keychain', options?.verbose)
     await runCommand(
       `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${caCertPath}`,
     )
   }
   else if (platform === 'win32') {
-    debugLog('trust', 'Adding certificate to Windows certificate store')
+    debugLog('trust', 'Adding certificate to Windows certificate store', options?.verbose)
     await runCommand(`certutil -f -v -addstore -enterprise Root ${caCertPath}`)
   }
   else if (platform === 'linux') {
-    debugLog('trust', 'Adding certificate to Linux certificate store')
+    debugLog('trust', 'Adding certificate to Linux certificate store', options?.verbose)
     const rootDirectory = os.homedir()
     const targetFileName = 'cert9.db'
-    debugLog('trust', `Searching for certificate databases in ${rootDirectory}`)
+    debugLog('trust', `Searching for certificate databases in ${rootDirectory}`, options?.verbose)
     const foldersWithFile = findFoldersWithFile(rootDirectory, targetFileName)
 
     for (const folder of foldersWithFile) {
-      debugLog('trust', `Processing certificate database in ${folder}`)
+      debugLog('trust', `Processing certificate database in ${folder}`, options?.verbose)
       try {
-        debugLog('trust', `Attempting to delete existing cert for ${config.commonName}`)
+        debugLog('trust', `Attempting to delete existing cert for ${config.commonName}`, options?.verbose)
         await runCommand(`certutil -d sql:${folder} -D -n ${config.commonName}`)
       }
       catch (error) {
-        debugLog('trust', `Warning: Error deleting existing cert: ${error}`)
+        debugLog('trust', `Warning: Error deleting existing cert: ${error}`, options?.verbose)
         console.warn(`Error deleting existing cert: ${error}`)
       }
 
-      debugLog('trust', `Adding new certificate to ${folder}`)
+      debugLog('trust', `Adding new certificate to ${folder}`, options?.verbose)
       await runCommand(`certutil -d sql:${folder} -A -t ${args} -n ${config.commonName} -i ${caCertPath}`)
 
       log.info(`Cert added to ${folder}`)
     }
   }
   else {
-    debugLog('trust', `Error: Unsupported platform ${platform}`)
+    debugLog('trust', `Error: Unsupported platform ${platform}`, options?.verbose)
     throw new Error(`Unsupported platform: ${platform}`)
   }
 
-  debugLog('trust', 'Certificate successfully added to system trust store')
+  debugLog('trust', 'Certificate successfully added to system trust store', options?.verbose)
   return certPath
 }
 
 export function storeCert(cert: Cert, options?: AddCertOption): string {
-  debugLog('storage', 'Storing certificate and private key')
+  debugLog('storage', 'Storing certificate and private key', options?.verbose)
   const certPath = options?.customCertPath || config.certPath
   const certKeyPath = options?.customCertPath || config.keyPath
 
-  debugLog('storage', `Certificate path: ${certPath}`)
-  debugLog('storage', `Private key path: ${certKeyPath}`)
+  debugLog('storage', `Certificate path: ${certPath}`, options?.verbose)
+  debugLog('storage', `Private key path: ${certKeyPath}`, options?.verbose)
 
   // Ensure the directory exists before writing the file
   const certDir = path.dirname(certPath)
   if (!fs.existsSync(certDir)) {
-    debugLog('storage', `Creating certificate directory: ${certDir}`)
+    debugLog('storage', `Creating certificate directory: ${certDir}`, options?.verbose)
     fs.mkdirSync(certDir, { recursive: true })
   }
 
-  debugLog('storage', 'Writing certificate file')
+  debugLog('storage', 'Writing certificate file', options?.verbose)
   fs.writeFileSync(certPath, cert.certificate)
 
   // Ensure the directory exists before writing the file
   const certKeyDir = path.dirname(certKeyPath)
   if (!fs.existsSync(certKeyDir)) {
-    debugLog('storage', `Creating private key directory: ${certKeyDir}`)
+    debugLog('storage', `Creating private key directory: ${certKeyDir}`, options?.verbose)
     fs.mkdirSync(certKeyDir, { recursive: true })
   }
 
-  debugLog('storage', 'Writing private key file')
+  debugLog('storage', 'Writing private key file', options?.verbose)
   fs.writeFileSync(certKeyPath, cert.privateKey)
 
-  debugLog('storage', 'Certificate and private key stored successfully')
+  debugLog('storage', 'Certificate and private key stored successfully', options?.verbose)
   return certPath
 }
 
@@ -334,22 +334,22 @@ export function storeCert(cert: Cert, options?: AddCertOption): string {
  * @returns The path to the CA Certificate
  */
 export function storeCACert(caCert: string, options?: AddCertOption): string {
-  debugLog('storage', 'Storing CA certificate')
+  debugLog('storage', 'Storing CA certificate', options?.verbose)
   const caCertPath = options?.customCertPath || config.caCertPath
 
-  debugLog('storage', `CA certificate path: ${caCertPath}`)
+  debugLog('storage', `CA certificate path: ${caCertPath}`, options?.verbose)
 
   // Ensure the directory exists before writing the file
   const caCertDir = path.dirname(caCertPath)
   if (!fs.existsSync(caCertDir)) {
-    debugLog('storage', `Creating CA certificate directory: ${caCertDir}`)
+    debugLog('storage', `Creating CA certificate directory: ${caCertDir}`, options?.verbose)
     fs.mkdirSync(caCertDir, { recursive: true })
   }
 
-  debugLog('storage', 'Writing CA certificate file')
+  debugLog('storage', 'Writing CA certificate file', options?.verbose)
   fs.writeFileSync(caCertPath, caCert)
 
-  debugLog('storage', 'CA certificate stored successfully')
+  debugLog('storage', 'CA certificate stored successfully', options?.verbose)
   return caCertPath
 }
 
