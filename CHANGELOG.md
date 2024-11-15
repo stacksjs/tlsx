@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.5...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.5...main)
+
+### 🏡 Chore
+
+- Add missing verbose type ([76ab785](https://github.com/stacksjs/tlsx/commit/76ab785))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.5.4...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.4...main)
