@@ -168,11 +168,19 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
 
   debugLog('cert', 'Setting certificate attributes', options?.verbose)
   const attributes = [
-    { shortName: 'C', value: config.countryName },
-    { shortName: 'ST', value: config.stateName },
-    { shortName: 'L', value: config.localityName },
-    { shortName: 'O', value: 'Local Development' },
-    { shortName: 'CN', value: '*.localhost' },
+    { shortName: 'C', value: options.countryName || config.countryName },
+    { shortName: 'ST', value: options.stateName || config.stateName },
+    { shortName: 'L', value: options.localityName || config.localityName },
+    { shortName: 'O', value: options.organizationName || config.organizationName },
+    { shortName: 'CN', value: options.commonName || config.commonName },
+  ]
+
+  const domain = options.domain || config.domain
+  const wildcardDomain = `*.${domain.includes('.') ? domain.split('.').slice(1).join('.') : domain}`
+  const altNames = [
+    { type: 2, value: wildcardDomain },
+    { type: 2, value: 'localhost' },
+    { type: 2, value: domain },
   ]
 
   debugLog('cert', 'Setting certificate extensions', options?.verbose)
@@ -195,12 +203,7 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
     },
     {
       name: 'subjectAltName',
-      altNames: [
-        { type: 2, value: '*.localhost' },
-        { type: 2, value: 'localhost' },
-        { type: 2, value: 'stacks.localhost' },
-        { type: 2, value: options.domain },
-      ],
+      altNames,
     },
   ]
 

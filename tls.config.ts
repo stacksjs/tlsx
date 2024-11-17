@@ -5,9 +5,9 @@ import path from 'node:path'
 const config: TlsConfig = {
   domain: 'stacks.localhost',
   hostCertCN: 'stacks.localhost',
-  caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`),
-  certPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`),
-  keyPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`),
+  caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`),
+  certPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`),
+  keyPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`),
   altNameIPs: ['127.0.0.1'],
   altNameURIs: ['localhost'],
   organizationName: 'stacksjs.org',

@@ -23,7 +23,7 @@ cli
   .usage('tlsx secure <domain> [options]')
   .example('tlsx secure example.com --output /etc/ssl')
   .action(async (domain: string, options?: TlsOption) => {
-    domain = domain ?? config?.altNameURIs[0]
+    domain = domain || config?.domain
 
     log.info(`Generating a self-signed SSL certificate for: ${domain}`)
     log.debug('Options:', options)
