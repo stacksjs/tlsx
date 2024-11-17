@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.6...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.6...main)
+
+### 🏡 Chore
+
+- Improve dynamic usage of config and options ([6b1d90a](https://github.com/stacksjs/tlsx/commit/6b1d90a))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.5.5...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.5...main)
