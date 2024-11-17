@@ -63,7 +63,7 @@ tlsx version
 The Reverse Proxy can be configured using a `tls.config.ts` _(or `tls.config.js`)_ file and it will be automatically loaded when running the `tlsx` command.
 
 ```ts
-// tlsx.config.ts (or tlsx.config.js)
+// tlsx.config.{ts,js}
 import type { TlsConfig } from '@stacksjs/tlsx'
 
 export default {
