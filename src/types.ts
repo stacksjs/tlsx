@@ -1,7 +1,6 @@
 export interface TlsConfig {
   hostCertCN: string
   domain: string
-  rootCAObject: { certificate: string, privateKey: string }
   altNameIPs: string[]
   altNameURIs: string[]
   validityDays: number
@@ -11,6 +10,10 @@ export interface TlsConfig {
   localityName: string
   commonName: string
   subjectAltNames: SubjectAltName[]
+  keyPath: string
+  certPath: string
+  caCertPath: string
+  rootCAObject?: { certificate: string, privateKey: string }
   keyUsage?: {
     digitalSignature: boolean
     contentCommitment: boolean
@@ -38,9 +41,6 @@ export interface TlsConfig {
     shortName: string
     value: string
   }>
-  keyPath: string
-  certPath: string
-  caCertPath: string
   verbose: boolean
 }
 
