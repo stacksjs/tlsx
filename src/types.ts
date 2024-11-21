@@ -11,7 +11,7 @@ export interface TlsConfig {
   localityName: string
   commonName: string
   subjectAltNames: SubjectAltName[]
-  keyUsage: {
+  keyUsage?: {
     digitalSignature: boolean
     contentCommitment: boolean
     keyEncipherment: boolean
@@ -22,19 +22,19 @@ export interface TlsConfig {
     encipherOnly: boolean
     decipherOnly: boolean
   }
-  extKeyUsage: {
+  extKeyUsage?: {
     serverAuth: boolean
     clientAuth: boolean
     codeSigning: boolean
     emailProtection: boolean
     timeStamping: boolean
   }
-  basicConstraints: {
+  basicConstraints?: {
     cA: boolean
     pathLenConstraint: number
   }
-  isCA: boolean
-  certificateAttributes: Array<{
+  isCA?: boolean
+  certificateAttributes?: Array<{
     shortName: string
     value: string
   }>
@@ -107,7 +107,7 @@ export interface AddCertOption {
   verbose?: boolean
 }
 
-export interface RootCA {
+export interface Certificate {
   certificate: string
   privateKey: string
   notBefore: Date
