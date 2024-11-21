@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.7.1...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.1...main)
+
+### 🏡 Chore
+
+- Improve types ([3674dfe](https://github.com/stacksjs/tlsx/commit/3674dfe))
+- Adjust default config ([d27b2bf](https://github.com/stacksjs/tlsx/commit/d27b2bf))
+
+### ❤️ Contributors
+
+- Chris <chrisbreuer93@gmail.com>
+
 ## v0.7.0...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.0...main)
