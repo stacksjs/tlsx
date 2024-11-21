@@ -38,11 +38,16 @@ export interface TlsConfig {
     shortName: string
     value: string
   }>
+  keyPath: string
+  certPath: string
+  caCertPath: string
   verbose: boolean
 }
 
+type DnsType = 2
+type IpType = 7
 export interface SubjectAltName {
-  type: number // 2 for DNS, 7 for IP
+  type: DnsType | IpType
   value: string
 }
 
@@ -102,12 +107,14 @@ export interface AddCertOption {
   verbose?: boolean
 }
 
-export interface GenerateCertReturn {
+export interface RootCA {
   certificate: string
   privateKey: string
   notBefore: Date
   notAfter: Date
 }
+
+export type TlsOption = DeepPartial<TlsConfig>
 
 export interface CAOptions extends TlsOption {
   validityYears?: number
@@ -120,8 +127,6 @@ export interface CAOptions extends TlsOption {
     value: string
   }>
 }
-
-export type TlsOption = DeepPartial<TlsConfig>
 
 export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>

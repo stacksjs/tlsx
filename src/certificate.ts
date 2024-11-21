@@ -1,4 +1,4 @@
-import type { CAOptions, CertificateOptions, GenerateCertReturn, TlsOption } from './types'
+import type { CAOptions, Certificate, CertificateOptions, TlsOption } from './types'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -7,16 +7,19 @@ import forge, { pki, tls } from 'node-forge'
 import { config } from './config'
 import { debugLog, findFoldersWithFile, makeNumberPositive } from './utils'
 
-export interface Cert {
+interface Cert {
   certificate: string
   privateKey: string
 }
+
+type CertPath = string
+type RandomSerialNumber = string
 
 /**
  * Generate a random serial number for the Certificate
  * @returns The serial number for the Certificate
  */
-export function generateRandomSerial(verbose?: boolean): string {
+export function generateRandomSerial(verbose?: boolean): RandomSerialNumber {
   debugLog('cert', 'Generating random serial number', verbose)
   const serialNumber = makeNumberPositive(forge.util.bytesToHex(forge.random.getBytesSync(20)))
   debugLog('cert', `Generated serial number: ${serialNumber}`, verbose)
@@ -85,7 +88,7 @@ function generateCertificateExtensions(options: CertificateOptions) {
   return extensions
 }
 
-export async function createRootCA(options: CAOptions = {}): Promise<GenerateCertReturn> {
+export async function createRootCA(options: CAOptions = {}): Promise<Certificate> {
   debugLog('ca', 'Creating new Root CA Certificate', options.verbose)
 
   const keySize = options.keySize || 2048
@@ -142,7 +145,7 @@ export async function createRootCA(options: CAOptions = {}): Promise<GenerateCer
   }
 }
 
-export async function generateCertificate(options: CertificateOptions): Promise<GenerateCertReturn> {
+export async function generateCertificate(options: CertificateOptions): Promise<Certificate> {
   debugLog('cert', 'Generating new certificate', options.verbose)
   debugLog('cert', `Options: ${JSON.stringify(options)}`, options.verbose)
 
@@ -197,7 +200,7 @@ export async function generateCertificate(options: CertificateOptions): Promise<
  * @param options
  * @returns The path to the stored certificate
  */
-export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: string, options?: TlsOption): Promise<string> {
+export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: string, options?: TlsOption): Promise<CertPath> {
   debugLog('trust', `Adding certificate to system trust store with options: ${JSON.stringify(options)}`, options?.verbose)
   debugLog('trust', 'Storing certificate and private key', options?.verbose)
   const certPath = storeCertificate(cert, options)
@@ -252,7 +255,7 @@ export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: s
   return certPath
 }
 
-export function storeCertificate(cert: Cert, options?: TlsOption): string {
+export function storeCertificate(cert: Cert, options?: TlsOption): CertPath {
   debugLog('storage', `Storing certificate and private key with options: ${JSON.stringify(options)}`, options?.verbose)
   const certPath = options?.certPath || config.certPath
   const certKeyPath = options?.keyPath || config.keyPath
@@ -290,7 +293,7 @@ export function storeCertificate(cert: Cert, options?: TlsOption): string {
  * @param options - The options for storing the CA Certificate
  * @returns The path to the CA Certificate
  */
-export function storeCACertificate(caCert: string, options?: TlsOption): string {
+export function storeCACertificate(caCert: string, options?: TlsOption): CertPath {
   debugLog('storage', 'Storing CA certificate', options?.verbose)
   const caCertPath = options?.caCertPath || config.caCertPath
 
