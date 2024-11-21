@@ -14,13 +14,17 @@ export const config: TlsConfig = await loadConfig({
     stateName: 'California',
     localityName: 'Playa Vista',
     commonName: 'stacks.localhost',
-    validityDays: 180,
+    validityDays: 825, // 2 years + 90 days
     hostCertCN: 'stacks.localhost',
     domain: 'stacks.localhost',
     rootCAObject: { certificate: '', privateKey: '' },
     caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`),
     certPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`),
     keyPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`),
+    subjectAltNames: [{
+      type: 2,
+      value: 'stacks.localhost',
+    }],
     verbose: false,
   },
 })
