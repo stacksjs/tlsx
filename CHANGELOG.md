@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.7.5...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.5...main)
+
+### 🏡 Chore
+
+- Add number type ([1d19e8c](https://github.com/stacksjs/tlsx/commit/1d19e8c))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.7.4...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.4...main)
