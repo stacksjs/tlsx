@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.7.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.0...main)
+
+### 🏡 Chore
+
+- Update TlsConfig type ([47dc3cb](https://github.com/stacksjs/tlsx/commit/47dc3cb))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.6.0...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.6.0...main)
