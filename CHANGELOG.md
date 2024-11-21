@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.7.2...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.2...main)
+
+### 🩹 Fixes
+
+- Use nullable types ([1334809](https://github.com/stacksjs/tlsx/commit/1334809))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.7.1...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.1...main)
