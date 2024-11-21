@@ -47,7 +47,7 @@ export interface TlsConfig {
 type DnsType = 2
 type IpType = 7
 export interface SubjectAltName {
-  type: DnsType | IpType
+  type: DnsType | IpType | number
   value: string
 }
 
