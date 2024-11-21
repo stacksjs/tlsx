@@ -9,10 +9,10 @@ export interface TlsConfig {
   stateName: string
   localityName: string
   commonName: string
-  subjectAltNames: SubjectAltName[]
   keyPath: string
   certPath: string
   caCertPath: string
+  subjectAltNames?: SubjectAltName[]
   rootCAObject?: { certificate: string, privateKey: string }
   keyUsage?: {
     digitalSignature: boolean
