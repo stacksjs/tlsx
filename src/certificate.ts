@@ -1,4 +1,4 @@
-import type { CertOption, GenerateCertReturn, TlsOption } from './types'
+import type { CAOptions, CertificateOptions, GenerateCertReturn, TlsOption } from './types'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -16,86 +16,106 @@ export interface Cert {
  * Generate a random serial number for the Certificate
  * @returns The serial number for the Certificate
  */
-export function randomSerialNumber(verbose?: boolean): string {
+export function generateRandomSerial(verbose?: boolean): string {
   debugLog('cert', 'Generating random serial number', verbose)
   const serialNumber = makeNumberPositive(forge.util.bytesToHex(forge.random.getBytesSync(20)))
   debugLog('cert', `Generated serial number: ${serialNumber}`, verbose)
   return serialNumber
 }
 
-/**
- * Get the Not Before Date for a Certificate (will be valid from 2 days ago)
- * @returns The Not Before Date for the Certificate
- */
-export function getCertNotBefore(verbose?: boolean): Date {
-  debugLog('cert', 'Calculating certificate not-before date', verbose)
-  const twoDaysAgo = new Date(Date.now() - 60 * 60 * 24 * 2 * 1000)
-  const year = twoDaysAgo.getFullYear()
-  const month = (twoDaysAgo.getMonth() + 1).toString().padStart(2, '0')
-  const day = twoDaysAgo.getDate().toString().padStart(2, '0')
-  const date = new Date(`${year}-${month}-${day}T23:59:59Z`)
-  debugLog('cert', `Certificate not-before date: ${date.toISOString()}`, verbose)
-  return date
+export function calculateValidityDates(options: {
+  validityDays?: number
+  validityYears?: number
+  notBeforeDays?: number
+  verbose?: boolean
+}): { notBefore: Date, notAfter: Date } {
+  const notBeforeDays = options.notBeforeDays ?? 2
+  const validityDays = options.validityDays ?? (options.validityYears ? options.validityYears * 365 : 180)
+
+  debugLog('cert', 'Calculating certificate validity dates', options.verbose)
+
+  const notBefore = new Date(Date.now() - 60 * 60 * 24 * notBeforeDays * 1000)
+  const notAfter = new Date(notBefore.getTime() + validityDays * 24 * 60 * 60 * 1000)
+
+  // Normalize dates to midnight UTC
+  notBefore.setUTCHours(0, 0, 0, 0)
+  notAfter.setUTCHours(23, 59, 59, 999)
+
+  debugLog('cert', `Validity period: ${notBefore.toISOString()} to ${notAfter.toISOString()}`, options.verbose)
+
+  return { notBefore, notAfter }
 }
 
-/**
- * Get the Not After Date for a Certificate (Valid for 90 Days)
- * @param notBefore - The Not Before Date for the Certificate
- * @returns The Not After Date for the Certificate
- */
-export function getCertNotAfter(notBefore: Date, verbose?: boolean): Date {
-  debugLog('cert', 'Calculating certificate not-after date', verbose)
-  const validityDays = config.validityDays // defaults to 180 days
-  const daysInMillis = validityDays * 60 * 60 * 24 * 1000
-  const notAfterDate = new Date(notBefore.getTime() + daysInMillis)
-  const year = notAfterDate.getFullYear()
-  const month = (notAfterDate.getMonth() + 1).toString().padStart(2, '0')
-  const day = notAfterDate.getDate().toString().padStart(2, '0')
-  const date = new Date(`${year}-${month}-${day}T23:59:59Z`)
-  debugLog('cert', `Certificate not-after date: ${date.toISOString()} (${validityDays} days validity)`, verbose)
-  return date
-}
+function generateCertificateExtensions(options: CertificateOptions) {
+  const extensions = []
 
-/**
- * Get the CA Not After Date (Valid for 100 Years)
- * @param notBefore - The Not Before Date for the CA
- * @returns The Not After Date for the CA
- */
-export function getCANotAfter(notBefore: Date, verbose?: boolean): Date {
-  debugLog('cert', 'Calculating CA not-after date', verbose)
-  const year = notBefore.getFullYear() + 100
-  const month = (notBefore.getMonth() + 1).toString().padStart(2, '0')
-  const day = notBefore.getDate().toString().padStart(2, '0')
-  const date = new Date(`${year}-${month}-${day}T23:59:59Z`)
-  debugLog('cert', `CA not-after date: ${date.toISOString()} (100 years validity)`, verbose)
-  return date
-}
+  // Basic Constraints
+  extensions.push({
+    name: 'basicConstraints',
+    cA: options.isCA ?? false,
+    critical: true,
+    ...(options.basicConstraints || {}),
+  })
 
-/**
- * Create a new Root CA Certificate
- * @returns The Root CA Certificate
- */
-export async function createRootCA(options?: TlsOption): Promise<GenerateCertReturn> {
-  debugLog('ca', 'Creating new Root CA Certificate', options?.verbose)
-  debugLog('ca', 'Generating 2048-bit RSA key pair', options?.verbose)
-  const { privateKey, publicKey } = pki.rsa.generateKeyPair(2048)
-
-  const mergedOptions = {
-    ...config,
-    ...(options || {}),
+  // Key Usage
+  if (options.keyUsage) {
+    extensions.push({
+      name: 'keyUsage',
+      critical: true,
+      ...options.keyUsage,
+    })
   }
 
-  debugLog('ca', 'Setting certificate attributes', options?.verbose)
+  // Extended Key Usage
+  if (options.extKeyUsage) {
+    extensions.push({
+      name: 'extKeyUsage',
+      ...options.extKeyUsage,
+    })
+  }
+
+  // Subject Alt Names
+  if (options.subjectAltNames && options.subjectAltNames.length > 0) {
+    extensions.push({
+      name: 'subjectAltName',
+      altNames: options.subjectAltNames,
+    })
+  }
+
+  return extensions
+}
+
+export async function createRootCA(options: CAOptions = {}): Promise<GenerateCertReturn> {
+  debugLog('ca', 'Creating new Root CA Certificate', options.verbose)
+
+  const keySize = options.keySize || 2048
+  debugLog('ca', `Generating ${keySize}-bit RSA key pair`, options.verbose)
+  const { privateKey, publicKey } = pki.rsa.generateKeyPair(keySize)
+
   const attributes = [
-    { shortName: 'C', value: mergedOptions.countryName },
-    { shortName: 'ST', value: mergedOptions.stateName },
-    { shortName: 'L', value: mergedOptions.localityName },
-    { shortName: 'O', value: 'Local Development CA' },
-    { shortName: 'CN', value: 'Local Development Root CA' },
+    { shortName: 'C', value: options.countryName || config.countryName },
+    { shortName: 'ST', value: options.stateName || config.stateName },
+    { shortName: 'L', value: options.localityName || config.localityName },
+    { shortName: 'O', value: options.organization || 'Local Development CA' },
+    { shortName: 'OU', value: options.organizationalUnit || 'Certificate Authority' },
+    { shortName: 'CN', value: options.commonName || 'Local Development Root CA' },
+    ...(options.extraAttributes || []),
   ]
 
-  debugLog('ca', 'Setting certificate extensions', options?.verbose)
-  const extensions = [
+  const { notBefore, notAfter } = calculateValidityDates({
+    validityYears: options.validityYears || 100,
+    verbose: options.verbose,
+  })
+
+  const caCert = pki.createCertificate()
+  caCert.publicKey = publicKey
+  caCert.serialNumber = generateRandomSerial(options.verbose)
+  caCert.validity.notBefore = notBefore
+  caCert.validity.notAfter = notAfter
+  caCert.setSubject(attributes)
+  caCert.setIssuer(attributes)
+
+  caCert.setExtensions([
     {
       name: 'basicConstraints',
       cA: true,
@@ -110,64 +130,36 @@ export async function createRootCA(options?: TlsOption): Promise<GenerateCertRet
     {
       name: 'subjectKeyIdentifier',
     },
-  ]
+  ])
 
-  debugLog('ca', 'Creating CA certificate', options?.verbose)
-  const caCert = pki.createCertificate()
-  caCert.publicKey = publicKey
-  caCert.serialNumber = randomSerialNumber(options?.verbose)
-  caCert.validity.notBefore = getCertNotBefore(options?.verbose)
-  caCert.validity.notAfter = getCANotAfter(caCert.validity.notBefore, options?.verbose)
-  caCert.setSubject(attributes)
-  caCert.setIssuer(attributes)
-  caCert.setExtensions(extensions)
-
-  debugLog('ca', 'Signing certificate with SHA-256', options?.verbose)
   caCert.sign(privateKey, forge.md.sha256.create())
 
-  const pemCert = pki.certificateToPem(caCert)
-  const pemKey = pki.privateKeyToPem(privateKey)
-
-  debugLog('ca', 'Root CA Certificate created successfully', options?.verbose)
   return {
-    certificate: pemCert,
-    privateKey: pemKey,
-    notBefore: caCert.validity.notBefore,
-    notAfter: caCert.validity.notAfter,
+    certificate: pki.certificateToPem(caCert),
+    privateKey: pki.privateKeyToPem(privateKey),
+    notBefore,
+    notAfter,
   }
 }
 
-/**
- * Generate a new Host Certificate
- * @param options - The options for generating the certificate
- * @returns The generated certificate
- */
-export async function generateCert(options?: CertOption): Promise<GenerateCertReturn> {
-  debugLog('cert', 'Generating new host certificate', options?.verbose)
-  debugLog('cert', `Options: ${JSON.stringify(options)}`, options?.verbose)
+export async function generateCertificate(options: CertificateOptions): Promise<GenerateCertReturn> {
+  debugLog('cert', 'Generating new certificate', options.verbose)
+  debugLog('cert', `Options: ${JSON.stringify(options)}`, options.verbose)
 
-  if (!options?.hostCertCN?.trim()) {
-    debugLog('cert', 'Error: hostCertCN is required', options?.verbose)
-    throw new Error('"hostCertCN" must be a String')
-  }
-  if (!options.domain?.trim()) {
-    debugLog('cert', 'Error: domain is required', options?.verbose)
-    throw new Error('"domain" must be a String')
-  }
-  if (!options.rootCAObject || !options.rootCAObject.certificate || !options.rootCAObject.privateKey) {
-    debugLog('cert', 'Error: rootCAObject is invalid or missing', options?.verbose)
-    throw new Error('"rootCAObject" must be an Object with the properties "certificate" & "privateKey"')
+  if (!options.rootCAObject?.certificate || !options.rootCAObject?.privateKey) {
+    throw new Error('Root CA certificate and private key are required')
   }
 
-  debugLog('cert', 'Converting Root CA PEM to forge objects', options?.verbose)
   const caCert = pki.certificateFromPem(options.rootCAObject.certificate)
   const caKey = pki.privateKeyFromPem(options.rootCAObject.privateKey)
 
   debugLog('cert', 'Generating 2048-bit RSA key pair for host certificate', options?.verbose)
-  const hostKeys = pki.rsa.generateKeyPair(2048)
+  const keySize = 2048
+  // const keySize = options.keySize || 2048
+  const { privateKey, publicKey } = pki.rsa.generateKeyPair(keySize)
 
-  debugLog('cert', 'Setting certificate attributes', options?.verbose)
-  const attributes = [
+  // Allow for custom certificate attributes
+  const attributes = options.certificateAttributes || [
     { shortName: 'C', value: options.countryName || config.countryName },
     { shortName: 'ST', value: options.stateName || config.stateName },
     { shortName: 'L', value: options.localityName || config.localityName },
@@ -175,63 +167,26 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
     { shortName: 'CN', value: options.commonName || config.commonName },
   ]
 
-  const domain = options.domain || config.domain
-  const wildcardDomain = `*.${domain.includes('.') ? domain.split('.').slice(1).join('.') : domain}`
-  const altNames = [
-    { type: 2, value: wildcardDomain },
-    { type: 2, value: 'localhost' },
-    { type: 2, value: domain },
-  ]
+  const { notBefore, notAfter } = calculateValidityDates({
+    validityDays: options.validityDays,
+    verbose: options.verbose,
+  })
 
-  debugLog('cert', 'Setting certificate extensions', options?.verbose)
-  const extensions = [
-    {
-      name: 'basicConstraints',
-      cA: false,
-      critical: true,
-    },
-    {
-      name: 'keyUsage',
-      digitalSignature: true,
-      keyEncipherment: true,
-      critical: true,
-    },
-    {
-      name: 'extKeyUsage',
-      serverAuth: true,
-      clientAuth: false,
-    },
-    {
-      name: 'subjectAltName',
-      altNames,
-    },
-  ]
+  const cert = pki.createCertificate()
+  cert.publicKey = publicKey
+  cert.serialNumber = generateRandomSerial(options.verbose)
+  cert.validity.notBefore = notBefore
+  cert.validity.notAfter = notAfter
+  cert.setSubject(attributes)
+  cert.setIssuer(caCert.subject.attributes)
+  cert.setExtensions(generateCertificateExtensions(options))
+  cert.sign(caKey, forge.md.sha256.create())
 
-  debugLog('cert', 'Creating new host certificate', options?.verbose)
-  const newHostCert = pki.createCertificate()
-  newHostCert.publicKey = hostKeys.publicKey
-
-  debugLog('cert', 'Setting certificate properties', options?.verbose)
-  newHostCert.serialNumber = randomSerialNumber(options?.verbose)
-  newHostCert.validity.notBefore = getCertNotBefore(options?.verbose)
-  newHostCert.validity.notAfter = getCertNotAfter(newHostCert.validity.notBefore, options?.verbose)
-  newHostCert.setSubject(attributes)
-  newHostCert.setIssuer(caCert.subject.attributes)
-  newHostCert.setExtensions(extensions)
-
-  debugLog('cert', 'Signing certificate with SHA-256', options?.verbose)
-  newHostCert.sign(caKey, forge.md.sha256.create())
-
-  debugLog('cert', 'Converting certificate to PEM format', options?.verbose)
-  const pemHostCert = pki.certificateToPem(newHostCert)
-  const pemHostKey = pki.privateKeyToPem(hostKeys.privateKey)
-
-  debugLog('cert', 'Host certificate generated successfully', options?.verbose)
   return {
-    certificate: pemHostCert,
-    privateKey: pemHostKey,
-    notBefore: newHostCert.validity.notBefore,
-    notAfter: newHostCert.validity.notAfter,
+    certificate: pki.certificateToPem(cert),
+    privateKey: pki.privateKeyToPem(privateKey),
+    notBefore,
+    notAfter,
   }
 }
 
@@ -245,10 +200,10 @@ export async function generateCert(options?: CertOption): Promise<GenerateCertRe
 export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: string, options?: TlsOption): Promise<string> {
   debugLog('trust', `Adding certificate to system trust store with options: ${JSON.stringify(options)}`, options?.verbose)
   debugLog('trust', 'Storing certificate and private key', options?.verbose)
-  const certPath = storeCert(cert, options)
+  const certPath = storeCertificate(cert, options)
 
   debugLog('trust', 'Storing CA certificate', options?.verbose)
-  const caCertPath = storeCACert(caCert, options)
+  const caCertPath = storeCACertificate(caCert, options)
 
   const platform = os.platform()
   debugLog('trust', `Detected platform: ${platform}`, options?.verbose)
@@ -297,7 +252,7 @@ export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: s
   return certPath
 }
 
-export function storeCert(cert: Cert, options?: TlsOption): string {
+export function storeCertificate(cert: Cert, options?: TlsOption): string {
   debugLog('storage', `Storing certificate and private key with options: ${JSON.stringify(options)}`, options?.verbose)
   const certPath = options?.certPath || config.certPath
   const certKeyPath = options?.keyPath || config.keyPath
@@ -335,7 +290,7 @@ export function storeCert(cert: Cert, options?: TlsOption): string {
  * @param options - The options for storing the CA Certificate
  * @returns The path to the CA Certificate
  */
-export function storeCACert(caCert: string, options?: TlsOption): string {
+export function storeCACertificate(caCert: string, options?: TlsOption): string {
   debugLog('storage', 'Storing CA certificate', options?.verbose)
   const caCertPath = options?.caCertPath || config.caCertPath
 

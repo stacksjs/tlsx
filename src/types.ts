@@ -16,7 +16,12 @@ export interface TlsConfig {
   verbose: boolean
 }
 
-export interface CertOption {
+export interface SubjectAltName {
+  type: number // 2 for DNS, 7 for IP
+  value: string
+}
+
+export interface CertificateOptions {
   hostCertCN: string
   domain: string
   rootCAObject: { certificate: string, privateKey: string }
@@ -28,6 +33,34 @@ export interface CertOption {
   stateName?: string
   localityName?: string
   commonName?: string
+  subjectAltNames?: SubjectAltName[]
+  keyUsage?: {
+    digitalSignature?: boolean
+    contentCommitment?: boolean
+    keyEncipherment?: boolean
+    dataEncipherment?: boolean
+    keyAgreement?: boolean
+    keyCertSign?: boolean
+    cRLSign?: boolean
+    encipherOnly?: boolean
+    decipherOnly?: boolean
+  }
+  extKeyUsage?: {
+    serverAuth?: boolean
+    clientAuth?: boolean
+    codeSigning?: boolean
+    emailProtection?: boolean
+    timeStamping?: boolean
+  }
+  basicConstraints?: {
+    cA?: boolean
+    pathLenConstraint?: number
+  }
+  isCA?: boolean
+  certificateAttributes?: Array<{
+    shortName: string
+    value: string
+  }>
   verbose?: boolean
 }
 
@@ -49,6 +82,18 @@ export interface GenerateCertReturn {
   privateKey: string
   notBefore: Date
   notAfter: Date
+}
+
+export interface CAOptions extends TlsOption {
+  validityYears?: number
+  keySize?: number
+  organization?: string
+  organizationalUnit?: string
+  commonName?: string
+  extraAttributes?: Array<{
+    shortName: string
+    value: string
+  }>
 }
 
 export type TlsOption = DeepPartial<TlsConfig>
