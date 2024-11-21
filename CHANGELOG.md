@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.7.4...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.4...main)
+
+### 🏡 Chore
+
+- Make subjectAltNames nullable ([c527087](https://github.com/stacksjs/tlsx/commit/c527087))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.7.3...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.3...main)
