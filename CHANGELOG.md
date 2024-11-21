@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.7.3...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.3...main)
+
+### 🏡 Chore
+
+- Ensure rootCAObject is nullable ([e2de06f](https://github.com/stacksjs/tlsx/commit/e2de06f))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.7.2...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.2...main)
