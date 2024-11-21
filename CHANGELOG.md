@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v0.6.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.6.0...main)
+
+### 🚀 Enhancements
+
+- Allow for more configurations ([0e92763](https://github.com/stacksjs/tlsx/commit/0e92763))
+
+### 🏡 Chore
+
+- Adjust readme ([a55cb5c](https://github.com/stacksjs/tlsx/commit/a55cb5c))
+- Lint ([f6aef6d](https://github.com/stacksjs/tlsx/commit/f6aef6d))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.5.6...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.6...main)
