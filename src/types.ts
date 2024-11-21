@@ -1,18 +1,43 @@
 export interface TlsConfig {
   hostCertCN: string
   domain: string
-  caCertPath: string
-  certPath: string
-  keyPath: string
-  rootCAObject?: { certificate: string, privateKey: string }
+  rootCAObject: { certificate: string, privateKey: string }
   altNameIPs: string[]
   altNameURIs: string[]
-  commonName: string
+  validityDays: number
+  organizationName: string
   countryName: string
   stateName: string
   localityName: string
-  organizationName: string
-  validityDays: number
+  commonName: string
+  subjectAltNames: SubjectAltName[]
+  keyUsage: {
+    digitalSignature: boolean
+    contentCommitment: boolean
+    keyEncipherment: boolean
+    dataEncipherment: boolean
+    keyAgreement: boolean
+    keyCertSign: boolean
+    cRLSign: boolean
+    encipherOnly: boolean
+    decipherOnly: boolean
+  }
+  extKeyUsage: {
+    serverAuth: boolean
+    clientAuth: boolean
+    codeSigning: boolean
+    emailProtection: boolean
+    timeStamping: boolean
+  }
+  basicConstraints: {
+    cA: boolean
+    pathLenConstraint: number
+  }
+  isCA: boolean
+  certificateAttributes: Array<{
+    shortName: string
+    value: string
+  }>
   verbose: boolean
 }
 
