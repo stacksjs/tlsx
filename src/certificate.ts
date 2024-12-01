@@ -156,7 +156,7 @@ export async function generateCertificate(options: CertificateOptions): Promise<
   const caCert = pki.certificateFromPem(options.rootCA.certificate)
   const caKey = pki.privateKeyFromPem(options.rootCA.privateKey)
 
-  debugLog('cert', 'Generating 2048-bit RSA key pair for host certificate', options?.verbose)
+  debugLog('cert', 'Generating 2048-bit RSA key pair for host certificate', options.verbose)
   const keySize = 2048
   // const keySize = options.keySize || 2048
   const { privateKey, publicKey } = pki.rsa.generateKeyPair(keySize)

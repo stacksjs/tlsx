@@ -1,7 +1,7 @@
 import type { TlsOption } from '../src/types'
 import { CAC, log } from '@stacksjs/cli'
 import { version } from '../package.json'
-import { addCertToSystemTrustStoreAndSaveCert, createRootCA } from '../src/certificate'
+import { addCertToSystemTrustStoreAndSaveCert, createRootCA, generateCertificate } from '../src/certificate'
 import { config } from '../src/config'
 
 const cli = new CAC('tlsx')
@@ -29,7 +29,7 @@ cli
     log.debug('Options:', options)
 
     const caCert = await createRootCA()
-    const hostCert = await generateCert({
+    const hostCert = await generateCertificate({
       hostCertCN: options?.commonName ?? config.commonName ?? domain,
       domain,
       altNameIPs: typeof options?.altNameIPs === 'string' ? (options.altNameIPs as string).split(',') : config.altNameIPs,

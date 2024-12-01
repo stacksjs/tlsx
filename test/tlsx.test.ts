@@ -1,6 +1,6 @@
-import type { CertOption } from '../src/types'
+import type { CertificateOptions } from '../src/types'
 import { describe, expect, it } from 'bun:test'
-import { createRootCA, generateCert, isCertExpired, isCertValidForDomain, parseCertDetails } from '../src'
+import { createRootCA, generateCertificate, isCertExpired, isCertValidForDomain, parseCertDetails } from '../src'
 
 describe('@stacksjs/tlsx', () => {
   it('should create a Root CA certificate', async () => {
@@ -13,7 +13,7 @@ describe('@stacksjs/tlsx', () => {
 
   it('should generate a host certificate', async () => {
     const rootCA = await createRootCA()
-    const options: CertOption = {
+    const options: CertificateOptions = {
       hostCertCN: 'localhost',
       domain: 'localhost',
       rootCA: {
@@ -21,7 +21,7 @@ describe('@stacksjs/tlsx', () => {
         privateKey: rootCA.privateKey,
       },
     }
-    const hostCert = await generateCert(options)
+    const hostCert = await generateCertificate(options)
     expect(hostCert).toHaveProperty('certificate')
     expect(hostCert).toHaveProperty('privateKey')
     expect(hostCert).toHaveProperty('notBefore')
@@ -30,7 +30,7 @@ describe('@stacksjs/tlsx', () => {
 
   it('should validate a certificate for a domain', async () => {
     const rootCA = await createRootCA()
-    const options: CertOption = {
+    const options: CertificateOptions = {
       hostCertCN: 'localhost',
       domain: 'localhost',
       rootCA: {
@@ -38,7 +38,7 @@ describe('@stacksjs/tlsx', () => {
         privateKey: rootCA.privateKey,
       },
     }
-    const hostCert = await generateCert(options)
+    const hostCert = await generateCertificate(options)
     const isValid = isCertValidForDomain(hostCert.certificate, 'localhost')
     expect(isValid).toBe(true)
   })
