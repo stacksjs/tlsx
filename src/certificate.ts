@@ -149,12 +149,12 @@ export async function generateCertificate(options: CertificateOptions): Promise<
   debugLog('cert', 'Generating new certificate', options.verbose)
   debugLog('cert', `Options: ${JSON.stringify(options)}`, options.verbose)
 
-  if (!options.rootCAObject?.certificate || !options.rootCAObject?.privateKey) {
+  if (!options.rootCA?.certificate || !options.rootCA?.privateKey) {
     throw new Error('Root CA certificate and private key are required')
   }
 
-  const caCert = pki.certificateFromPem(options.rootCAObject.certificate)
-  const caKey = pki.privateKeyFromPem(options.rootCAObject.privateKey)
+  const caCert = pki.certificateFromPem(options.rootCA.certificate)
+  const caKey = pki.privateKeyFromPem(options.rootCA.privateKey)
 
   debugLog('cert', 'Generating 2048-bit RSA key pair for host certificate', options?.verbose)
   const keySize = 2048

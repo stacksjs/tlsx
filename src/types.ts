@@ -13,7 +13,7 @@ export interface TlsConfig {
   certPath: string
   caCertPath: string
   subjectAltNames?: SubjectAltName[]
-  rootCAObject?: { certificate: string, privateKey: string }
+  rootCA?: { certificate: string, privateKey: string }
   keyUsage?: {
     digitalSignature: boolean
     contentCommitment: boolean
@@ -54,7 +54,7 @@ export interface SubjectAltName {
 export interface CertificateOptions {
   hostCertCN: string
   domain: string
-  rootCAObject: { certificate: string, privateKey: string }
+  rootCA: { certificate: string, privateKey: string }
   altNameIPs?: string[]
   altNameURIs?: string[]
   validityDays?: number

@@ -16,7 +16,7 @@ describe('@stacksjs/tlsx', () => {
     const options: CertOption = {
       hostCertCN: 'localhost',
       domain: 'localhost',
-      rootCAObject: {
+      rootCA: {
         certificate: rootCA.certificate,
         privateKey: rootCA.privateKey,
       },
@@ -33,7 +33,7 @@ describe('@stacksjs/tlsx', () => {
     const options: CertOption = {
       hostCertCN: 'localhost',
       domain: 'localhost',
-      rootCAObject: {
+      rootCA: {
         certificate: rootCA.certificate,
         privateKey: rootCA.privateKey,
       },

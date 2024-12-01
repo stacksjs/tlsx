@@ -39,7 +39,7 @@ cli
       localityName: options?.localityName || config.localityName,
       organizationName: options?.organizationName || config.organizationName,
       validityDays: Number(options?.validityDays) || config.validityDays,
-      rootCAObject: {
+      rootCA: {
         certificate: caCert.certificate,
         privateKey: caCert.privateKey,
       },

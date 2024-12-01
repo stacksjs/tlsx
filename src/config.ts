@@ -17,7 +17,7 @@ export const config: TlsConfig = await loadConfig({
     validityDays: 825, // 2 years + 90 days
     hostCertCN: 'stacks.localhost',
     domain: 'stacks.localhost',
-    rootCAObject: { certificate: '', privateKey: '' },
+    rootCA: { certificate: '', privateKey: '' },
     caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`),
     certPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`),
     keyPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`),
