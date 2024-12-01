@@ -52,9 +52,9 @@ export interface SubjectAltName {
 }
 
 export interface CertificateOptions {
-  hostCertCN: string
   domain: string
   rootCA: { certificate: string, privateKey: string }
+  hostCertCN?: string
   altNameIPs?: string[]
   altNameURIs?: string[]
   validityDays?: number
