@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v0.7.6...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.6...main)
+
+### 🚀 Enhancements
+
+- Add `basePath` option ([562e339](https://github.com/stacksjs/tlsx/commit/562e339))
+
+### 🏡 Chore
+
+- Rename to rootCA ([36b0d80](https://github.com/stacksjs/tlsx/commit/36b0d80))
+- Update generateCertificate name ([a334711](https://github.com/stacksjs/tlsx/commit/a334711))
+- Make hostCertCN optional ([3c1cb49](https://github.com/stacksjs/tlsx/commit/3c1cb49))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.7.5...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.5...main)
