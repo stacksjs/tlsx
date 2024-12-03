@@ -18,6 +18,7 @@ export const config: TlsConfig = await loadConfig({
     hostCertCN: 'stacks.localhost',
     domain: 'stacks.localhost',
     rootCA: { certificate: '', privateKey: '' },
+    basePath: '',
     caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`),
     certPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`),
     keyPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`),

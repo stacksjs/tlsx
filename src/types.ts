@@ -9,6 +9,7 @@ export interface TlsConfig {
   stateName: string
   localityName: string
   commonName: string
+  basePath: string
   keyPath: string
   certPath: string
   caCertPath: string

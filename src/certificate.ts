@@ -257,8 +257,8 @@ export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: s
 
 export function storeCertificate(cert: Cert, options?: TlsOption): CertPath {
   debugLog('storage', `Storing certificate and private key with options: ${JSON.stringify(options)}`, options?.verbose)
-  const certPath = options?.certPath || config.certPath
-  const certKeyPath = options?.keyPath || config.keyPath
+  const certPath = options?.basePath ? path.join(options.basePath, options?.certPath || config.certPath) : config.certPath
+  const certKeyPath = options?.basePath ? path.join(options.basePath, options?.keyPath || config.keyPath) : config.keyPath
 
   debugLog('storage', `Certificate path: ${certPath}`, options?.verbose)
   debugLog('storage', `Private key path: ${certKeyPath}`, options?.verbose)
@@ -295,7 +295,7 @@ export function storeCertificate(cert: Cert, options?: TlsOption): CertPath {
  */
 export function storeCACertificate(caCert: string, options?: TlsOption): CertPath {
   debugLog('storage', 'Storing CA certificate', options?.verbose)
-  const caCertPath = options?.caCertPath || config.caCertPath
+  const caCertPath = options?.basePath ? path.join(options.basePath, options?.caCertPath || config.caCertPath) : config.caCertPath
 
   debugLog('storage', `CA certificate path: ${caCertPath}`, options?.verbose)
 
