@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.8.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.0...main)
+
+### 🏡 Chore
+
+- Export default config ([ab6f0aa](https://github.com/stacksjs/tlsx/commit/ab6f0aa))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.7.6...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.6...main)
