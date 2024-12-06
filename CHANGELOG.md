@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.8.1...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.1...main)
+
+### 🩹 Fixes
+
+- Ensure certPath & certKeyPath are properly defined ([553dc9b](https://github.com/stacksjs/tlsx/commit/553dc9b))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.8.0...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.0...main)
