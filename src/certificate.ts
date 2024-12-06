@@ -295,7 +295,7 @@ export function storeCertificate(cert: Cert, options?: TlsOption): CertPath {
  */
 export function storeCACertificate(caCert: string, options?: TlsOption): CertPath {
   debugLog('storage', 'Storing CA certificate', options?.verbose)
-  const caCertPath = options?.basePath ? path.join(options.basePath, options?.caCertPath || config.caCertPath) : config.caCertPath
+  const caCertPath = path.join(options?.basePath || config.basePath, options?.caCertPath || config.caCertPath)
 
   debugLog('storage', `CA certificate path: ${caCertPath}`, options?.verbose)
 
