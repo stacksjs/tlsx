@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.8.2...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.2...main)
+
+### 🩹 Fixes
+
+- Ensure caCertPath is properly defined ([c2f6545](https://github.com/stacksjs/tlsx/commit/c2f6545))
+
+### 🏡 Chore
+
+- Ensure default basePath is defined ([ed0d76a](https://github.com/stacksjs/tlsx/commit/ed0d76a))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.8.1...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.1...main)
