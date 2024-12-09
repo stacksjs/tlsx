@@ -1,24 +1,29 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
   name: "tlsx"
-  text: "HTTPS for your dev environment"
-  tagline: Automatically ensure your local development environment uses HTTPS
+  text: "HTTPS for localhost"
+  tagline: "Certificates for your local machine in a zero-config & zero-setup way."
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Documentation
+      link: /intro
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: View on GitHub
+      link: https://github.com/stacksjs/tlsx
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: SSL Support
+    icon: 🛡️
+    details: HTTPS by default
+  - title: Auto-Renew
+    icon: 🔄
+    details: Automatically renews expired certificates
+  - title: Zero-Config
+    icon: 🚀
+    details: Yet, highly configurable
+  - title: Library or CLI
+    icon: 💻
+    details: Use as a library or as a CLI
 ---

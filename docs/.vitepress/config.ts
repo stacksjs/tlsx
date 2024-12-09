@@ -1,39 +1,32 @@
-// import fs from 'node:fs'
 import { defineConfig } from 'vitepress'
-// import { config } from '../../src/config'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'tlsx Docs',
-  description: 'A better developer environment.',
+  title: 'bunfig',
+  description: 'A smart config leader for Bun projects.',
+  cleanUrls: true,
+
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' },
+      { text: 'Docs', link: '/intro' },
+      { text: 'Changelog', link: 'https://github.com/stacksjs/bunfig/releases' },
     ],
 
     sidebar: [
       {
-        text: 'Examples',
+        text: 'Get Started',
         items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' },
+          { text: 'Introduction', link: '/intro' },
+          { text: 'Install', link: '/install' },
         ],
       },
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/stacksjs/stacks' },
+      { icon: 'github', link: 'https://github.com/stacksjs/bunfig' },
+      { icon: 'bluesky', link: 'https://bsky.app/profile/chrisbreuer.dev' },
       { icon: 'twitter', link: 'https://twitter.com/stacksjs' },
     ],
   },
-  // vite: {
-  //   server: {
-  //     https: {
-  //       cert: fs.readFileSync(config.certPath),
-  //       key: fs.readFileSync(config.keyPath),
-  //     },
-  //   },
-  // },
 })
