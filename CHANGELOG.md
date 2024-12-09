@@ -1,6 +1,21 @@
 # Changelog
 
 
+## v0.8.3...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.3...main)
+
+### 🏡 Chore
+
+- Use bun instead of bunx ([004201f](https://github.com/stacksjs/tlsx/commit/004201f))
+- Update bun version ([595d8ff](https://github.com/stacksjs/tlsx/commit/595d8ff))
+- Adjust vitepress config ([6c05a1c](https://github.com/stacksjs/tlsx/commit/6c05a1c))
+- Add minification and splitting to build ([92ce125](https://github.com/stacksjs/tlsx/commit/92ce125))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.8.2...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.2...main)
