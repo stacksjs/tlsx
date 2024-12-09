@@ -11,6 +11,8 @@ const result = await Bun.build({
   outdir: './dist',
   format: 'esm',
   target: 'bun',
+  minify: true,
+  splitting: true,
   plugins: [
     dts(),
   ],
