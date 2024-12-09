@@ -1,10 +1,10 @@
-import fs from 'node:fs'
+// import fs from 'node:fs'
 import { defineConfig } from 'vitepress'
-import { config } from '../../src/config'
+// import { config } from '../../src/config'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'TLSX Docs',
+  title: 'tlsx Docs',
   description: 'A better developer environment.',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
@@ -28,12 +28,12 @@ export default defineConfig({
       { icon: 'twitter', link: 'https://twitter.com/stacksjs' },
     ],
   },
-  vite: {
-    server: {
-      https: {
-        cert: fs.readFileSync(config.certPath),
-        key: fs.readFileSync(config.keyPath),
-      },
-    },
-  },
+  // vite: {
+  //   server: {
+  //     https: {
+  //       cert: fs.readFileSync(config.certPath),
+  //       key: fs.readFileSync(config.keyPath),
+  //     },
+  //   },
+  // },
 })
