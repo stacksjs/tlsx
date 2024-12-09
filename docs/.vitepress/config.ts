@@ -2,15 +2,15 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'bunfig',
-  description: 'A smart config leader for Bun projects.',
+  title: 'tlsx',
+  description: 'A simple, fast, and secure TLS certificate manager for your projects.',
   cleanUrls: true,
 
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Docs', link: '/intro' },
-      { text: 'Changelog', link: 'https://github.com/stacksjs/bunfig/releases' },
+      { text: 'Changelog', link: 'https://github.com/stacksjs/tlsx/releases' },
     ],
 
     sidebar: [
@@ -24,7 +24,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/stacksjs/bunfig' },
+      { icon: 'github', link: 'https://github.com/stacksjs/tlsx' },
       { icon: 'bluesky', link: 'https://bsky.app/profile/chrisbreuer.dev' },
       { icon: 'twitter', link: 'https://twitter.com/stacksjs' },
     ],
