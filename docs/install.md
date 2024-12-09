@@ -1,4 +1,4 @@
-## Install
+# Install
 
 ```bash
 bun install -d @stacksjs/tlsx
