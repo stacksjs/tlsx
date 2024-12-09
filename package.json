@@ -35,13 +35,10 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.js"
-    },
-    "./*": {
-      "import": "./dist/*"
+      "import": "./dist/src/index.js"
     }
   },
-  "module": "./dist/index.js",
+  "module": "./dist/src/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
     "tlsx": "./dist/bin/cli.js"

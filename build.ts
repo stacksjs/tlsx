@@ -1,4 +1,3 @@
-import { $ } from 'bun'
 import process from 'node:process'
 import { dts } from 'bun-plugin-dtsx'
 
@@ -30,6 +29,3 @@ if (!result.success) {
 }
 
 console.log('Build complete')
-
-await $`cp ./dist/src/index.js ./dist/index.js`
-await $`rm -rf ./dist/src`
