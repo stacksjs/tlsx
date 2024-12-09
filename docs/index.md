@@ -16,14 +16,14 @@ hero:
 features:
   - title: SSL Support
     icon: 🛡️
-    details: HTTPS by default
+    details: Self-signed. HTTPS by default
   - title: Auto-Renew
     icon: 🔄
-    details: Automatically renews expired certificates
+    details: Automatically renews expired certificates.
   - title: Zero-Config
     icon: 🚀
-    details: Yet, highly configurable
+    details: Yet, highly configurable.
   - title: Library or CLI
     icon: 💻
-    details: Use as a library or as a CLI
+    details: Use as a library or as a CLI.
 ---
