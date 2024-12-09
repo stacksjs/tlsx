@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.8.4...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.4...main)
+
+### 🩹 Fixes
+
+- Adjust paths after splitting ([7102a68](https://github.com/stacksjs/tlsx/commit/7102a68))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.8.3...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.3...main)
