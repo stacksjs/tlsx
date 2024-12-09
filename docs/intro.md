@@ -1,12 +1,12 @@
 # Introduction
 
-`tlsx` is a
+`tlsx` is a TLS library written for automation in mind. And HTTPS by default.
 
 ## Features
 
 - SSL Support _(HTTPS by default)_
 - Automatically Renews Expired Certificates
-- Configurable
+- Highly Configurable
 
 ## Changelog
 

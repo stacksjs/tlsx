@@ -16,7 +16,7 @@ hero:
 features:
   - title: SSL Support
     icon: 🛡️
-    details: Self-signed. HTTPS by default
+    details: Self-signed. HTTPS by default.
   - title: Auto-Renew
     icon: 🔄
     details: Automatically renews expired certificates.
