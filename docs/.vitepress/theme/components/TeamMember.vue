@@ -17,7 +17,7 @@ defineProps<{
     <div mb-1 mt-2 text-xl>
       {{ data.name }}
     </div>
-    <div h-80px op60 v-html="data.description" />
+    <div h-20 lg:h-28 xl:h-20 op60 v-html="data.description" />
 
     <div flex="~ inline gap-2" py2 text-2xl>
       <a
