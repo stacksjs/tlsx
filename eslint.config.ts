@@ -1,6 +1,7 @@
+import type { ESLintConfig } from '@stacksjs/eslint-config'
 import stacks from '@stacksjs/eslint-config'
 
-export default stacks({
+const config: ESLintConfig = stacks({
   stylistic: {
     indent: 2,
     quotes: 'single',
@@ -10,3 +11,5 @@ export default stacks({
   jsonc: true,
   yaml: true,
 })
+
+export default config
