@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v0.8.5...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.5...main)
+
+### 🏡 Chore
+
+- Doc updates ([48d20a1](https://github.com/stacksjs/tlsx/commit/48d20a1))
+- Use tlsx links ([ee3c538](https://github.com/stacksjs/tlsx/commit/ee3c538))
+- Adjust docs ([ba4c6a3](https://github.com/stacksjs/tlsx/commit/ba4c6a3))
+- Adjust indentation ([136445f](https://github.com/stacksjs/tlsx/commit/136445f))
+- Adjust docs ([b7a7eff](https://github.com/stacksjs/tlsx/commit/b7a7eff))
+- Add default docs theme ([ef6e72e](https://github.com/stacksjs/tlsx/commit/ef6e72e))
+- Build for node as well ([b15ba40](https://github.com/stacksjs/tlsx/commit/b15ba40))
+- Use bun text lock file ([1a68aa2](https://github.com/stacksjs/tlsx/commit/1a68aa2))
+- Enhance docs ([4f9a15a](https://github.com/stacksjs/tlsx/commit/4f9a15a))
+- Rearrange dependencies ([a429348](https://github.com/stacksjs/tlsx/commit/a429348))
+- Minor adjustments ([31ada27](https://github.com/stacksjs/tlsx/commit/31ada27))
+- Add params jsdocs ([af38d30](https://github.com/stacksjs/tlsx/commit/af38d30))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+
 ## v0.8.4...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.4...main)
