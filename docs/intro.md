@@ -1,3 +1,5 @@
+<p align="center"><img src="https://github.com/stacksjs/tlsx/blob/main/.github/art/cover.png?raw=true" alt="Social Card of this repo"></p>
+
 # Introduction
 
 `tlsx` is a TLS library written for automation in mind. And HTTPS by default.

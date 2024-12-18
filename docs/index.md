@@ -7,7 +7,7 @@ hero:
   tagline: "Certificates for your local machine in a zero-config & zero-setup way."
   actions:
     - theme: brand
-      text: Documentation
+      text: Get Started
       link: /intro
     - theme: alt
       text: View on GitHub
@@ -27,3 +27,5 @@ features:
     icon: 💻
     details: Use as a library or as a CLI.
 ---
+
+<Home />

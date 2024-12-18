@@ -1,21 +1,24 @@
 import type { Theme } from 'vitepress'
+import TwoSlashFloatingVue from '@shikijs/vitepress-twoslash/client'
 import DefaultTheme from 'vitepress/theme'
-// https://vitepress.dev/guide/custom-theme
 import { h } from 'vue'
-import './docs.css'
 
-// import TwoSlashFloatingVue from 'vitepress-plugin-twoslash/client'
+import 'uno.css'
+
+import './styles/main.css'
+import './styles/vars.css'
+import './styles/overrides.css'
 
 export default {
-  extends: DefaultTheme,
+  ...DefaultTheme,
+
+  enhanceApp(ctx: any) {
+    ctx.app.use(TwoSlashFloatingVue)
+  },
 
   Layout: () => {
     return h(DefaultTheme.Layout, null, {
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
     })
   },
-
-  // enhanceApp({ app }: EnhanceAppContext) {
-  //   app.use(TwoSlashFloatingVue)
-  // },
 } satisfies Theme
