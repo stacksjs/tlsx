@@ -195,6 +195,8 @@ interface CommandResult {
  * Executes a shell command and returns the result
  * @param command - The shell command to execute
  * @param options - Optional execution options
+ * @param options.cwd - The cwd
+ * @param options.timeout - The timeout, default: 30000 // 30s
  * @returns Promise that resolves with stdout and stderr
  * @throws Error if the command fails
  */
