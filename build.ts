@@ -9,7 +9,7 @@ const result = await Bun.build({
   entrypoints: ['./src/index.ts', './bin/cli.ts'],
   outdir: './dist',
   format: 'esm',
-  target: 'bun',
+  target: 'node',
   minify: true,
   splitting: true,
   plugins: [
