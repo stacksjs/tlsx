@@ -5,6 +5,7 @@ hero:
   name: "tlsx"
   text: "HTTPS for localhost"
   tagline: "Certificates for your local machine in a zero-config & zero-setup way."
+  image: /images/logo-white.png
   actions:
     - theme: brand
       text: Get Started
