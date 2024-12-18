@@ -2,10 +2,10 @@ import type { CAOptions, Certificate, CertificateOptions, TlsOption } from './ty
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { log, runCommand } from '@stacksjs/cli'
+import { consola as log } from 'consola'
 import forge, { pki, tls } from 'node-forge'
 import { config } from './config'
-import { debugLog, findFoldersWithFile, makeNumberPositive } from './utils'
+import { debugLog, findFoldersWithFile, makeNumberPositive, runCommand } from './utils'
 
 interface Cert {
   certificate: string

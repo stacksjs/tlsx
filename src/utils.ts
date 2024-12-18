@@ -1,7 +1,10 @@
 import type { CertDetails } from './types'
+import { exec } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import process from 'node:process'
+import { promisify } from 'node:util'
 import { pki } from 'node-forge'
 import { config } from './config'
 
@@ -177,5 +180,45 @@ export function debugLog(category: string, message: string, verbose?: boolean): 
   if (verbose || config.verbose) {
     // eslint-disable-next-line no-console
     console.debug(`[tlsx:${category}] ${message}`)
+  }
+}
+
+// Promisify the exec function to use with async/await
+const execAsync = promisify(exec)
+
+interface CommandResult {
+  stdout: string
+  stderr: string
+}
+
+/**
+ * Executes a shell command and returns the result
+ * @param command - The shell command to execute
+ * @param options - Optional execution options
+ * @returns Promise that resolves with stdout and stderr
+ * @throws Error if the command fails
+ */
+export async function runCommand(
+  command: string,
+  options: { cwd?: string, timeout?: number } = {},
+): Promise<CommandResult> {
+  try {
+    const { stdout, stderr } = await execAsync(command, {
+      cwd: options.cwd || process.cwd(),
+      timeout: options.timeout || 30000, // Default 30s timeout
+    })
+
+    return {
+      stdout: stdout.trim(),
+      stderr: stderr.trim(),
+    }
+  }
+  catch (error: any) {
+    // Enhance error message with command details
+    const enhancedError = new Error(
+      `Failed to execute command: ${command}\nError: ${error.message}`,
+    )
+    enhancedError.stack = error.stack
+    throw enhancedError
   }
 }

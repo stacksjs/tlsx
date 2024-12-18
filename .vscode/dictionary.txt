@@ -19,6 +19,7 @@ destructurable
 dtsx
 entrypoints
 heroicons
+iconify
 keychain
 Keychains
 Keypair
@@ -35,12 +36,15 @@ postcompile
 prefetch
 preinstall
 quickfix
+shikijs
 socio
 Solana
 sslx
 stacksjs
 tlsx
+twoslash
 typecheck
+unocss
 unplugin
 unref
 upath

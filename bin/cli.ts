@@ -1,5 +1,6 @@
 import type { TlsOption } from '../src/types'
-import { CAC, log } from '@stacksjs/cli'
+import { CAC } from 'cac'
+import { consola as log } from 'consola'
 import { version } from '../package.json'
 import { addCertToSystemTrustStoreAndSaveCert, createRootCA, generateCertificate } from '../src/certificate'
 import { config } from '../src/config'
