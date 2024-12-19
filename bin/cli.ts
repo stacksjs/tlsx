@@ -41,6 +41,7 @@ cli
   .example('tlsx secure example.com --output /etc/ssl')
   .example('tlsx secure example.com -d "api.example.com,*.example.com"')
   .example('tlsx secure -d "example.com,api.example.com"')
+  .example('tlsx secure stacks.localhost -d "stacks2.local,stacks3.localhost,stacks4.test"')
   .action(async (domain?: string, options?: CliOptions) => {
     const cliOptions = options || {}
 
