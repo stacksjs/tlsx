@@ -5,7 +5,7 @@ import path from 'node:path'
 import { consola as log } from 'consola'
 import forge, { pki, tls } from 'node-forge'
 import { config } from './config'
-import { debugLog, findFoldersWithFile, makeNumberPositive, runCommand, getPrimaryDomain } from './utils'
+import { debugLog, findFoldersWithFile, getPrimaryDomain, makeNumberPositive, runCommand } from './utils'
 
 /**
  * Generates Subject Alternative Names for the certificate
