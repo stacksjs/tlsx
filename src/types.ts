@@ -1,6 +1,7 @@
 export interface TlsConfig {
   hostCertCN: string
   domain: string
+  domains?: string[]
   altNameIPs: string[]
   altNameURIs: string[]
   validityDays: number
@@ -53,7 +54,8 @@ export interface SubjectAltName {
 }
 
 export interface CertificateOptions {
-  domain: string
+  domain?: string
+  domains?: string[]
   rootCA: { certificate: string, privateKey: string }
   hostCertCN?: string
   altNameIPs?: string[]
@@ -132,3 +134,52 @@ export interface CAOptions extends TlsOption {
 export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>
 }
+
+export interface Cert {
+  certificate: string
+  privateKey: string
+}
+
+export type CertPath = string
+export type RandomSerialNumber = string
+
+export interface BasicConstraintsExtension {
+  name: 'basicConstraints'
+  cA: boolean
+  pathLenConstraint?: number
+  critical: boolean
+}
+
+export interface KeyUsageExtension {
+  name: 'keyUsage'
+  critical: boolean
+  digitalSignature?: boolean
+  contentCommitment?: boolean
+  keyEncipherment?: boolean
+  dataEncipherment?: boolean
+  keyAgreement?: boolean
+  keyCertSign?: boolean
+  cRLSign?: boolean
+  encipherOnly?: boolean
+  decipherOnly?: boolean
+}
+
+export interface ExtKeyUsageExtension {
+  name: 'extKeyUsage'
+  serverAuth?: boolean
+  clientAuth?: boolean
+  codeSigning?: boolean
+  emailProtection?: boolean
+  timeStamping?: boolean
+}
+
+interface SubjectAltNameExtension {
+  name: 'subjectAltName'
+  altNames: SubjectAltName[]
+}
+
+export type CertificateExtension =
+  | BasicConstraintsExtension
+  | KeyUsageExtension
+  | ExtKeyUsageExtension
+  | SubjectAltNameExtension

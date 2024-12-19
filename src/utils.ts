@@ -1,4 +1,4 @@
-import type { CertDetails } from './types'
+import type { CertDetails, CertificateOptions } from './types'
 import { exec } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
@@ -223,4 +223,22 @@ export async function runCommand(
     enhancedError.stack = error.stack
     throw enhancedError
   }
+}
+
+/**
+ * Gets the primary domain from options
+ * @param options Certificate generation options
+ * @throws Error if no domain is specified
+ * @returns Primary domain
+ */
+export function getPrimaryDomain(options: CertificateOptions): string {
+  if (options.domain) {
+    return options.domain
+  }
+
+  if (options.domains?.length) {
+    return options.domains[0]
+  }
+
+  throw new Error('Either domain or domains must be specified')
 }
