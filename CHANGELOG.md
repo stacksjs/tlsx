@@ -1,6 +1,32 @@
 # Changelog
 
 
+## v0.9.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.9.0...main)
+
+### 🚀 Enhancements
+
+- Allow creating cert for multiple domains ([182414b](https://github.com/stacksjs/tlsx/commit/182414b))
+
+### 🏡 Chore
+
+- Lint changes ([24af332](https://github.com/stacksjs/tlsx/commit/24af332))
+- Enhance team css ([9bc4103](https://github.com/stacksjs/tlsx/commit/9bc4103))
+- Enhance css ([61dcc6b](https://github.com/stacksjs/tlsx/commit/61dcc6b))
+- Enhance team description ([f6b5e9f](https://github.com/stacksjs/tlsx/commit/f6b5e9f))
+- Use text lock file ([d640aad](https://github.com/stacksjs/tlsx/commit/d640aad))
+- Update unocss ([b05cbd3](https://github.com/stacksjs/tlsx/commit/b05cbd3))
+- Update bun ([6454ed8](https://github.com/stacksjs/tlsx/commit/6454ed8))
+- Lint ([01239c4](https://github.com/stacksjs/tlsx/commit/01239c4))
+- Several command improvements ([b0849dd](https://github.com/stacksjs/tlsx/commit/b0849dd))
+- Add example ([25ca3ea](https://github.com/stacksjs/tlsx/commit/25ca3ea))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
+- Cab-mikee ([@cab-mikee](http://github.com/cab-mikee))
+
 ## v0.8.5...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.5...main)
