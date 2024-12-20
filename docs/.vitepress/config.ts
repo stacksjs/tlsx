@@ -85,6 +85,8 @@ const sidebar = [
     items: [
       { text: 'Introduction', link: '/intro' },
       { text: 'Installation', link: '/install' },
+      { text: 'Usage', link: '/usage' },
+      { text: 'Config', link: '/config' },
     ],
   },
 ]
@@ -99,7 +101,7 @@ const analyticsHead
 export default withPwa(
   defineConfig({
     lang: 'en-US',
-    title: 'Transport Layer Security',
+    title: 'tlsx',
     description: 'A simple, fast, and secure TLS certificate manager for your projects.',
     metaChunk: true,
 

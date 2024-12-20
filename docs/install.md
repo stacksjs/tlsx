@@ -1,75 +1,92 @@
 # Install
 
+## Bun & Node.js
+
 ```bash
 bun install -d @stacksjs/tlsx
+npm install -g @stacksjs/tlsx
 
 # or, invoke immediately
 bunx @stacksjs/tlsx
 npx @stacksjs/tlsx
 ```
 
-Please note, we are looking to publish this package to npm under the name `tlsx`. _Hoping npm will release the name for us._
+_We are looking to publish this package npm under the name `tlsx`. We are also hoping npm will release the name for us._
+
+## Binaries
+
+For now, you can download the `tlsx` binaries from the [releases page](https://github.com/stacksjs/tlsx/releases/tag/v0.10.0). Choose the binary that matches your platform and architecture:
+
+## macOS (Darwin)
+
+For M1/M2 Macs (arm64):
+
+```bash
+# Download the binary
+curl -L https://github.com/stacksjs/tlsx/releases/download/v0.10.0/tlsx-darwin-arm64 -o tlsx
+
+# Make it executable
+chmod +x tlsx
+
+# Move it to your PATH
+mv tlsx /usr/local/bin/tlsx
+```
+
+For Intel Macs (amd64):
+
+```bash
+# Download the binary
+curl -L https://github.com/stacksjs/tlsx/releases/download/v0.10.0/tlsx-darwin-x64 -o tlsx
+
+# Make it executable
+chmod +x tlsx
+
+# Move it to your PATH
+mv tlsx /usr/local/bin/tlsx
+```
+
+## Linux
+
+For ARM64:
+
+```bash
+# Download the binary
+curl -L https://github.com/stacksjs/tlsx/releases/download/v0.10.0/tlsx-linux-arm64 -o tlsx
+
+# Make it executable
+chmod +x tlsx
+
+# Move it to your PATH
+mv tlsx /usr/local/bin/tlsx
+```
+
+For x64:
+
+```bash
+# Download the binary
+curl -L https://github.com/stacksjs/tlsx/releases/download/v0.10.0/tlsx-linux-x64 -o tlsx
+
+# Make it executable
+chmod +x tlsx
+
+# Move it to your PATH
+mv tlsx /usr/local/bin/tlsx
+```
+
+## Windows
+
+For x64:
+
+```bash
+# Download the binary
+curl -L https://github.com/stacksjs/tlsx/releases/download/v0.10.0/tlsx-windows-x64.exe -o tlsx.exe
+
+# Move it to your PATH (adjust the path as needed)
+move tlsx.exe C:\Windows\System32\tlsx.exe
+```
 
 <!-- _Alternatively, you can install:_
-
 ```bash
 brew install tlsx # wip
 pkgx install tlsx # wip
 ``` -->
-
-## Usage
-
-There are two ways of using this reverse proxy: _as a library or as a CLI._
-
-### Library
-
-Given the npm package is installed:
-
-```ts
-import type { AddCertOptions, CAOptions, CertificateOptions, TlsConfig, TlsOptions } from '@stacksjs/tlsx'
-import { addCertToSystemTrustStoreAndSaveCerts, config, forge, generateCert, pki, storeCertificate, tls } from '@stacksjs/tlsx'
-
-// ...
-```
-
-### CLI
-
-```bash
-# more docs incoming
-tlsx --help
-tlsx version
-```
-
-## Configuration
-
-The Reverse Proxy can be configured using a `tls.config.ts` _(or `tls.config.js`)_ file and it will be automatically loaded when running the `tlsx` command.
-
-```ts
-// tlsx.config.{ts,js}
-import type { TlsConfig } from '@stacksjs/tlsx'
-
-export default {
-  domain: 'stacks.localhost',
-  hostCertCN: 'stacks.localhost',
-  caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`),
-  certPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`),
-  keyPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`),
-  altNameIPs: ['127.0.0.1'],
-  altNameURIs: ['localhost'],
-  organizationName: 'stacksjs.org',
-  countryName: 'US',
-  stateName: 'California',
-  localityName: 'Playa Vista',
-  commonName: 'stacks.localhost',
-  validityDays: 180,
-  verbose: false,
-} satisfies TlsConfig
-```
-
-_Then run:_
-
-```bash
-tlsx
-```
-
-To learn more, head over to the [documentation](https://tlsx.sh/).
