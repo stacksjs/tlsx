@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "tlsx"
   text: "HTTPS for localhost"
-  tagline: "Certificates for your local machine in a zero-config & zero-setup way."
+  tagline: "Certificates for your local machine.<br>Zero-config & zero-setup."
   image: /images/logo-white.png
   actions:
     - theme: brand

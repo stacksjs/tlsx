@@ -56,9 +56,5 @@ export default defineConfig({
       // 'vue',
       'body-scroll-lock',
     ],
-
-    include: [
-      'nprogress',
-    ],
   },
 })

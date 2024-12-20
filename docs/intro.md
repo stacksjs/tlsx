@@ -7,8 +7,10 @@
 ## Features
 
 - SSL Support _(HTTPS by default)_
-- Automatically Renews Expired Certificates
-- Highly Configurable
+- Configurable Library & CLI
+- Multi-domain Support
+- Cross-platform System Trust Store Integration
+- Flexible Certificate Generation
 
 ## Changelog
 
