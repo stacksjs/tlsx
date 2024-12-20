@@ -65,6 +65,7 @@ export default withPwa(
     title: 'tlsx',
     description: 'A simple, fast, and secure TLS certificate manager for your projects.',
     metaChunk: true,
+    cleanUrls: true,
 
     head: [
       ['link', { rel: 'icon', type: 'image/svg+xml', href: './images/logo-mini.svg' }],
