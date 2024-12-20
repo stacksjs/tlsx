@@ -18,10 +18,16 @@ features:
   - title: SSL Support
     icon: 🛡️
     details: Self-signed. HTTPS by default.
-  - title: Auto-Renew
-    icon: 🔄
-    details: Automatically renews expired certificates.
-  - title: Zero-Config
+  - title: Wildcard Domains
+    icon: 🌟
+    details: Supports wildcard domains.
+  - title: Multi-domain
+    icon: 🌐
+    details: Supports multiple domains.
+  - title: System Trust Store
+    icon: 🏦
+    details: Cross-platform integration.
+  - title: Zero-Config & Zero-Setup
     icon: 🚀
     details: Yet, highly configurable.
   - title: Library or CLI
