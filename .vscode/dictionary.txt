@@ -3,6 +3,7 @@ antfu
 biomejs
 booleanish
 bumpp
+bunfig
 bunx
 certutil
 changelogen

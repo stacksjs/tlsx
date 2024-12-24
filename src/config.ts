@@ -1,7 +1,7 @@
 import type { TlsConfig } from './types'
 import os from 'node:os'
 import path from 'node:path'
-import { loadConfig } from 'bun-config'
+import { loadConfig } from 'bunfig'
 
 export const defaultConfig: TlsConfig = {
   altNameIPs: ['127.0.0.1'],
