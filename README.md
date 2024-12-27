@@ -99,7 +99,7 @@ tlsx version
 
 ## Configuration
 
-The Reverse Proxy can be configured using a `tls.config.ts` _(or `tls.config.js`)_ file and it will be automatically loaded when running the `tlsx` command.
+`tlsx` can be configured using a `tls.config.ts` _(or `tls.config.js`)_ file and it will be automatically loaded when running the `tlsx` command.
 
 ```ts
 // tlsx.config.{ts,js}
