@@ -81,7 +81,7 @@ export default withPwa(
       ['meta', { name: 'author', content: 'Stacks.js, Inc.' }],
       ['meta', {
         name: 'tags',
-        content: 'tlsx, stacksjs, certificate, lightweight, zero-config',
+        content: 'tlsx, stacksjs, certificate, ssl, SSL support, domain, multi-domain, zero-config',
       }],
 
       ['meta', { property: 'og:type', content: 'website' }],
