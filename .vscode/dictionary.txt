@@ -24,6 +24,7 @@ iconify
 keychain
 Keychains
 Keypair
+localtunnels
 lockb
 Millis
 mkcert
@@ -38,8 +39,10 @@ prefetch
 preinstall
 quickfix
 shikijs
+shoutout
 socio
 Solana
+sponsorware
 sslx
 stacksjs
 tlsx
