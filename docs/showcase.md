@@ -12,8 +12,9 @@ If you authored a project you’d like to showcase, please share it with us in a
 
 The whole Stacks ecosystem is built using `tlsx`. Here are some of the projects utilizing it:
 
-- [`bun-plugin-dtsx`](https://github.com/stacksjs/stacksjs/bun-plugin-dtsx) _(Extremely fast & configurable DTS emitter)_
-- [`bunfig`](https://github.com/stacksjs/bunfig) _(Lightweight & smart Bun configuration loader)_
+- [`rpx`](https://github.com/stacksjs/rpx) _(A modern, fast reverse proxy)_
+- [`vite-plugin-local`](https://github.com/stacksjs/vite-plugin-local) _(A Vite plugin for pretty development URLs and HTTPS. Zero config, zero setup)_
+- [`stacks`](https://github.com/stacksjs/stacks) _(Progressive full-stack framework for Web Artisans. Develop modern apps, clouds & framework-agnostic libraries—faster.)_
 
 ### Stacks Framework
 
