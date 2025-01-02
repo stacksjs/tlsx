@@ -70,6 +70,7 @@ export default withPwa(
     title: 'tlsx',
     description,
     metaChunk: true,
+    lastUpdated: true,
     cleanUrls: true,
 
     head: [
@@ -95,6 +96,9 @@ export default withPwa(
     ],
 
     themeConfig: {
+      search: {
+        provider: 'local'
+      },
       logo: {
         light: './images/logo-transparent.svg',
         dark: './images/logo-white-transparent.svg',
@@ -110,7 +114,7 @@ export default withPwa(
 
       footer: {
         message: 'Released under the MIT License.',
-        copyright: 'Copyright © 2024-present Stacks.js, Inc.',
+        copyright: 'Copyright © 2025-present Stacks.js, Inc.',
       },
 
       socialLinks: [
