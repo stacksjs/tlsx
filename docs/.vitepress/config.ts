@@ -3,7 +3,7 @@ import { transformerTwoslash } from '@shikijs/vitepress-twoslash'
 import { withPwa } from '@vite-pwa/vitepress'
 import { defineConfig } from 'vitepress'
 
-import viteConfig from './vite.config'
+import vite from './vite.config'
 
 // https://vitepress.dev/reference/site-config
 
@@ -97,7 +97,7 @@ export default withPwa(
 
     themeConfig: {
       search: {
-        provider: 'local'
+        provider: 'local',
       },
       logo: {
         light: './images/logo-transparent.svg',
@@ -149,6 +149,6 @@ export default withPwa(
       ],
     },
 
-    vite: viteConfig,
+    vite,
   }),
 )
