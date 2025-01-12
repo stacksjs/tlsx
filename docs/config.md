@@ -46,8 +46,6 @@ export default {
   /**
    * The path to the certificate file.
    * @default '~/.stacks/ssl/tlsx.localhost.crt'
-   * @example '~/.stacks/ssl/tlsx.localhost.crt'
-   * @example '~/.stacks/ssl/tlsx.localhost.crt'
    * @example '/etc/ssl/tlsx.localhost.crt'
    * @example '/usr/local/etc/ssl/tlsx.localhost.crt'
    */
@@ -56,8 +54,6 @@ export default {
   /**
    * The path to the private key file.
    * @default '~/.stacks/ssl/tlsx.localhost.crt.key'
-   * @example '~/.stacks/ssl/tlsx.localhost.crt.key'
-   * @example '~/.stacks/ssl/tlsx.localhost.crt.key'
    * @example '/etc/ssl/tlsx.localhost.crt.key'
    * @example '/usr/local/etc/ssl/tlsx.localhost.crt.key'
    */
