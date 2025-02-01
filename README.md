@@ -6,17 +6,17 @@
 <!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
 
-# Zero-Config & Zero-Setup HTTPS
+# tlsx
 
->
+> A TLS library with automation. HTTPS by default through a light-weight library and/or CLI. Similar to mkcert.
 
 ## Features
 
-- SSL Support _(HTTPS by default)_
-- Configurable Library & CLI
-- Multi-domain Support
-- Cross-platform System Trust Store Integration
-- Flexible Certificate Generation
+- 🔒 SSL Support _(HTTPS by default)_
+- 0️⃣ Zero-Config & Zero-Setup HTTPS
+- 🛠️ Configurable Library & CLI
+- 🔀 Multi-domain Support
+- 🏗️ Cross-platform System Trust Store Integration
 
 ## Install
 
