@@ -52,6 +52,7 @@ stacksjs
 tlsx
 twoslash
 typecheck
+unconfig
 unocss
 unplugin
 unref
