@@ -22,6 +22,7 @@ export const defaultConfig: TlsConfig = {
   verbose: false,
 }
 
+// @ts-expect-error dtsx issue leading to bad types
 // eslint-disable-next-line antfu/no-top-level-await
 export const config: TlsConfig = await loadConfig({
   name: 'tls',
