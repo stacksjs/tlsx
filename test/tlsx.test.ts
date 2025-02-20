@@ -1,10 +1,10 @@
-import type { CertificateOptions, CAOptions, Certificate } from '../src/types'
-import { describe, expect, it, beforeEach, afterEach } from 'bun:test'
-import { createRootCA, generateCertificate, isCertExpired, isCertValidForDomain, parseCertDetails, findFoldersWithFile, listCertsInDirectory, getCertificateFromCertPemOrPath } from '../src'
+import type forge from 'node-forge'
+import type { CAOptions, Certificate, CertificateOptions } from '../src/types'
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { writeFileSync, mkdirSync, rmSync } from 'node:fs'
-import * as forge from 'node-forge'
+import { createRootCA, findFoldersWithFile, generateCertificate, getCertificateFromCertPemOrPath, isCertExpired, isCertValidForDomain, listCertsInDirectory, parseCertDetails } from '../src'
 
 describe('@stacksjs/tlsx', () => {
   let rootCA: Certificate
@@ -28,8 +28,6 @@ describe('@stacksjs/tlsx', () => {
         certificate: rootCA.certificate,
         privateKey: rootCA.privateKey,
       },
-      certificate: '',
-      privateKey: '',
     }
     const hostCert = await generateCertificate(options)
     expect(hostCert).toHaveProperty('certificate')
@@ -46,8 +44,6 @@ describe('@stacksjs/tlsx', () => {
         certificate: rootCA.certificate,
         privateKey: rootCA.privateKey,
       },
-      certificate: '',
-      privateKey: '',
     }
     const hostCert = await generateCertificate(options)
     const isValid = isCertValidForDomain(hostCert.certificate, 'localhost')
@@ -77,8 +73,6 @@ describe('@stacksjs/tlsx', () => {
         certificate: rootCA.certificate,
         privateKey: rootCA.privateKey,
       },
-      certificate: '',
-      privateKey: '',
     }
     const hostCert = await generateCertificate(options)
     expect(hostCert).toHaveProperty('certificate')
@@ -100,14 +94,13 @@ describe('@stacksjs/tlsx', () => {
         certificate: rootCA.certificate,
         privateKey: rootCA.privateKey,
       },
-      certificate: '',
-      privateKey: '',
     }
     const hostCert = await generateCertificate(options)
     const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
-    const altNames = cert.getExtension('subjectAltName')
+    const altNames = cert.getExtension('subjectAltName') as forge.Extension
 
-    const altNamesList = (altNames as forge.pki.SubjectAltNameExtension).altNames
+    // Type 7 is for IP addresses, Type 6 is for URIs in SubjectAltName extension
+    const altNamesList = (altNames as any).altNames as Array<{ type: number, value: string }>
     expect(altNamesList.some(name => name.type === 7 && name.value === '127.0.0.1')).toBe(true)
     expect(altNamesList.some(name => name.type === 7 && name.value === '::1')).toBe(true)
     expect(altNamesList.some(name => name.type === 6 && name.value === 'https://localhost/app')).toBe(true)
@@ -148,13 +141,13 @@ describe('@stacksjs/tlsx', () => {
     const subject = details.subject
 
     // Check each field in the subject
-    const orgField = subject.find(field => field.shortName === 'O')
+    const orgField = subject.find((field: any) => field.shortName === 'O')
     expect(orgField?.value).toBe('Test Corp')
 
-    const countryField = subject.find(field => field.shortName === 'C')
+    const countryField = subject.find((field: any) => field.shortName === 'C')
     expect(countryField?.value).toBe('US')
 
-    const stateField = subject.find(field => field.shortName === 'ST')
+    const stateField = subject.find((field: any) => field.shortName === 'ST')
     expect(stateField?.value).toBe('California')
 
     const localityField = subject.find(field => field.shortName === 'L')
@@ -224,8 +217,6 @@ describe('@stacksjs/tlsx', () => {
           certificate: rootCA.certificate,
           privateKey: rootCA.privateKey,
         },
-        certificate: '',
-        privateKey: '',
         keyUsage: {
           digitalSignature: true,
           keyEncipherment: true,
@@ -238,13 +229,13 @@ describe('@stacksjs/tlsx', () => {
       const hostCert = await generateCertificate(options)
       const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
 
-      const keyUsage = cert.getExtension('keyUsage') as forge.pki.KeyUsageExtension
-      expect(keyUsage.digitalSignature).toBe(true)
-      expect(keyUsage.keyEncipherment).toBe(true)
+      const keyUsage = cert.getExtension('keyUsage') as forge.Extension
+      expect((keyUsage as any).digitalSignature).toBe(true)
+      expect((keyUsage as any).keyEncipherment).toBe(true)
 
-      const extKeyUsage = cert.getExtension('extKeyUsage') as forge.pki.ExtendedKeyUsageExtension
-      expect(extKeyUsage.serverAuth).toBe(true)
-      expect(extKeyUsage.clientAuth).toBe(true)
+      const extKeyUsage = cert.getExtension('extKeyUsage') as forge.Extension
+      expect((extKeyUsage as any).serverAuth).toBe(true)
+      expect((extKeyUsage as any).clientAuth).toBe(true)
     })
 
     it('should generate a certificate with basic constraints', async () => {
@@ -255,8 +246,6 @@ describe('@stacksjs/tlsx', () => {
           certificate: rootCA.certificate,
           privateKey: rootCA.privateKey,
         },
-        certificate: '',
-        privateKey: '',
         basicConstraints: {
           cA: true,
           pathLenConstraint: 1,
@@ -265,9 +254,9 @@ describe('@stacksjs/tlsx', () => {
       const hostCert = await generateCertificate(options)
       const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
 
-      const basicConstraints = cert.getExtension('basicConstraints') as forge.pki.BasicConstraintsExtension
-      expect(basicConstraints.cA).toBe(true)
-      expect(basicConstraints.pathLenConstraint).toBe(1)
+      const basicConstraints = cert.getExtension('basicConstraints')
+      expect(basicConstraints?.cA).toBe(true)
+      expect(basicConstraints?.pathLenConstraint).toBe(1)
     })
 
     it('should generate a certificate with custom attributes', async () => {
@@ -278,8 +267,6 @@ describe('@stacksjs/tlsx', () => {
           certificate: rootCA.certificate,
           privateKey: rootCA.privateKey,
         },
-        certificate: '',
-        privateKey: '',
         certificateAttributes: [
           { shortName: 'OU', value: 'Test Unit' },
           { shortName: 'O', value: 'Test Corp' },

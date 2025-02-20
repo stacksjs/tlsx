@@ -617,12 +617,15 @@ export interface CertificateOptions {
   verbose?: boolean
 }
 
+type Subject = any
+type Issuer = any
+
 /**
  * Certificate details.
  */
 export interface CertDetails {
-  subject: any
-  issuer: any
+  subject: Subject
+  issuer: Issuer
   validFrom: Date
   validTo: Date
   serialNumber: string
