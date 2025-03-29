@@ -4,7 +4,7 @@
     "": {
       "name": "@stacksjs/tlsx",
       "devDependencies": {
-        "@stacksjs/docs": "^0.70.16",
+        "@stacksjs/docs": "^0.70.22",
         "@stacksjs/eslint-config": "^4.2.1-beta.1",
         "@types/bun": "^1.2.8",
         "@types/node-forge": "^1.3.11",
@@ -433,7 +433,7 @@
 
     "@shikijs/vscode-textmate": ["@shikijs/vscode-textmate@10.0.2", "", {}, "sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg=="],
 
-    "@stacksjs/docs": ["@stacksjs/docs@0.70.16", "", { "dependencies": { "@iconify-json/carbon": "^1.2.8", "@shikijs/vitepress-twoslash": "^3.2.1", "@vite-pwa/assets-generator": "^0.2.6", "@vite-pwa/vitepress": "^0.5.3", "unocss": "^66.0.0", "unplugin-icons": "^22.1.0", "unplugin-vue-components": "^28.4.1", "vite-plugin-pwa": "^0.21.2", "vitepress": "1.6.3" } }, "sha512-t/crIkAlQBX8ByLXxXmdnEzdi2fa8RwR5UULy68dXA4s8RI0B45Qtiyc2hG7arHn7iTzPPXlB+hYRChZmkUHhA=="],
+    "@stacksjs/docs": ["@stacksjs/docs@0.70.22", "", { "dependencies": { "@iconify-json/carbon": "^1.2.8", "@shikijs/vitepress-twoslash": "^3.2.1", "@vite-pwa/assets-generator": "^0.2.6", "@vite-pwa/vitepress": "^0.5.3", "unocss": "^66.0.0", "unplugin-icons": "^22.1.0", "unplugin-vue-components": "^28.4.1", "vite-plugin-pwa": "^0.21.2", "vitepress": "1.6.3" } }, "sha512-80p3UEYwSYbaShPiNvknb8ndzQ3AVezPYZS3SvaOHZeu4EvNI8CjkkhtT8zabbCvRBLUqnIw1//LAkCXxmXNUA=="],
 
     "@stacksjs/dtsx": ["@stacksjs/dtsx@0.8.0", "", { "bin": { "dtsx": "dist/cli.js" } }, "sha512-x7HxXTRZTrwvpSTZlxL5lu4F1sFHnDynAQBNr3UIkrctCKQbe7dYM21SfEozBx5+qBk+Mv1yZUvrUL/aA1bQwg=="],
 
