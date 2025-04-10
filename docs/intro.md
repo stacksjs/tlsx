@@ -20,6 +20,10 @@ Please see our [releases](https://github.com/stacksjs/tlsx/releases) page for mo
 
 Please review the [Contributing Guide](https://github.com/stacksjs/contributing) for details.
 
+## Stargazers
+
+[![Stargazers](https://starchart.cc/stacksjs/tlsx.svg?variant=adaptive)](https://starchart.cc/stacksjs/tlsx)
+
 ## Community
 
 For help, discussion about best practices, or any other conversation that would benefit from being searchable:
