@@ -1,0 +1,62 @@
+{
+  "name": "bun-plugin-rpx",
+  "type": "module",
+  "version": "0.10.0",
+  "description": "A modern and smart reverse proxy. Bun plugin.",
+  "author": "Chris Breuer <chris@stacksjs.org>",
+  "license": "MIT",
+  "homepage": "https://github.com/stacksjs/rpx",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stacksjs/rpx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stacksjs/rpx/issues"
+  },
+  "keywords": [
+    "reverse proxy",
+    "ssl",
+    "development",
+    "environment",
+    "proxy",
+    "bun",
+    "bun-plugin",
+    "stacks",
+    "typescript",
+    "javascript"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "module": "./dist/src/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "rpx": "./dist/bin/cli.js",
+    "reverse-proxy": "./dist/bin/cli.js"
+  },
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun build.ts",
+    "lint": "bunx --bun eslint .",
+    "lint:fix": "bunx --bun eslint . --fix",
+    "changelog": "changelogen --output CHANGELOG.md",
+    "prepublishOnly": "bun --bun run build",
+    "test": "bun test",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "devDependencies": {
+    "bun-plugin-dtsx": "^0.21.12"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "bunx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts}": "bunx eslint . --fix"
+  }
+}
