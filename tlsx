@@ -1,2 +1,2 @@
 #!/usr/bin/env bun
-import('./bin/cli')
+import('./packages/tlsx/bin/cli')

@@ -1,52 +1,190 @@
-name: CI
+name: Release
 
 on:
   push:
     tags:
       - 'v*'
 
-jobs:
-  release:
-    name: release
-    runs-on: ubuntu-latest
+permissions:
+  contents: write
+  packages: write
+  id-token: write
 
+jobs:
+  npm:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ env.VERSION }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install Bun
+      - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - name: Use cached node_modules
+      - name: Use Cached node_modules
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node-modules-${{ hashFiles('**/bun.lockb') }}
+          key: node-modules-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
             node-modules-
 
       - name: Install Dependencies
         run: bun install
 
+      - name: Extract tag version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
       - name: Publish to npm
         run: bun publish --access public
         env:
           BUN_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-      - name: Create GitHub release
-        run: bunx changelogithub
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Attach Binaries
-        uses: softprops/action-gh-release@v2
+      - name: Create GitHub Release
+        id: create_release
+        uses: stacksjs/action-releaser@v1.0.0
         with:
           files: |
-            bin/tlsx-linux-x64.zip
-            bin/tlsx-linux-arm64.zip
-            bin/tlsx-windows-x64.zip
-            bin/tlsx-darwin-x64.zip
-            bin/tlsx-darwin-arm64.zip
+            ./packages/rpx/bin/rpx-linux-x64.zip
+            ./packages/rpx/bin/rpx-linux-arm64.zip
+            ./packages/rpx/bin/rpx-windows-x64.zip
+            ./packages/rpx/bin/rpx-darwin-x64.zip
+            ./packages/rpx/bin/rpx-darwin-arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Calculate SHA256 checksums
+        run: |
+          mkdir -p checksums
+          sha256sum ./packages/rpx/bin/rpx-linux-x64.zip > checksums/linux-x64.sha256
+          sha256sum ./packages/rpx/bin/rpx-linux-arm64.zip > checksums/linux-arm64.sha256
+          sha256sum ./packages/rpx/bin/rpx-darwin-x64.zip > checksums/darwin-x64.sha256
+          sha256sum ./packages/rpx/bin/rpx-darwin-arm64.zip > checksums/darwin-arm64.sha256
+
+      - name: Upload Checksums Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: checksums
+          path: checksums/
+          retention-days: 1
+
+  homebrew:
+    needs: npm
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Generate GitHub App Token
+        id: generate-token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.GH_APP_ID }}
+          private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - name: Setup GitHub CLI
+        run: |
+          echo "${{ steps.generate-token.outputs.token }}" | gh auth login --with-token
+
+      - name: Ensure Homebrew Tap Repository Exists
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          if ! gh repo view stacksjs/homebrew-tap &>/dev/null; then
+            echo "Creating homebrew-tap repository..."
+            gh repo create stacksjs/homebrew-tap --public --description "Homebrew tap for Stacks packages"
+          else
+            echo "homebrew-tap repository already exists"
+          fi
+
+      - name: Wait for Release Assets
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "Waiting for release assets to be available..."
+
+          # Wait for assets to be available (max 10 minutes)
+          TIMEOUT=600
+          START_TIME=$(date +%s)
+
+          while [ $(( $(date +%s) - START_TIME )) -lt $TIMEOUT ]; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://github.com/stacksjs/rpx/releases/download/$VERSION/rpx-darwin-arm64.zip)
+            echo "HTTP response code: $HTTP_CODE"
+
+            if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ]; then
+              echo "Assets are available!"
+              break
+            fi
+
+            echo "Assets not ready yet, waiting 10 seconds..."
+            sleep 10
+          done
+
+          if [ $(( $(date +%s) - START_TIME )) -ge $TIMEOUT ]; then
+            echo "Timed out waiting for assets, proceeding anyway..."
+          fi
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: checksums
+          path: checksums
+
+      - name: Update Homebrew Formula
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          LINUX_X64_SHA=$(cat checksums/linux-x64.sha256 | awk '{print $1}')
+          LINUX_ARM64_SHA=$(cat checksums/linux-arm64.sha256 | awk '{print $1}')
+          DARWIN_X64_SHA=$(cat checksums/darwin-x64.sha256 | awk '{print $1}')
+          DARWIN_ARM64_SHA=$(cat checksums/darwin-arm64.sha256 | awk '{print $1}')
+
+          # Check if tap/rpx.rb exists
+          if [ ! -f "tap/rpx.rb" ]; then
+            echo "Error: tap/rpx.rb file is missing"
+            exit 1
+          fi
+
+          # Update checksums in the formula
+          sed -i '' "s|sha256 \".*\" # darwin-arm64|sha256 \"${DARWIN_ARM64_SHA}\" # darwin-arm64|g" tap/rpx.rb
+          sed -i '' "s|sha256 \".*\" # darwin-x64|sha256 \"${DARWIN_X64_SHA}\" # darwin-x64|g" tap/rpx.rb
+          sed -i '' "s|sha256 \".*\" # linux-arm64|sha256 \"${LINUX_ARM64_SHA}\" # linux-arm64|g" tap/rpx.rb
+          sed -i '' "s|sha256 \".*\" # linux-x64|sha256 \"${LINUX_X64_SHA}\" # linux-x64|g" tap/rpx.rb
+
+          # Verify that the version in tap/rpx.rb matches our release version
+          if ! grep -q "version \"${VERSION}\"" tap/rpx.rb; then
+            echo "Warning: Version mismatch in tap/rpx.rb. Setting to ${VERSION}"
+            sed -i '' "s|version \".*\"|version \"${VERSION}\"|g" tap/rpx.rb
+          fi
+
+      - name: Push to Homebrew Tap Repository
+        run: |
+          # Clone the tap repo using GitHub App token
+          git clone https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/stacksjs/homebrew-tap.git
+
+          # Set up Git config
+          cd homebrew-tap
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Copy the formula to the tap repo
+          mkdir -p Formula
+          cp ../tap/rpx.rb Formula/
+
+          # Check if there are changes to commit
+          if git status --porcelain | grep -q .; then
+            # Push the changes to the tap repo
+            git add Formula/rpx.rb
+            git commit -m "chore: update rpx formula to ${GITHUB_REF#refs/tags/}"
+            git push
+            echo "Successfully updated homebrew formula!"
+          else
+            echo "No changes to commit"
+          fi

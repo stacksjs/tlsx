@@ -1,4 +1,4 @@
-import type { TlsConfig } from './src/types'
+import type { TlsConfig } from './packages/tlsx/src/types'
 import os from 'node:os'
 import path from 'node:path'
 
