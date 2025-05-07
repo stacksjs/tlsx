@@ -32,6 +32,7 @@ const nav = [
       { text: 'Partners', link: '/partners' },
       { text: 'Postcardware', link: '/postcardware' },
       { text: 'Stargazers', link: '/stargazers' },
+      { text: 'Showcase', link: '/showcase' },
       { text: 'License', link: '/license' },
       {
         items: [
@@ -59,7 +60,25 @@ const sidebar = [
       { text: 'Config', link: '/config' },
     ],
   },
-  { text: 'Showcase', link: '/Showcase' },
+  {
+    text: 'Features',
+    items: [
+      { text: 'SSL Support', link: '/features/ssl-support' },
+      { text: 'Wildcard Domains', link: '/features/wildcard-domains' },
+      { text: 'Multi-domain', link: '/features/multi-domain' },
+      { text: 'System Trust Store', link: '/features/system-trust-store' },
+      { text: 'Zero-Config', link: '/features/zero-config' },
+    ],
+  },
+  {
+    text: 'Advanced',
+    items: [
+      { text: 'Custom Certificates', link: '/advanced/custom-certificates' },
+      { text: 'Certificate Authority', link: '/advanced/certificate-authority' },
+      { text: 'Key Usage & Extensions', link: '/advanced/key-usage-extensions' },
+    ],
+  },
+  { text: 'API Reference', link: '/api-reference' },
 ]
 
 const description = 'A simple, fast, and secure TLS certificate manager for your projects.'
