@@ -132,7 +132,7 @@ describe('@stacksjs/tlsx', () => {
       organizationalUnit: 'Test Unit',
       countryName: 'US',
       stateName: 'California',
-      localityName: 'San Francisco',
+      localityName: 'Playa Vista',
       commonName: 'Test Root CA',
     }
 
