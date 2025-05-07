@@ -46,7 +46,7 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: stacksjs/action-releaser@v1.0.0
+        uses: stacksjs/action-releaser@v1.1.0
         with:
           files: |
             ./packages/rpx/bin/rpx-linux-x64.zip
