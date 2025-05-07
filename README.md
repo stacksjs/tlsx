@@ -1,4 +1,4 @@
-<p align="center"><img src=".github/art/cover.png" alt="Social Card of this repo"></p>
+<p align="center"><img src=".github/art/cover.jpg" alt="Social Card of this repo"></p>
 
 [![npm version][npm-version-src]][npm-version-href]
 [![GitHub Actions][github-actions-src]][github-actions-href]
