@@ -1,4 +1,3 @@
-import type forge from 'node-forge'
 import type { CAOptions, Certificate, CertificateOptions } from '../src/types'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
@@ -97,7 +96,7 @@ describe('@stacksjs/tlsx', () => {
     }
     const hostCert = await generateCertificate(options)
     const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
-    const altNames = cert.getExtension('subjectAltName') as forge.Extension
+    const altNames = cert.getExtension('subjectAltName') as any
 
     // Type 7 is for IP addresses, Type 6 is for URIs in SubjectAltName extension
     const altNamesList = (altNames as any).altNames as Array<{ type: number, value: string }>
@@ -141,19 +140,19 @@ describe('@stacksjs/tlsx', () => {
     const subject = details.subject
 
     // Check each field in the subject
-    const orgField = subject.find((field: any) => field.shortName === 'O')
+    const orgField = subject.find((field: { shortName: string, value: string }) => field.shortName === 'O')
     expect(orgField?.value).toBe('Test Corp')
 
-    const countryField = subject.find((field: any) => field.shortName === 'C')
+    const countryField = subject.find((field: { shortName: string, value: string }) => field.shortName === 'C')
     expect(countryField?.value).toBe('US')
 
-    const stateField = subject.find((field: any) => field.shortName === 'ST')
+    const stateField = subject.find((field: { shortName: string, value: string }) => field.shortName === 'ST')
     expect(stateField?.value).toBe('California')
 
-    const localityField = subject.find(field => field.shortName === 'L')
+    const localityField = subject.find((field: { shortName: string, value: string }) => field.shortName === 'L')
     expect(localityField?.value).toBe('San Francisco')
 
-    const ouField = subject.find(field => field.shortName === 'OU')
+    const ouField = subject.find((field: { shortName: string, value: string }) => field.shortName === 'OU')
     expect(ouField?.value).toBe('Test Unit')
   })
 
@@ -229,11 +228,11 @@ describe('@stacksjs/tlsx', () => {
       const hostCert = await generateCertificate(options)
       const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
 
-      const keyUsage = cert.getExtension('keyUsage') as forge.Extension
+      const keyUsage = cert.getExtension('keyUsage') as any
       expect((keyUsage as any).digitalSignature).toBe(true)
       expect((keyUsage as any).keyEncipherment).toBe(true)
 
-      const extKeyUsage = cert.getExtension('extKeyUsage') as forge.Extension
+      const extKeyUsage = cert.getExtension('extKeyUsage') as any
       expect((extKeyUsage as any).serverAuth).toBe(true)
       expect((extKeyUsage as any).clientAuth).toBe(true)
     })
@@ -254,7 +253,7 @@ describe('@stacksjs/tlsx', () => {
       const hostCert = await generateCertificate(options)
       const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
 
-      const basicConstraints = cert.getExtension('basicConstraints')
+      const basicConstraints = cert.getExtension('basicConstraints') as any
       expect(basicConstraints?.cA).toBe(true)
       expect(basicConstraints?.pathLenConstraint).toBe(1)
     })
@@ -276,8 +275,8 @@ describe('@stacksjs/tlsx', () => {
       const details = parseCertDetails(hostCert.certificate)
 
       const subject = details.subject
-      expect(subject.find(field => field.shortName === 'OU')?.value).toBe('Test Unit')
-      expect(subject.find(field => field.shortName === 'O')?.value).toBe('Test Corp')
+      expect(subject.find((field: { shortName: string, value: string }) => field.shortName === 'OU')?.value).toBe('Test Unit')
+      expect(subject.find((field: { shortName: string, value: string }) => field.shortName === 'O')?.value).toBe('Test Corp')
     })
   })
 })
