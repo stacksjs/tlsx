@@ -41,7 +41,7 @@ const cert = await generateCertificate({
   rootCA: existingCA,
 
   // Certificate validity
-  validityDays: 730,  // 2 years
+  validityDays: 730, // 2 years
 
   // Certificate subject details
   commonName: 'Example Project Local',

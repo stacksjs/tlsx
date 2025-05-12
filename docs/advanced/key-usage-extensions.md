@@ -19,7 +19,7 @@ const cert = await generateCertificate({
 
   // Basic constraints
   basicConstraints: {
-    cA: false,      // Not a CA certificate
+    cA: false, // Not a CA certificate
     critical: true, // This extension is critical
   },
 })
@@ -36,10 +36,10 @@ const cert = await generateCertificate({
 
   // Key usage
   keyUsage: {
-    digitalSignature: true,  // Allow digital signatures
-    keyEncipherment: true,   // Allow key encipherment
+    digitalSignature: true, // Allow digital signatures
+    keyEncipherment: true, // Allow key encipherment
     dataEncipherment: false, // Disallow data encipherment
-    critical: true,          // This extension is critical
+    critical: true, // This extension is critical
   },
 })
 ```
@@ -64,12 +64,12 @@ const cert = await generateCertificate({
 
   // Extended key usage
   extKeyUsage: {
-    serverAuth: true,  // Web server authentication
-    clientAuth: true,  // Web client authentication
+    serverAuth: true, // Web server authentication
+    clientAuth: true, // Web client authentication
     codeSigning: false,
     emailProtection: false,
     timeStamping: false,
-    critical: false,    // This extension is not critical
+    critical: false, // This extension is not critical
   },
 })
 ```
@@ -98,7 +98,7 @@ const cert = await generateCertificate({
   // Custom SANs
   subjectAltNames: [
     { type: 2, value: 'custom.example.local' }, // DNS name
-    { type: 7, value: '10.0.0.1' },             // IP address
+    { type: 7, value: '10.0.0.1' }, // IP address
     { type: 6, value: 'https://example.local' }, // URI
   ],
 
