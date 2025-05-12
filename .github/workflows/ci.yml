@@ -107,4 +107,4 @@ jobs:
         run: bun run build
 
       - name: Publish Commit
-        run: bunx pkg-pr-new publish './packages/rpx' './packages/bun-plugin'
+        run: bunx pkg-pr-new publish './packages/tlsx' './packages/bun-plugin' './packages/vite-plugin'
