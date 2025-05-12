@@ -35,7 +35,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/src/index.js"
+      "import": "./dist/src/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "module": "./dist/src/index.js",
