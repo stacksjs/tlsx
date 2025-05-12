@@ -1,6 +1,63 @@
 # Changelog
 
 
+## v0.10.0...main
+
+[compare changes](https://github.com/stacksjs/tlsx/compare/v0.10.0...main)
+
+### 🚀 Enhancements
+
+- Add bun plugin ([ea9ba9f](https://github.com/stacksjs/tlsx/commit/ea9ba9f))
+
+### 📖 Documentation
+
+- Several updates ([9f2cf5b](https://github.com/stacksjs/tlsx/commit/9f2cf5b))
+- Minor improvements ([ad4fe66](https://github.com/stacksjs/tlsx/commit/ad4fe66))
+- More updates ([8fba663](https://github.com/stacksjs/tlsx/commit/8fba663))
+- Add analytics ([5f3086b](https://github.com/stacksjs/tlsx/commit/5f3086b))
+- Added clean urls ([65464d2](https://github.com/stacksjs/tlsx/commit/65464d2))
+- Enhance docs ([b09f954](https://github.com/stacksjs/tlsx/commit/b09f954))
+- Enhance tags ([40195ab](https://github.com/stacksjs/tlsx/commit/40195ab))
+- Adjust install section ([7f02601](https://github.com/stacksjs/tlsx/commit/7f02601))
+- Updates on config page ([efda9ec](https://github.com/stacksjs/tlsx/commit/efda9ec))
+- Adjust code theme ([4c25f12](https://github.com/stacksjs/tlsx/commit/4c25f12))
+- Update showcase ([00f97c1](https://github.com/stacksjs/tlsx/commit/00f97c1))
+- Improve showcase ([9de086c](https://github.com/stacksjs/tlsx/commit/9de086c))
+- Improve showcase ([a8b0baa](https://github.com/stacksjs/tlsx/commit/a8b0baa))
+- Improve sponsor ([6a3eed0](https://github.com/stacksjs/tlsx/commit/6a3eed0))
+- Add features and advanced sections ([f2ed949](https://github.com/stacksjs/tlsx/commit/f2ed949))
+- Adjust config ([0ad0e00](https://github.com/stacksjs/tlsx/commit/0ad0e00))
+
+### 🏡 Chore
+
+- Update readme ([4880929](https://github.com/stacksjs/tlsx/commit/4880929))
+- Add bunfig ([d46942c](https://github.com/stacksjs/tlsx/commit/d46942c))
+- Update deps ([eee6655](https://github.com/stacksjs/tlsx/commit/eee6655))
+- Use text lockfile ([b3f5905](https://github.com/stacksjs/tlsx/commit/b3f5905))
+- Update renovate config ([17983a0](https://github.com/stacksjs/tlsx/commit/17983a0))
+- Remove redundant examples ([57bf2e4](https://github.com/stacksjs/tlsx/commit/57bf2e4))
+- Enhance sponsor ([ed1f81f](https://github.com/stacksjs/tlsx/commit/ed1f81f))
+- Update readme ([2905dc9](https://github.com/stacksjs/tlsx/commit/2905dc9))
+- Add github funding info ([6b7f18b](https://github.com/stacksjs/tlsx/commit/6b7f18b))
+- Enhance sponsor ([6250275](https://github.com/stacksjs/tlsx/commit/6250275))
+- Enhance funding and remove bun.lockb ([54daa9b](https://github.com/stacksjs/tlsx/commit/54daa9b))
+- Update deps ([e7d6f17](https://github.com/stacksjs/tlsx/commit/e7d6f17))
+- Add word to dictionary ([7c46c85](https://github.com/stacksjs/tlsx/commit/7c46c85))
+- Add types docblocks ([32101cc](https://github.com/stacksjs/tlsx/commit/32101cc))
+- Add tests ([982596c](https://github.com/stacksjs/tlsx/commit/982596c))
+- Minor updates ([19593a0](https://github.com/stacksjs/tlsx/commit/19593a0))
+- Add stargazer and zip ([00c8532](https://github.com/stacksjs/tlsx/commit/00c8532))
+- Use workspaces ([bd8250b](https://github.com/stacksjs/tlsx/commit/bd8250b))
+- Meta updates ([745246d](https://github.com/stacksjs/tlsx/commit/745246d))
+- Adjust cover path ([0762987](https://github.com/stacksjs/tlsx/commit/0762987))
+- Update deps ([9b6d18d](https://github.com/stacksjs/tlsx/commit/9b6d18d))
+- Add types export ([04873b7](https://github.com/stacksjs/tlsx/commit/04873b7))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+- Cab-mikee ([@cab-mikee](https://github.com/cab-mikee))
+
 ## v0.9.0...main
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.9.0...main)
