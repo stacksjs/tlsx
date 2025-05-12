@@ -5,6 +5,11 @@
     "moduleDetection": "force",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "paths": {
+      "@stacksjs/tlsx": ["./packages/tlsx/src"],
+      "bun-plugin-tlsx": ["./packages/bun-plugin/src"],
+      "vite-plugin-tlsx": ["./packages/vite-plugin/src"]
+    },
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "strict": true,

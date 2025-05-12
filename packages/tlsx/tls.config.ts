@@ -3,19 +3,19 @@ import os from 'node:os'
 import path from 'node:path'
 
 const config: TlsConfig = {
-  domain: 'stacks.localhost',
-  hostCertCN: 'stacks.localhost',
+  domain: 'localhost',
+  hostCertCN: 'localhost',
   basePath: '',
-  caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.ca.crt`),
-  certPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt`),
-  keyPath: path.join(os.homedir(), '.stacks', 'ssl', `stacks.localhost.crt.key`),
+  caCertPath: path.join(os.homedir(), '.tlsx', 'ssl', `localhost.ca.crt`),
+  certPath: path.join(os.homedir(), '.tlsx', 'ssl', `localhost.crt`),
+  keyPath: path.join(os.homedir(), '.tlsx', 'ssl', `localhost.key`),
   altNameIPs: ['127.0.0.1'],
   altNameURIs: ['localhost'],
   organizationName: 'stacksjs.org',
   countryName: 'US',
   stateName: 'California',
   localityName: 'Playa Vista',
-  commonName: 'stacks.localhost',
+  commonName: 'localhost',
   validityDays: 180,
   verbose: false,
 }
