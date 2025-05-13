@@ -53,7 +53,7 @@
     "release": "bun run changelog && bunx bumpp package.json --all",
     "test": "bun test",
     "typecheck": "bun --bun tsc --noEmit",
-    "dev:docs": "bun --bun vitepress dev docs",
+    "dev:docs": "bun --bun vitepress dev docs --https",
     "build:docs": "bun --bun vitepress build docs",
     "preview:docs": "bun --bun vitepress preview docs"
   },

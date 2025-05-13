@@ -1,0 +1,65 @@
+{
+  "name": "vite-plugin-tlsx",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "A Vite plugin that adds HTTPS support using tlsx.",
+  "author": "Chris Breuer <chris@stacksjs.org>",
+  "license": "MIT",
+  "homepage": "https://github.com/stacksjs/tlsx",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stacksjs/tlsx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stacksjs/tlsx/issues"
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "https",
+    "tls",
+    "ssl",
+    "development",
+    "security",
+    "vitepress",
+    "stacks",
+    "typescript",
+    "javascript"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "module": "./dist/src/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun build.ts",
+    "lint": "bunx --bun eslint .",
+    "lint:fix": "bunx --bun eslint . --fix",
+    "prepublishOnly": "bun --bun run build",
+    "test": "bun test",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "peerDependencies": {
+    "vite": "^4.0.0 || ^5.0.0"
+  },
+  "dependencies": {
+    "@stacksjs/tlsx": "workspace:*"
+  },
+  "devDependencies": {
+    "bun-plugin-dtsx": "^0.21.12",
+    "vite": "^5.0.0"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "bunx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts}": "bunx eslint . --fix"
+  }
+}
