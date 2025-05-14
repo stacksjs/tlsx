@@ -1,21 +1,21 @@
 {
-  "name": "bun-plugin-rpx",
+  "name": "bun-plugin-tlsx",
   "type": "module",
-  "version": "0.10.0",
-  "description": "A modern and smart reverse proxy. Bun plugin.",
+  "version": "0.11.0",
+  "description": "A modern and smart TLS/HTTPS library. Bun plugin.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
-  "homepage": "https://github.com/stacksjs/rpx",
+  "homepage": "https://github.com/stacksjs/tlsx",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stacksjs/rpx.git"
+    "url": "git+https://github.com/stacksjs/tlsx.git"
   },
   "bugs": {
-    "url": "https://github.com/stacksjs/rpx/issues"
+    "url": "https://github.com/stacksjs/tlsx/issues"
   },
   "keywords": [
-    "reverse proxy",
-    "ssl",
+    "tls",
+    "https",
     "development",
     "environment",
     "proxy",
@@ -28,10 +28,10 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/src/index.js"
+      "import": "./dist/index.js"
     }
   },
-  "module": "./dist/src/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "README.md",

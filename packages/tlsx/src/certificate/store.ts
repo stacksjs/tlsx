@@ -3,7 +3,7 @@ import path from 'node:path'
 import type { Cert, CertPath, TlsOption } from '../types'
 import { config } from '../config'
 import { LOG_CATEGORIES } from '../constants'
-import { debugLog } from '../utils'
+import { debugLog, normalizeCertPaths } from '../utils'
 
 /**
  * Store a certificate and its private key
@@ -13,13 +13,16 @@ import { debugLog } from '../utils'
  */
 export function storeCertificate(cert: Cert, options?: TlsOption): CertPath {
   debugLog(LOG_CATEGORIES.STORAGE, `Storing certificate and private key with options: ${JSON.stringify(options)}`, options?.verbose)
-  const certPath = path.join(options?.basePath || config.basePath, options?.certPath || config.certPath)
-  const certKeyPath = path.join(options?.basePath || config.basePath, options?.keyPath || config.keyPath)
+  const { certPath, keyPath } = normalizeCertPaths({
+    basePath: options?.basePath,
+    certPath: options?.certPath,
+    keyPath: options?.keyPath,
+  })
 
   debugLog(LOG_CATEGORIES.STORAGE, `Certificate path: ${certPath}`, options?.verbose)
-  debugLog(LOG_CATEGORIES.STORAGE, `Private key path: ${certKeyPath}`, options?.verbose)
+  debugLog(LOG_CATEGORIES.STORAGE, `Private key path: ${keyPath}`, options?.verbose)
 
-  // Ensure the directory exists before writing the file
+  // Ensure the certificate directory exists before writing the file
   const certDir = path.dirname(certPath)
   if (!fs.existsSync(certDir)) {
     debugLog(LOG_CATEGORIES.STORAGE, `Creating certificate directory: ${certDir}`, options?.verbose)
@@ -29,15 +32,15 @@ export function storeCertificate(cert: Cert, options?: TlsOption): CertPath {
   debugLog(LOG_CATEGORIES.STORAGE, 'Writing certificate file', options?.verbose)
   fs.writeFileSync(certPath, cert.certificate)
 
-  // Ensure the directory exists before writing the file
-  const certKeyDir = path.dirname(certKeyPath)
+  // Ensure the key directory exists before writing the file
+  const certKeyDir = path.dirname(keyPath)
   if (!fs.existsSync(certKeyDir)) {
     debugLog(LOG_CATEGORIES.STORAGE, `Creating private key directory: ${certKeyDir}`, options?.verbose)
     fs.mkdirSync(certKeyDir, { recursive: true })
   }
 
   debugLog(LOG_CATEGORIES.STORAGE, 'Writing private key file', options?.verbose)
-  fs.writeFileSync(certKeyPath, cert.privateKey)
+  fs.writeFileSync(keyPath, cert.privateKey)
 
   debugLog(LOG_CATEGORIES.STORAGE, 'Certificate and private key stored successfully', options?.verbose)
   return certPath
@@ -51,7 +54,10 @@ export function storeCertificate(cert: Cert, options?: TlsOption): CertPath {
  */
 export function storeCACertificate(caCert: string, options?: TlsOption): CertPath {
   debugLog(LOG_CATEGORIES.STORAGE, 'Storing CA certificate', options?.verbose)
-  const caCertPath = path.join(options?.basePath || config.basePath, options?.caCertPath || config.caCertPath)
+  const { caCertPath } = normalizeCertPaths({
+    basePath: options?.basePath,
+    caCertPath: options?.caCertPath,
+  })
 
   debugLog(LOG_CATEGORIES.STORAGE, `CA certificate path: ${caCertPath}`, options?.verbose)
 

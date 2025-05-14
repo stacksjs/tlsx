@@ -9,6 +9,7 @@ import { storeCACertificate, storeCertificate } from './store'
 // Define platform-specific trust store handlers
 interface TrustStoreHandler {
   addCertificate(caCertPath: string, options?: TlsOption): Promise<void>
+  removeCertificate?(caCertPath: string, options?: TlsOption): Promise<void>
   platform: string
 }
 
@@ -21,6 +22,21 @@ const macOSTrustStoreHandler: TrustStoreHandler = {
       `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${caCertPath}`,
     )
   },
+  async removeCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
+    debugLog(LOG_CATEGORIES.TRUST, 'Removing certificate from macOS keychain', options?.verbose)
+    // First get the certificate hash/name from the system
+    const certName = config.commonName
+    try {
+      await runCommand(
+        `sudo security delete-certificate -c "${certName}" /Library/Keychains/System.keychain`,
+      )
+      debugLog(LOG_CATEGORIES.TRUST, `Removed certificate ${certName} from macOS keychain`, options?.verbose)
+    }
+    catch (error) {
+      debugLog(LOG_CATEGORIES.TRUST, `Error removing certificate: ${error}`, options?.verbose)
+      throw error
+    }
+  }
 }
 
 // Windows trust store handler
@@ -30,6 +46,19 @@ const windowsTrustStoreHandler: TrustStoreHandler = {
     debugLog(LOG_CATEGORIES.TRUST, 'Adding certificate to Windows certificate store', options?.verbose)
     await runCommand(`certutil -f -v -addstore -enterprise Root ${caCertPath}`)
   },
+  async removeCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
+    debugLog(LOG_CATEGORIES.TRUST, 'Removing certificate from Windows certificate store', options?.verbose)
+    // Get the certificate serial number or hash
+    const certName = config.commonName
+    try {
+      await runCommand(`certutil -delstore -enterprise Root "${certName}"`)
+      debugLog(LOG_CATEGORIES.TRUST, `Removed certificate ${certName} from Windows certificate store`, options?.verbose)
+    }
+    catch (error) {
+      debugLog(LOG_CATEGORIES.TRUST, `Error removing certificate: ${error}`, options?.verbose)
+      throw error
+    }
+  }
 }
 
 // Linux trust store handler
@@ -66,6 +95,31 @@ const linuxTrustStoreHandler: TrustStoreHandler = {
       log.info(`Cert added to ${folder}`)
     }
   },
+  async removeCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
+    debugLog(LOG_CATEGORIES.TRUST, 'Removing certificate from Linux certificate store', options?.verbose)
+    const rootDirectory = os.homedir()
+    const targetFileName = CERT_CONSTANTS.LINUX_CERT_DB_FILENAME
+
+    debugLog(LOG_CATEGORIES.TRUST, `Searching for certificate databases in ${rootDirectory}`, options?.verbose)
+    const foldersWithFile = findFoldersWithFile(rootDirectory, targetFileName)
+
+    if (foldersWithFile.length === 0) {
+      log.warn('No certificate databases found. Cannot remove certificate.')
+      return
+    }
+
+    for (const folder of foldersWithFile) {
+      debugLog(LOG_CATEGORIES.TRUST, `Processing certificate database in ${folder}`, options?.verbose)
+      try {
+        await runCommand(`certutil -d sql:${folder} -D -n ${config.commonName}`)
+        log.info(`Cert removed from ${folder}`)
+      }
+      catch (error) {
+        debugLog(LOG_CATEGORIES.TRUST, `Error removing cert from ${folder}: ${error}`, options?.verbose)
+        console.warn(`Error removing cert from ${folder}: ${error}`)
+      }
+    }
+  }
 }
 
 // Map of platform-specific handlers
@@ -104,4 +158,33 @@ export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: s
 
   debugLog(LOG_CATEGORIES.TRUST, 'Certificate successfully added to system trust store', options?.verbose)
   return certPath
+}
+
+/**
+ * Remove a certificate from the system trust store
+ * @param domain - Domain of the certificate to remove
+ * @param options - TLS options
+ */
+export async function removeCertFromSystemTrustStore(domain: string, options?: TlsOption): Promise<void> {
+  debugLog(LOG_CATEGORIES.TRUST, `Removing certificate for ${domain} from system trust store`, options?.verbose)
+
+  // We should use the caCertPath since that's what's actually added to the trust store
+  const caCertPath = options?.caCertPath || config.caCertPath
+
+  const platform = os.platform()
+  debugLog(LOG_CATEGORIES.TRUST, `Detected platform: ${platform}`, options?.verbose)
+
+  const handler = trustStoreHandlers[platform]
+  if (!handler) {
+    const errorMsg = `Unsupported platform: ${platform}`
+    debugLog(LOG_CATEGORIES.TRUST, `Error: ${errorMsg}`, options?.verbose)
+    throw new Error(errorMsg)
+  }
+
+  if (!handler.removeCertificate) {
+    throw new Error(`Removing certificates is not supported on ${platform}`)
+  }
+
+  await handler.removeCertificate(caCertPath, options)
+  debugLog(LOG_CATEGORIES.TRUST, `Certificate for ${domain} successfully removed from system trust store`, options?.verbose)
 }

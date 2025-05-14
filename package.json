@@ -1,6 +1,7 @@
 {
-  "name": "@stacksjs/tlsx",
+  "name": "tlsx",
   "type": "module",
+  "private": true,
   "version": "0.11.0",
   "description": "A TLS/HTTPS library with automation.",
   "author": "Chris Breuer <chris@stacksjs.org>",
@@ -33,18 +34,6 @@
     "typescript",
     "javascript"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/src/index.js"
-    }
-  },
-  "module": "./dist/src/index.js",
-  "types": "./dist/index.d.ts",
-  "bin": {
-    "tlsx": "./dist/bin/cli.js"
-  },
-  "files": ["README.md", "dist"],
   "scripts": {
     "lint": "bunx --bun eslint .",
     "lint:fix": "bunx --bun eslint . --fix",
@@ -65,7 +54,6 @@
     "bun-plugin-dtsx": "^0.21.12",
     "cac": "^6.7.14",
     "node-forge": "^1.3.1",
-    "picocolors": "^1.1.1",
     "typescript": "^5.8.3"
   },
   "overrides": {
@@ -76,5 +64,8 @@
   },
   "lint-staged": {
     "*.{js,ts}": "bunx eslint . --fix"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

@@ -170,3 +170,43 @@ export function getPrimaryDomain(options: CertificateOptions): string {
 
   throw new Error('Either domain or domains must be specified')
 }
+
+/**
+ * Normalizes certificate paths based on basePath and defaults
+ * @param options Options that may contain file paths
+ * @returns Normalized file paths
+ */
+export function normalizeCertPaths(options: {
+  basePath?: string
+  certPath?: string
+  keyPath?: string
+  caCertPath?: string
+}): { certPath: string; keyPath: string; caCertPath: string; basePath: string } {
+  const basePath = options.basePath || config.basePath
+
+  // Resolve paths properly
+  const certPath = options.certPath
+    ? path.isAbsolute(options.certPath)
+      ? options.certPath
+      : path.join(basePath, options.certPath)
+    : path.join(basePath, config.certPath)
+
+  const keyPath = options.keyPath
+    ? path.isAbsolute(options.keyPath)
+      ? options.keyPath
+      : path.join(basePath, options.keyPath)
+    : path.join(basePath, config.keyPath)
+
+  const caCertPath = options.caCertPath
+    ? path.isAbsolute(options.caCertPath)
+      ? options.caCertPath
+      : path.join(basePath, options.caCertPath)
+    : path.join(basePath, config.caCertPath)
+
+  return {
+    certPath: certPath,
+    keyPath: keyPath,
+    caCertPath: caCertPath,
+    basePath: basePath,
+  }
+}

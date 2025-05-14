@@ -1,6 +1,10 @@
 import type { CertDetails } from '../types'
 import { pki } from 'node-forge'
 import { readCertFromFile } from '../utils'
+import fs from 'node:fs'
+import { config } from '../config'
+import { LOG_CATEGORIES } from '../constants'
+import { debugLog } from '../utils'
 
 /**
  * Checks if a certificate is valid for a given domain.
@@ -89,4 +93,136 @@ export function getCertificateFromCertPemOrPath(certPemOrPath: string): pki.Cert
   }
 
   return pki.certificateFromPem(certPem)
+}
+
+export interface CertificateValidationResult {
+  valid: boolean
+  expired: boolean
+  notYetValid: boolean
+  issuerValid: boolean
+  domains: string[]
+  validFrom: Date
+  validTo: Date
+  issuer: string
+  subject: string
+  message?: string
+}
+
+/**
+ * Validate a certificate
+ * @param certificatePath Path to the certificate file
+ * @param caCertificatePath Path to the CA certificate file
+ * @param verbose Enable verbose logging
+ * @returns Certificate validation result
+ */
+export function validateCertificate(
+  certificatePath: string,
+  caCertificatePath?: string,
+  verbose?: boolean,
+): CertificateValidationResult {
+  debugLog(LOG_CATEGORIES.CERT, `Validating certificate: ${certificatePath}`, verbose)
+
+  try {
+    // Check if certificate exists
+    if (!fs.existsSync(certificatePath)) {
+      return {
+        valid: false,
+        expired: false,
+        notYetValid: false,
+        issuerValid: false,
+        domains: [],
+        validFrom: new Date(),
+        validTo: new Date(),
+        issuer: '',
+        subject: '',
+        message: `Certificate file not found: ${certificatePath}`,
+      }
+    }
+
+    // Read certificate
+    const certPem = fs.readFileSync(certificatePath, 'utf8')
+    const cert = pki.certificateFromPem(certPem)
+
+    // Check validity period
+    const now = new Date()
+    const notBefore = new Date(cert.validity.notBefore)
+    const notAfter = new Date(cert.validity.notAfter)
+
+    const expired = now > notAfter
+    const notYetValid = now < notBefore
+
+    // Get certificate subject and issuer
+    const subject = cert.subject.getField('CN')?.value || 'Unknown'
+    const issuer = cert.issuer.getField('CN')?.value || 'Unknown'
+
+    // Extract domains from the certificate
+    const domains: string[] = []
+
+    // Add the CN as the first domain if it's a valid domain name (not an IP address)
+    if (subject && !/^\d+\.\d+\.\d+\.\d+$/.test(subject)) {
+      domains.push(subject)
+    }
+
+    // Get subject alt names
+    const altNamesExt = cert.getExtension('subjectAltName')
+    if (altNamesExt && 'altNames' in altNamesExt) {
+      const altNames = altNamesExt.altNames as Array<{ type: number, value: string }>
+      for (const altName of altNames) {
+        if (altName.type === 2) { // DNS name
+          domains.push(altName.value)
+        }
+      }
+    }
+
+    // Validate the issuer if CA certificate path is provided
+    let issuerValid = false
+    if (caCertificatePath) {
+      if (fs.existsSync(caCertificatePath)) {
+        try {
+          const caCertPem = fs.readFileSync(caCertificatePath, 'utf8')
+          const caCert = pki.certificateFromPem(caCertPem)
+
+          // Check if the certificate was issued by the CA
+          // Compare the issuer of the certificate with the subject of the CA certificate
+          issuerValid = cert.isIssuer(caCert)
+        }
+        catch (error) {
+          debugLog(LOG_CATEGORIES.CERT, `Error validating CA certificate: ${error}`, verbose)
+        }
+      }
+      else {
+        debugLog(LOG_CATEGORIES.CERT, `CA certificate file not found: ${caCertificatePath}`, verbose)
+      }
+    }
+
+    const valid = !expired && !notYetValid && (caCertificatePath ? issuerValid : true)
+
+    return {
+      valid,
+      expired,
+      notYetValid,
+      issuerValid,
+      domains,
+      validFrom: notBefore,
+      validTo: notAfter,
+      issuer,
+      subject,
+    }
+  }
+  catch (error) {
+    debugLog(LOG_CATEGORIES.CERT, `Error validating certificate: ${error}`, verbose)
+
+    return {
+      valid: false,
+      expired: false,
+      notYetValid: false,
+      issuerValid: false,
+      domains: [],
+      validFrom: new Date(),
+      validTo: new Date(),
+      issuer: '',
+      subject: '',
+      message: `Error validating certificate: ${error}`,
+    }
+  }
 }

@@ -28,7 +28,9 @@ bunx @stacksjs/tlsx
 npx @stacksjs/tlsx
 ```
 
-Please note, we are looking to publish this package to npm under the name `tlsx`. _Hoping npm will release the name for us._
+Please note, we are looking to publish this package to npm under the name `tlsx`.
+
+_Here's to hoping npm will release the name for us 🙏🏽_
 
 <!-- _Alternatively, you can install:_
 
