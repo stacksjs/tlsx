@@ -68,7 +68,7 @@
   "devDependencies": {
     "@stacksjs/tlsx": "^0.10.0",
     "bun-plugin-dtsx": "^0.21.12",
-    "bunfig": "^0.8.4",
+    "bunfig": "^0.8.5",
     "cac": "^6.7.14",
     "consola": "^3.4.2",
     "typescript": "^5.8.3"

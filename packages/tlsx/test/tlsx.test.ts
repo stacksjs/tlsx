@@ -150,7 +150,7 @@ describe('@stacksjs/tlsx', () => {
     expect(stateField?.value).toBe('California')
 
     const localityField = subject.find((field: { shortName: string, value: string }) => field.shortName === 'L')
-    expect(localityField?.value).toBe('San Francisco')
+    expect(localityField?.value).toBe('Playa Vista')
 
     const ouField = subject.find((field: { shortName: string, value: string }) => field.shortName === 'OU')
     expect(ouField?.value).toBe('Test Unit')
