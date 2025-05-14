@@ -1,4 +1,5 @@
 export * from './certificate'
 export { config, defaultConfig } from './config'
+export * from './constants'
 export * from './types'
 export * from './utils'

@@ -2,6 +2,7 @@ import os from 'node:os'
 import { consola as log } from 'consola'
 import type { Cert, CertPath, TlsOption } from '../types'
 import { config } from '../config'
+import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
 import { debugLog, findFoldersWithFile, runCommand } from '../utils'
 import { storeCACertificate, storeCertificate } from './store'
 
@@ -15,7 +16,7 @@ interface TrustStoreHandler {
 const macOSTrustStoreHandler: TrustStoreHandler = {
   platform: 'darwin',
   async addCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
-    debugLog('trust', 'Adding certificate to macOS keychain', options?.verbose)
+    debugLog(LOG_CATEGORIES.TRUST, 'Adding certificate to macOS keychain', options?.verbose)
     await runCommand(
       `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${caCertPath}`,
     )
@@ -26,7 +27,7 @@ const macOSTrustStoreHandler: TrustStoreHandler = {
 const windowsTrustStoreHandler: TrustStoreHandler = {
   platform: 'win32',
   async addCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
-    debugLog('trust', 'Adding certificate to Windows certificate store', options?.verbose)
+    debugLog(LOG_CATEGORIES.TRUST, 'Adding certificate to Windows certificate store', options?.verbose)
     await runCommand(`certutil -f -v -addstore -enterprise Root ${caCertPath}`)
   },
 }
@@ -35,12 +36,12 @@ const windowsTrustStoreHandler: TrustStoreHandler = {
 const linuxTrustStoreHandler: TrustStoreHandler = {
   platform: 'linux',
   async addCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
-    debugLog('trust', 'Adding certificate to Linux certificate store', options?.verbose)
+    debugLog(LOG_CATEGORIES.TRUST, 'Adding certificate to Linux certificate store', options?.verbose)
     const rootDirectory = os.homedir()
-    const targetFileName = 'cert9.db'
-    const args = 'TC, C, C'
+    const targetFileName = CERT_CONSTANTS.LINUX_CERT_DB_FILENAME
+    const args = CERT_CONSTANTS.LINUX_TRUST_ARGS
 
-    debugLog('trust', `Searching for certificate databases in ${rootDirectory}`, options?.verbose)
+    debugLog(LOG_CATEGORIES.TRUST, `Searching for certificate databases in ${rootDirectory}`, options?.verbose)
     const foldersWithFile = findFoldersWithFile(rootDirectory, targetFileName)
 
     if (foldersWithFile.length === 0) {
@@ -49,17 +50,17 @@ const linuxTrustStoreHandler: TrustStoreHandler = {
     }
 
     for (const folder of foldersWithFile) {
-      debugLog('trust', `Processing certificate database in ${folder}`, options?.verbose)
+      debugLog(LOG_CATEGORIES.TRUST, `Processing certificate database in ${folder}`, options?.verbose)
       try {
-        debugLog('trust', `Attempting to delete existing cert for ${config.commonName}`, options?.verbose)
+        debugLog(LOG_CATEGORIES.TRUST, `Attempting to delete existing cert for ${config.commonName}`, options?.verbose)
         await runCommand(`certutil -d sql:${folder} -D -n ${config.commonName}`)
       }
       catch (error) {
-        debugLog('trust', `Warning: Error deleting existing cert: ${error}`, options?.verbose)
+        debugLog(LOG_CATEGORIES.TRUST, `Warning: Error deleting existing cert: ${error}`, options?.verbose)
         console.warn(`Error deleting existing cert: ${error}`)
       }
 
-      debugLog('trust', `Adding new certificate to ${folder}`, options?.verbose)
+      debugLog(LOG_CATEGORIES.TRUST, `Adding new certificate to ${folder}`, options?.verbose)
       await runCommand(`certutil -d sql:${folder} -A -t ${args} -n ${config.commonName} -i ${caCertPath}`)
 
       log.info(`Cert added to ${folder}`)
@@ -82,25 +83,25 @@ const trustStoreHandlers: Record<string, TrustStoreHandler> = {
  * @returns The path to the stored certificate
  */
 export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: string, options?: TlsOption): Promise<CertPath> {
-  debugLog('trust', `Adding certificate to system trust store with options: ${JSON.stringify(options)}`, options?.verbose)
-  debugLog('trust', 'Storing certificate and private key', options?.verbose)
+  debugLog(LOG_CATEGORIES.TRUST, `Adding certificate to system trust store with options: ${JSON.stringify(options)}`, options?.verbose)
+  debugLog(LOG_CATEGORIES.TRUST, 'Storing certificate and private key', options?.verbose)
   const certPath = storeCertificate(cert, options)
 
-  debugLog('trust', 'Storing CA certificate', options?.verbose)
+  debugLog(LOG_CATEGORIES.TRUST, 'Storing CA certificate', options?.verbose)
   const caCertPath = storeCACertificate(caCert, options)
 
   const platform = os.platform()
-  debugLog('trust', `Detected platform: ${platform}`, options?.verbose)
+  debugLog(LOG_CATEGORIES.TRUST, `Detected platform: ${platform}`, options?.verbose)
 
   const handler = trustStoreHandlers[platform]
   if (!handler) {
     const errorMsg = `Unsupported platform: ${platform}`
-    debugLog('trust', `Error: ${errorMsg}`, options?.verbose)
+    debugLog(LOG_CATEGORIES.TRUST, `Error: ${errorMsg}`, options?.verbose)
     throw new Error(errorMsg)
   }
 
   await handler.addCertificate(caCertPath, options)
 
-  debugLog('trust', 'Certificate successfully added to system trust store', options?.verbose)
+  debugLog(LOG_CATEGORIES.TRUST, 'Certificate successfully added to system trust store', options?.verbose)
   return certPath
 }

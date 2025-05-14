@@ -1,6 +1,7 @@
 import forge, { pki } from 'node-forge'
 import type { CAOptions, Certificate, CertificateOptions } from '../types'
 import { config } from '../config'
+import { CERT_CONSTANTS } from '../constants'
 import { debugLog, getPrimaryDomain } from '../utils'
 import { calculateValidityDates, generateCertificateExtensions, generateRandomSerial } from './utils'
 
@@ -12,7 +13,7 @@ import { calculateValidityDates, generateCertificateExtensions, generateRandomSe
 export async function createRootCA(options: CAOptions = {}): Promise<Certificate> {
   debugLog('ca', 'Creating new Root CA Certificate', options.verbose)
 
-  const keySize = options.keySize || 2048
+  const keySize = options.keySize || CERT_CONSTANTS.DEFAULT_KEY_SIZE
   debugLog('ca', `Generating ${keySize}-bit RSA key pair`, options.verbose)
   const { privateKey, publicKey } = pki.rsa.generateKeyPair(keySize)
 
@@ -27,7 +28,7 @@ export async function createRootCA(options: CAOptions = {}): Promise<Certificate
   ]
 
   const { notBefore, notAfter } = calculateValidityDates({
-    validityYears: options.validityYears || 100,
+    validityYears: options.validityYears || CERT_CONSTANTS.DEFAULT_CA_VALIDITY_YEARS,
     verbose: options.verbose,
   })
 
@@ -72,8 +73,8 @@ export async function createRootCA(options: CAOptions = {}): Promise<Certificate
  * @returns Generated certificate
  */
 export async function generateCertificate(options: CertificateOptions): Promise<Certificate> {
-  debugLog('cert', 'Generating new certificate', options.verbose)
-  debugLog('cert', `Options: ${JSON.stringify(options)}`, options.verbose)
+  debugLog('ca', 'Generating new certificate', options.verbose)
+  debugLog('ca', `Options: ${JSON.stringify(options)}`, options.verbose)
 
   // Validate that at least one domain is specified
   if (!options.domain && !options.domains?.length) {
@@ -87,8 +88,8 @@ export async function generateCertificate(options: CertificateOptions): Promise<
   const caCert = pki.certificateFromPem(options.rootCA.certificate)
   const caKey = pki.privateKeyFromPem(options.rootCA.privateKey)
 
-  debugLog('cert', 'Generating 2048-bit RSA key pair for host certificate', options.verbose)
-  const keySize = 2048
+  debugLog('ca', `Generating ${CERT_CONSTANTS.DEFAULT_KEY_SIZE}-bit RSA key pair for host certificate`, options.verbose)
+  const keySize = CERT_CONSTANTS.DEFAULT_KEY_SIZE
   const { privateKey, publicKey } = pki.rsa.generateKeyPair(keySize)
 
   // Use the primary domain for the CN if no specific commonName is provided
@@ -103,7 +104,7 @@ export async function generateCertificate(options: CertificateOptions): Promise<
   ]
 
   const { notBefore, notAfter } = calculateValidityDates({
-    validityDays: options.validityDays,
+    validityDays: options.validityDays || CERT_CONSTANTS.DEFAULT_VALIDITY_DAYS,
     verbose: options.verbose,
   })
 

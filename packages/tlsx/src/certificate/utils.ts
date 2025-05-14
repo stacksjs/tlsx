@@ -1,5 +1,6 @@
 import forge from 'node-forge'
 import type { CertificateExtension, CertificateOptions, RandomSerialNumber, SubjectAltName } from '../types'
+import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
 import { debugLog, getPrimaryDomain, makeNumberPositive } from '../utils'
 
 /**
@@ -47,7 +48,7 @@ export function generateSubjectAltNames(options: CertificateOptions): SubjectAlt
     altNames.push(...options.subjectAltNames)
   }
 
-  debugLog('cert', `Generated ${altNames.length} Subject Alternative Names`, options.verbose)
+  debugLog(LOG_CATEGORIES.CERT, `Generated ${altNames.length} Subject Alternative Names`, options.verbose)
   return altNames
 }
 
@@ -56,9 +57,9 @@ export function generateSubjectAltNames(options: CertificateOptions): SubjectAlt
  * @returns The serial number for the Certificate
  */
 export function generateRandomSerial(verbose?: boolean): RandomSerialNumber {
-  debugLog('cert', 'Generating random serial number', verbose)
+  debugLog(LOG_CATEGORIES.CERT, 'Generating random serial number', verbose)
   const serialNumber = makeNumberPositive(forge.util.bytesToHex(forge.random.getBytesSync(20)))
-  debugLog('cert', `Generated serial number: ${serialNumber}`, verbose)
+  debugLog(LOG_CATEGORIES.CERT, `Generated serial number: ${serialNumber}`, verbose)
   return serialNumber
 }
 
@@ -71,10 +72,10 @@ export function calculateValidityDates(options: {
   notBeforeDays?: number
   verbose?: boolean
 }): { notBefore: Date, notAfter: Date } {
-  const notBeforeDays = options.notBeforeDays ?? 2
-  const validityDays = options.validityDays ?? (options.validityYears ? options.validityYears * 365 : 180)
+  const notBeforeDays = options.notBeforeDays ?? CERT_CONSTANTS.DEFAULT_NOT_BEFORE_DAYS
+  const validityDays = options.validityDays ?? (options.validityYears ? options.validityYears * 365 : CERT_CONSTANTS.DEFAULT_VALIDITY_DAYS)
 
-  debugLog('cert', 'Calculating certificate validity dates', options.verbose)
+  debugLog(LOG_CATEGORIES.CERT, 'Calculating certificate validity dates', options.verbose)
 
   const notBefore = new Date(Date.now() - 60 * 60 * 24 * notBeforeDays * 1000)
   const notAfter = new Date(notBefore.getTime() + validityDays * 24 * 60 * 60 * 1000)
@@ -83,7 +84,7 @@ export function calculateValidityDates(options: {
   notBefore.setUTCHours(0, 0, 0, 0)
   notAfter.setUTCHours(23, 59, 59, 999)
 
-  debugLog('cert', `Validity period: ${notBefore.toISOString()} to ${notAfter.toISOString()}`, options.verbose)
+  debugLog(LOG_CATEGORIES.CERT, `Validity period: ${notBefore.toISOString()} to ${notAfter.toISOString()}`, options.verbose)
 
   return { notBefore, notAfter }
 }
