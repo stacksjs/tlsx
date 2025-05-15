@@ -1,8 +1,9 @@
 #!/usr/bin/env bun
-import path from 'node:path'
 import fs from 'node:fs'
 import os from 'node:os'
-import { createRootCA, generateCertificate, addCertToSystemTrustStoreAndSaveCert } from '../packages/tlsx/src'
+import path from 'node:path'
+import process from 'node:process'
+import { addCertToSystemTrustStoreAndSaveCert, createRootCA, generateCertificate } from '../packages/tlsx/src'
 
 async function main() {
   try {
@@ -31,7 +32,8 @@ async function main() {
       const caKeyPath = path.join(basePath, `${domain}-ca.key`)
       const caKey = fs.readFileSync(caKeyPath, 'utf8')
       rootCA = { certificate: caCert, privateKey: caKey }
-    } else {
+    }
+    else {
       console.log('🔑 Creating new Root CA certificate')
       // Create a new root CA
       rootCA = await createRootCA({

@@ -1,17 +1,16 @@
 #!/usr/bin/env bun
 
-import path from 'node:path'
 import fs from 'node:fs'
 import os from 'node:os'
+import path from 'node:path'
+import process from 'node:process'
 import {
+  addCertToSystemTrustStoreAndSaveCert,
   createRootCA,
   generateCertificate,
-  addCertToSystemTrustStoreAndSaveCert,
+  validateBrowserCompatibility,
   validateCertificate,
-  validateBrowserCompatibility
 } from '../packages/tlsx/src/certificate'
-import { config } from '../packages/tlsx/src/config'
-import { CERT_CONSTANTS } from '../packages/tlsx/src/constants'
 
 async function main() {
   try {
@@ -40,7 +39,8 @@ async function main() {
       const caKeyPath = path.join(basePath, `${domain}-ca.key`)
       const caKey = fs.readFileSync(caKeyPath, 'utf8')
       rootCA = { certificate: caCert, privateKey: caKey }
-    } else {
+    }
+    else {
       console.log('🔑 Creating new Root CA certificate')
       // Create a new root CA with stronger settings for browser compatibility
       rootCA = await createRootCA({
@@ -115,7 +115,8 @@ async function main() {
     const validationResult = validateCertificate(certPath, caCertPath, true)
     if (validationResult.valid) {
       console.log('✅ Certificate is valid!')
-    } else {
+    }
+    else {
       console.warn('⚠️ Certificate validation issues:')
       console.warn(`   - Valid: ${validationResult.valid}`)
       console.warn(`   - Expired: ${validationResult.expired}`)
@@ -128,7 +129,8 @@ async function main() {
     const compatibilityResult = validateBrowserCompatibility(certPath, true)
     if (compatibilityResult.compatible) {
       console.log('✅ Certificate is compatible with modern browsers')
-    } else {
+    }
+    else {
       console.warn('⚠️ Browser compatibility issues:')
       for (const issue of compatibilityResult.issues) {
         console.warn(`   - ${issue}`)
