@@ -52,13 +52,9 @@
     "lint": "bunx --bun eslint .",
     "lint:fix": "bunx --bun eslint . --fix",
     "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
-    "changelog": "bunx changelogen --output CHANGELOG.md",
-    "release": "bun run changelog && bunx bumpp package.json --all",
+    "prepublishOnly": "bun --bun run build",
     "test": "bun test",
-    "typecheck": "bun --bun tsc --noEmit",
-    "dev:docs": "bun --bun vitepress dev docs --https",
-    "build:docs": "bun --bun vitepress build docs",
-    "preview:docs": "bun --bun vitepress preview docs"
+    "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
     "@types/node-forge": "^1.3.11",

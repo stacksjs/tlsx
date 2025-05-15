@@ -226,3 +226,99 @@ export function validateCertificate(
     }
   }
 }
+
+/**
+ * Checks if a certificate is compatible with modern browsers
+ * @param certificatePath Path to the certificate file
+ * @param verbose Enable verbose logging
+ * @returns Browser compatibility validation result with specific issues, if any
+ */
+export function validateBrowserCompatibility(
+  certificatePath: string,
+  verbose?: boolean,
+): { compatible: boolean; issues: string[] } {
+  debugLog(LOG_CATEGORIES.CERT, `Validating browser compatibility: ${certificatePath}`, verbose)
+
+  try {
+    // Check if certificate exists
+    if (!fs.existsSync(certificatePath)) {
+      return {
+        compatible: false,
+        issues: [`Certificate file not found: ${certificatePath}`],
+      }
+    }
+
+    // Read certificate
+    const certPem = fs.readFileSync(certificatePath, 'utf8')
+    const cert = pki.certificateFromPem(certPem)
+
+    const issues: string[] = []
+
+    // Check for localhost SAN
+    let hasLocalhost = false
+    let hasWildcard = false
+
+    // Check subject CN for localhost
+    const subject = cert.subject.getField('CN')?.value || ''
+    if (subject === 'localhost') {
+      hasLocalhost = true
+    }
+
+    // Check SANs for localhost
+    const altNamesExt = cert.getExtension('subjectAltName')
+    if (altNamesExt && 'altNames' in altNamesExt) {
+      const altNames = altNamesExt.altNames as Array<{ type: number, value: string }>
+      for (const altName of altNames) {
+        if (altName.type === 2) { // DNS name
+          if (altName.value === 'localhost') {
+            hasLocalhost = true
+          }
+          if (altName.value.includes('*')) {
+            hasWildcard = true
+          }
+        }
+      }
+    }
+
+    if (!hasLocalhost) {
+      issues.push('Certificate does not include "localhost" in Subject Alternative Names, which may cause issues with some browsers.')
+    }
+
+    if (hasWildcard) {
+      issues.push('Certificate contains wildcard domains, which may not be fully supported in all browsers for localhost development.')
+    }
+
+    // Check key usage for serverAuth
+    let hasServerAuth = false
+    const extKeyUsageExt = cert.getExtension('extKeyUsage')
+    if (extKeyUsageExt && 'serverAuth' in extKeyUsageExt) {
+      hasServerAuth = true
+    }
+
+    if (!hasServerAuth) {
+      issues.push('Certificate lacks Extended Key Usage for serverAuth, which is required by modern browsers.')
+    }
+
+    // Check if validity period is longer than 398 days (modern browser limit)
+    const notBefore = new Date(cert.validity.notBefore)
+    const notAfter = new Date(cert.validity.notAfter)
+
+    const validityDays = (notAfter.getTime() - notBefore.getTime()) / (1000 * 60 * 60 * 24)
+    if (validityDays > 398) {
+      issues.push(`Certificate validity period is ${Math.floor(validityDays)} days, which exceeds the 398-day maximum supported by modern browsers.`)
+    }
+
+    return {
+      compatible: issues.length === 0,
+      issues,
+    }
+  }
+  catch (error) {
+    debugLog(LOG_CATEGORIES.CERT, `Error validating browser compatibility: ${error}`, verbose)
+
+    return {
+      compatible: false,
+      issues: [`Error validating browser compatibility: ${error}`],
+    }
+  }
+}
