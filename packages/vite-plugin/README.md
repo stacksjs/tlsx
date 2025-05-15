@@ -16,16 +16,16 @@ A Vite plugin that enables HTTPS for the Vite development server using TLSX. Thi
 
 ```bash
 # npm
-npm install @stacksjs/vite-plugin-tlsx -D
+npm install vite-plugin-tlsx -D
 
 # yarn
-yarn add @stacksjs/vite-plugin-tlsx -D
+yarn add vite-plugin-tlsx -D
 
 # pnpm
-pnpm add @stacksjs/vite-plugin-tlsx -D
+pnpm add vite-plugin-tlsx -D
 
 # bun
-bun add @stacksjs/vite-plugin-tlsx -D
+bun add vite-plugin-tlsx -D
 ```
 
 ## Usage
@@ -33,8 +33,8 @@ bun add @stacksjs/vite-plugin-tlsx -D
 Add the plugin to your `vite.config.ts` file:
 
 ```ts
+import tlsx from 'vite-plugin-tlsx'
 import { defineConfig } from 'vite'
-import tlsx from '@stacksjs/vite-plugin-tlsx'
 
 export default defineConfig({
   plugins: [
@@ -55,8 +55,8 @@ export default defineConfig({
 
 ```ts
 // .vitepress/config.ts
+import tlsx from 'vite-plugin-tlsx'
 import { defineConfig } from 'vitepress'
-import tlsx from '@stacksjs/vite-plugin-tlsx'
 
 export default defineConfig({
   vite: {
