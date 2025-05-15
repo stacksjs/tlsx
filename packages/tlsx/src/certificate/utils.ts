@@ -1,7 +1,7 @@
-import forge from 'node-forge'
 import type { CertificateExtension, CertificateOptions, RandomSerialNumber, SubjectAltName } from '../types'
+import forge from 'node-forge'
 import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
-import { debugLog, getPrimaryDomain, makeNumberPositive } from '../utils'
+import { debugLog, makeNumberPositive } from '../utils'
 
 /**
  * Generates Subject Alternative Names for the certificate

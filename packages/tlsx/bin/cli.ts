@@ -1,8 +1,9 @@
+import os from 'node:os'
+import process from 'node:process'
 import { CAC } from 'cac'
 import { consola as log } from 'consola'
-import os from 'node:os'
 import { version } from '../package.json'
-import { addCertToSystemTrustStoreAndSaveCert, createRootCA, generateCertificate, removeCertFromSystemTrustStore } from '../src/certificate'
+import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, createRootCA, generateCertificate, removeCertFromSystemTrustStore } from '../src/certificate'
 import { validateCertificate } from '../src/certificate/validation'
 import { config } from '../src/config'
 import { listCertsInDirectory, normalizeCertPaths } from '../src/utils'
@@ -112,11 +113,13 @@ cli
   .option('-ca, --ca-path <ca>', 'CA file path', { default: config.caCertPath })
   .option('-c, --cert-path <cert>', 'Certificate file path', { default: config.certPath })
   .option('-k, --key-path <key>', 'Key file path', { default: config.keyPath })
+  .option('--cert-name <name>', 'Specific certificate name to revoke')
   .option('--verbose', 'Enable verbose logging', { default: config.verbose })
   .usage('tlsx revoke [domain] [options]')
   .example('tlsx revoke example.com')
   .example('tlsx revoke example.com --ca-path /path/to/ca.crt')
-  .action(async (domain?: string, options?: Omit<CliOptions, 'domains'>) => {
+  .example('tlsx revoke example.com --cert-name "My Custom Cert Name"')
+  .action(async (domain?: string, options?: Omit<CliOptions, 'domains'> & { 'cert-name'?: string }) => {
     const cliOptions = options || {}
 
     // Validate that domain is provided
@@ -125,9 +128,10 @@ cli
     }
 
     const domainToRevoke = domain || config.domain
+    const certName = options?.['cert-name']
 
-    log.info(`Revoking certificate for domain: ${domainToRevoke}`)
-    log.debug('Options:', { ...cliOptions, domain: domainToRevoke })
+    log.info(`Revoking certificate for domain: ${domainToRevoke}${certName ? ` with name: ${certName}` : ''}`)
+    log.debug('Options:', { ...cliOptions, domain: domainToRevoke, certName })
 
     try {
       // Call the implemented certificate revocation function
@@ -136,10 +140,11 @@ cli
         certPath: cliOptions.certPath || config.certPath,
         keyPath: cliOptions.keyPath || config.keyPath,
         verbose: cliOptions.verbose,
-      })
+      }, certName)
 
-      log.success(`Certificate for ${domainToRevoke} has been revoked`)
-    } catch (error) {
+      log.success(`Certificate for ${domainToRevoke}${certName ? ` with name: ${certName}` : ''} has been revoked`)
+    }
+    catch (error) {
       log.error(`Failed to revoke certificate for ${domainToRevoke}: ${error}`)
       process.exit(1)
     }
@@ -169,7 +174,8 @@ cli
       certificates.forEach((certPath, index) => {
         log.info(`${index + 1}. ${certPath}`)
       })
-    } catch (error) {
+    }
+    catch (error) {
       log.error(`Failed to list certificates: ${error}`)
       process.exit(1)
     }
@@ -182,7 +188,7 @@ cli
   .usage('tlsx verify [cert-path] [options]')
   .example('tlsx verify /path/to/cert.crt')
   .example('tlsx verify /path/to/cert.crt --ca-path /path/to/ca.crt')
-  .action(async (certPath?: string, options?: { 'ca-path'?: string, verbose?: boolean }) => {
+  .action(async (certPath?: string, options?: { 'ca-path'?: string, 'verbose'?: boolean }) => {
     // If no certificate path is provided, use the default
     const certificatePath = certPath || config.certPath
     const caCertPath = options?.['ca-path'] || config.caCertPath
@@ -279,6 +285,52 @@ cli
       // Display all config
       log.info(`\nComplete Configuration:`)
       log.info(JSON.stringify(config, null, 2))
+    }
+  })
+
+cli
+  .command('cleanup', 'Clean up all TLSX certificates from the system trust store')
+  .option('--force', 'Skip confirmation prompt', { default: false })
+  .option('--verbose', 'Enable verbose logging', { default: config.verbose })
+  .option('--pattern <pattern>', 'Certificate name pattern to match for cleanup')
+  .usage('tlsx cleanup [options]')
+  .example('tlsx cleanup')
+  .example('tlsx cleanup --force')
+  .example('tlsx cleanup --pattern "My Custom Cert"')
+  .action(async (options?: { force?: boolean, verbose?: boolean, pattern?: string }) => {
+    const force = options?.force || false
+    const verbose = options?.verbose || config.verbose
+    const pattern = options?.pattern
+
+    if (!force) {
+      log.warn(`This will remove ${pattern ? `certificates matching "${pattern}"` : 'all TLSX certificates'} from your system trust store.`)
+      log.warn('This action cannot be undone.')
+
+      // Simple confirmation prompt
+      process.stdout.write('Are you sure you want to continue? (y/N): ')
+
+      const response = await new Promise<string>((resolve) => {
+        process.stdin.once('data', (data) => {
+          resolve(data.toString().trim().toLowerCase())
+        })
+      })
+
+      if (response !== 'y' && response !== 'yes') {
+        log.info('Operation cancelled.')
+        return
+      }
+    }
+
+    log.info(`Cleaning up ${pattern ? `certificates matching "${pattern}"` : 'all TLSX certificates'} from system trust store...`)
+
+    try {
+      await cleanupTrustStore({ verbose }, pattern)
+
+      log.success(`${pattern ? `Certificates matching "${pattern}"` : 'All TLSX certificates'} have been removed from the system trust store`)
+    }
+    catch (error) {
+      log.error(`Failed to clean up certificates: ${error}`)
+      process.exit(1)
     }
   })
 

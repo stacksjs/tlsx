@@ -1,6 +1,6 @@
+import type { Cert, CertPath, TlsOption } from '../types'
 import os from 'node:os'
 import { consola as log } from 'consola'
-import type { Cert, CertPath, TlsOption } from '../types'
 import { config } from '../config'
 import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
 import { debugLog, findFoldersWithFile, runCommand } from '../utils'
@@ -8,8 +8,8 @@ import { storeCACertificate, storeCertificate } from './store'
 
 // Define platform-specific trust store handlers
 interface TrustStoreHandler {
-  addCertificate(caCertPath: string, options?: TlsOption): Promise<void>
-  removeCertificate?(caCertPath: string, options?: TlsOption): Promise<void>
+  addCertificate: (caCertPath: string, options?: TlsOption) => Promise<void>
+  removeCertificate?: (caCertPath: string, options?: TlsOption, certName?: string) => Promise<void>
   platform: string
 }
 
@@ -22,21 +22,20 @@ const macOSTrustStoreHandler: TrustStoreHandler = {
       `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${caCertPath}`,
     )
   },
-  async removeCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
-    debugLog(LOG_CATEGORIES.TRUST, 'Removing certificate from macOS keychain', options?.verbose)
-    // First get the certificate hash/name from the system
-    const certName = config.commonName
+  async removeCertificate(caCertPath: string, options?: TlsOption, certName?: string): Promise<void> {
+    const certificateName = certName || config.commonName
+    debugLog(LOG_CATEGORIES.TRUST, `Removing certificate ${certificateName} from macOS keychain`, options?.verbose)
     try {
       await runCommand(
-        `sudo security delete-certificate -c "${certName}" /Library/Keychains/System.keychain`,
+        `sudo security delete-certificate -c "${certificateName}" /Library/Keychains/System.keychain`,
       )
-      debugLog(LOG_CATEGORIES.TRUST, `Removed certificate ${certName} from macOS keychain`, options?.verbose)
+      debugLog(LOG_CATEGORIES.TRUST, `Removed certificate ${certificateName} from macOS keychain`, options?.verbose)
     }
     catch (error) {
       debugLog(LOG_CATEGORIES.TRUST, `Error removing certificate: ${error}`, options?.verbose)
       throw error
     }
-  }
+  },
 }
 
 // Windows trust store handler
@@ -46,19 +45,18 @@ const windowsTrustStoreHandler: TrustStoreHandler = {
     debugLog(LOG_CATEGORIES.TRUST, 'Adding certificate to Windows certificate store', options?.verbose)
     await runCommand(`certutil -f -v -addstore -enterprise Root ${caCertPath}`)
   },
-  async removeCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
-    debugLog(LOG_CATEGORIES.TRUST, 'Removing certificate from Windows certificate store', options?.verbose)
-    // Get the certificate serial number or hash
-    const certName = config.commonName
+  async removeCertificate(caCertPath: string, options?: TlsOption, certName?: string): Promise<void> {
+    const certificateName = certName || config.commonName
+    debugLog(LOG_CATEGORIES.TRUST, `Removing certificate ${certificateName} from Windows certificate store`, options?.verbose)
     try {
-      await runCommand(`certutil -delstore -enterprise Root "${certName}"`)
-      debugLog(LOG_CATEGORIES.TRUST, `Removed certificate ${certName} from Windows certificate store`, options?.verbose)
+      await runCommand(`certutil -delstore -enterprise Root "${certificateName}"`)
+      debugLog(LOG_CATEGORIES.TRUST, `Removed certificate ${certificateName} from Windows certificate store`, options?.verbose)
     }
     catch (error) {
       debugLog(LOG_CATEGORIES.TRUST, `Error removing certificate: ${error}`, options?.verbose)
       throw error
     }
-  }
+  },
 }
 
 // Linux trust store handler
@@ -95,8 +93,9 @@ const linuxTrustStoreHandler: TrustStoreHandler = {
       log.info(`Cert added to ${folder}`)
     }
   },
-  async removeCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
-    debugLog(LOG_CATEGORIES.TRUST, 'Removing certificate from Linux certificate store', options?.verbose)
+  async removeCertificate(caCertPath: string, options?: TlsOption, certName?: string): Promise<void> {
+    const certificateName = certName || config.commonName
+    debugLog(LOG_CATEGORIES.TRUST, `Removing certificate ${certificateName} from Linux certificate store`, options?.verbose)
     const rootDirectory = os.homedir()
     const targetFileName = CERT_CONSTANTS.LINUX_CERT_DB_FILENAME
 
@@ -111,7 +110,7 @@ const linuxTrustStoreHandler: TrustStoreHandler = {
     for (const folder of foldersWithFile) {
       debugLog(LOG_CATEGORIES.TRUST, `Processing certificate database in ${folder}`, options?.verbose)
       try {
-        await runCommand(`certutil -d sql:${folder} -D -n ${config.commonName}`)
+        await runCommand(`certutil -d sql:${folder} -D -n "${certificateName}"`)
         log.info(`Cert removed from ${folder}`)
       }
       catch (error) {
@@ -119,7 +118,7 @@ const linuxTrustStoreHandler: TrustStoreHandler = {
         console.warn(`Error removing cert from ${folder}: ${error}`)
       }
     }
-  }
+  },
 }
 
 // Map of platform-specific handlers
@@ -164,12 +163,15 @@ export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: s
  * Remove a certificate from the system trust store
  * @param domain - Domain of the certificate to remove
  * @param options - TLS options
+ * @param certName - Optional specific certificate name to remove (defaults to config.commonName)
  */
-export async function removeCertFromSystemTrustStore(domain: string, options?: TlsOption): Promise<void> {
+export async function removeCertFromSystemTrustStore(domain: string, options?: TlsOption, certName?: string): Promise<void> {
   debugLog(LOG_CATEGORIES.TRUST, `Removing certificate for ${domain} from system trust store`, options?.verbose)
 
   // We should use the caCertPath since that's what's actually added to the trust store
   const caCertPath = options?.caCertPath || config.caCertPath
+  // Use provided certName or default to config.commonName
+  const certificateName = certName || config.commonName
 
   const platform = os.platform()
   debugLog(LOG_CATEGORIES.TRUST, `Detected platform: ${platform}`, options?.verbose)
@@ -185,6 +187,118 @@ export async function removeCertFromSystemTrustStore(domain: string, options?: T
     throw new Error(`Removing certificates is not supported on ${platform}`)
   }
 
-  await handler.removeCertificate(caCertPath, options)
+  await handler.removeCertificate(caCertPath, options, certificateName)
+
   debugLog(LOG_CATEGORIES.TRUST, `Certificate for ${domain} successfully removed from system trust store`, options?.verbose)
+}
+
+/**
+ * Clean up all TLSX certificates from the system trust store
+ * This function removes all certificates created by TLSX from the system trust store
+ * @param options - TLS options
+ * @param certNamePattern - Optional pattern to match certificate names (defaults to all TLSX certificates)
+ * @returns Promise that resolves when all certificates have been removed
+ */
+export async function cleanupTrustStore(options?: TlsOption, certNamePattern?: string): Promise<void> {
+  const verbose = options?.verbose || config.verbose
+  debugLog(LOG_CATEGORIES.TRUST, 'Cleaning up all TLSX certificates from system trust store', verbose)
+
+  const platform = os.platform()
+  debugLog(LOG_CATEGORIES.TRUST, `Detected platform: ${platform}`, verbose)
+
+  const handler = trustStoreHandlers[platform]
+  if (!handler) {
+    const errorMsg = `Unsupported platform: ${platform}`
+    debugLog(LOG_CATEGORIES.TRUST, `Error: ${errorMsg}`, verbose)
+    throw new Error(errorMsg)
+  }
+
+  if (!handler.removeCertificate) {
+    throw new Error(`Removing certificates is not supported on ${platform}`)
+  }
+
+  try {
+    // Platform-specific cleanup implementations
+    if (platform === 'darwin') {
+      // On macOS, find and remove all certificates with our organization name
+      debugLog(LOG_CATEGORIES.TRUST, 'Removing all TLSX certificates from macOS keychain', verbose)
+
+      // If a specific pattern is provided, use it instead of the default
+      const searchPattern = certNamePattern || config.commonName
+
+      await runCommand(
+        `sudo security find-certificate -a -c "${searchPattern}" -Z /Library/Keychains/System.keychain | grep SHA-1 | awk '{print $3}' | xargs -I {} sudo security delete-certificate -Z {} /Library/Keychains/System.keychain`,
+      )
+      log.success(`All certificates matching "${searchPattern}" removed from macOS keychain`)
+    }
+    else if (platform === 'win32') {
+      // On Windows, remove certificates based on our organization name or pattern
+      debugLog(LOG_CATEGORIES.TRUST, 'Removing all TLSX certificates from Windows certificate store', verbose)
+
+      // If a specific pattern is provided, use it instead of the default
+      const searchPattern = certNamePattern || config.organizationName
+
+      await runCommand(`certutil -delstore -enterprise Root "${searchPattern}"`)
+      log.success(`All certificates matching "${searchPattern}" removed from Windows certificate store`)
+    }
+    else if (platform === 'linux') {
+      // On Linux, we need to search through certificate databases
+      debugLog(LOG_CATEGORIES.TRUST, 'Removing all TLSX certificates from Linux certificate stores', verbose)
+      const rootDirectory = os.homedir()
+      const targetFileName = CERT_CONSTANTS.LINUX_CERT_DB_FILENAME
+
+      debugLog(LOG_CATEGORIES.TRUST, `Searching for certificate databases in ${rootDirectory}`, verbose)
+      const foldersWithFile = findFoldersWithFile(rootDirectory, targetFileName)
+
+      if (foldersWithFile.length === 0) {
+        log.warn('No certificate databases found. Cannot clean up certificates.')
+        return
+      }
+
+      // For each database, list and remove certificates created by TLSX
+      for (const folder of foldersWithFile) {
+        debugLog(LOG_CATEGORIES.TRUST, `Processing certificate database in ${folder}`, verbose)
+        try {
+          // Get list of certificates in the database
+          const { stdout } = await runCommand(`certutil -d sql:${folder} -L`)
+
+          // Parse the output to find certificates with our organization name or matching the pattern
+          const lines = stdout.split('\n')
+          for (const line of lines) {
+            // Look for certificates with our organization name or common name pattern
+            const shouldRemove = certNamePattern
+              ? line.toLowerCase().includes(certNamePattern.toLowerCase())
+              : (line.includes(config.organizationName) || line.includes('tlsx') || line.includes('Local Development'))
+
+            if (shouldRemove) {
+              // Extract the certificate name - it's the first part of the line before spaces
+              const certName = line.split(/\s+/)[0].trim()
+              if (certName) {
+                debugLog(LOG_CATEGORIES.TRUST, `Removing certificate: ${certName}`, verbose)
+                try {
+                  await runCommand(`certutil -d sql:${folder} -D -n "${certName}"`)
+                  log.info(`Removed certificate ${certName} from ${folder}`)
+                }
+                catch (error) {
+                  debugLog(LOG_CATEGORIES.TRUST, `Error removing cert ${certName}: ${error}`, verbose)
+                }
+              }
+            }
+          }
+        }
+        catch (error) {
+          debugLog(LOG_CATEGORIES.TRUST, `Error processing database ${folder}: ${error}`, verbose)
+          console.warn(`Error processing database ${folder}: ${error}`)
+        }
+      }
+
+      log.success('All matching certificates removed from Linux certificate stores')
+    }
+
+    debugLog(LOG_CATEGORIES.TRUST, 'Trust store cleanup completed successfully', verbose)
+  }
+  catch (error) {
+    debugLog(LOG_CATEGORIES.TRUST, `Error cleaning up trust store: ${error}`, verbose)
+    throw new Error(`Failed to clean up trust store: ${error}`)
+  }
 }

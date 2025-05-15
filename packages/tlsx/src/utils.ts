@@ -174,6 +174,10 @@ export function getPrimaryDomain(options: CertificateOptions): string {
 /**
  * Normalizes certificate paths based on basePath and defaults
  * @param options Options that may contain file paths
+ * @param options.basePath Base directory for certificate files, defaults to config.basePath
+ * @param options.certPath Path to the certificate file, resolved against basePath if relative
+ * @param options.keyPath Path to the private key file, resolved against basePath if relative
+ * @param options.caCertPath Path to the CA certificate file, resolved against basePath if relative
  * @returns Normalized file paths
  */
 export function normalizeCertPaths(options: {
@@ -181,7 +185,7 @@ export function normalizeCertPaths(options: {
   certPath?: string
   keyPath?: string
   caCertPath?: string
-}): { certPath: string; keyPath: string; caCertPath: string; basePath: string } {
+}): { certPath: string, keyPath: string, caCertPath: string, basePath: string } {
   const basePath = options.basePath || config.basePath
 
   // Resolve paths properly
@@ -204,9 +208,9 @@ export function normalizeCertPaths(options: {
     : path.join(basePath, config.caCertPath)
 
   return {
-    certPath: certPath,
-    keyPath: keyPath,
-    caCertPath: caCertPath,
-    basePath: basePath,
+    certPath,
+    keyPath,
+    caCertPath,
+    basePath,
   }
 }

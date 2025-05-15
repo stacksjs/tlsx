@@ -1,17 +1,16 @@
-import { describe, expect, it, beforeEach, afterEach, mock } from 'bun:test'
+/* eslint-disable no-console */
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
 import fs from 'node:fs'
-import path from 'node:path'
 import os from 'node:os'
+import path from 'node:path'
+import { config } from '../src/config'
 import {
   debugLog,
   findFoldersWithFile,
   getPrimaryDomain,
-  listCertsInDirectory,
   makeNumberPositive,
-  normalizeCertPaths,
-  readCertFromFile
+  readCertFromFile,
 } from '../src/utils'
-import { config } from '../src/config'
 
 // Need to mock listCertsInDirectory to isolate the test
 const mockListCertsInDirectory = mock((dirPath?: string) => {
@@ -47,10 +46,10 @@ const mockNormalizeCertPaths = mock((options: any) => {
     : path.join(basePath, config.caCertPath)
 
   return {
-    certPath: certPath,
-    keyPath: keyPath,
-    caCertPath: caCertPath,
-    basePath: basePath,
+    certPath,
+    keyPath,
+    caCertPath,
+    basePath,
   }
 })
 
@@ -164,7 +163,7 @@ describe('Utility Functions', () => {
   describe('normalizeCertPaths', () => {
     it('should normalize paths using defaults if not provided', () => {
       // Mock implementation to return predictable values that match expectations
-      mockNormalizeCertPaths.mockImplementation((options: any) => {
+      mockNormalizeCertPaths.mockImplementation((_options: any) => {
         return {
           basePath: config.basePath,
           certPath: path.join(config.basePath, config.certPath),
@@ -238,7 +237,9 @@ describe('Utility Functions', () => {
       const originalConsoleDebug = console.debug
       let logged = false
 
-      console.debug = () => { logged = true }
+      console.debug = () => {
+        logged = true
+      }
 
       debugLog('test', 'test message', false)
 

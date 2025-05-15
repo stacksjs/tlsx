@@ -1,10 +1,8 @@
-import { describe, expect, it, mock, beforeEach, afterEach } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
 import fs from 'node:fs'
-import path from 'node:path'
 import os from 'node:os'
-import { createRootCA, generateCertificate } from '../src/certificate'
+import path from 'node:path'
 import * as validationModule from '../src/certificate/validation'
-import { config } from '../src/config'
 
 describe('Certificate Validation', () => {
   let tempDir: string

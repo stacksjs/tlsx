@@ -1,9 +1,8 @@
-import { describe, expect, it, beforeEach, afterEach, mock } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
 import fs from 'node:fs'
-import path from 'node:path'
 import os from 'node:os'
-import { storeCertificate, storeCACertificate } from '../src/certificate/store'
-import { normalizeCertPaths } from '../src/utils'
+import path from 'node:path'
+import { storeCACertificate, storeCertificate } from '../src/certificate/store'
 
 // Mock the normalizeCertPaths function
 mock.module('../src/utils', () => {

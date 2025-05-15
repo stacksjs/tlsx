@@ -1,5 +1,5 @@
-import forge, { pki } from 'node-forge'
 import type { CAOptions, Certificate, CertificateOptions } from '../types'
+import forge, { pki } from 'node-forge'
 import { config } from '../config'
 import { CERT_CONSTANTS } from '../constants'
 import { debugLog, getPrimaryDomain } from '../utils'

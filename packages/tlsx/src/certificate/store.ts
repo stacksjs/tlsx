@@ -1,7 +1,6 @@
+import type { Cert, CertPath, TlsOption } from '../types'
 import fs from 'node:fs'
 import path from 'node:path'
-import type { Cert, CertPath, TlsOption } from '../types'
-import { config } from '../config'
 import { LOG_CATEGORIES } from '../constants'
 import { debugLog, normalizeCertPaths } from '../utils'
 

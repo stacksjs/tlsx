@@ -1,8 +1,8 @@
 {
   "name": "tlsx",
   "type": "module",
-  "private": true,
   "version": "0.11.0",
+  "private": true,
   "description": "A TLS/HTTPS library with automation.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",

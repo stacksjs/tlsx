@@ -1,10 +1,8 @@
 import type { CertDetails } from '../types'
-import { pki } from 'node-forge'
-import { readCertFromFile } from '../utils'
 import fs from 'node:fs'
-import { config } from '../config'
+import { pki } from 'node-forge'
 import { LOG_CATEGORIES } from '../constants'
-import { debugLog } from '../utils'
+import { debugLog, readCertFromFile } from '../utils'
 
 /**
  * Checks if a certificate is valid for a given domain.
@@ -236,7 +234,7 @@ export function validateCertificate(
 export function validateBrowserCompatibility(
   certificatePath: string,
   verbose?: boolean,
-): { compatible: boolean; issues: string[] } {
+): { compatible: boolean, issues: string[] } {
   debugLog(LOG_CATEGORIES.CERT, `Validating browser compatibility: ${certificatePath}`, verbose)
 
   try {

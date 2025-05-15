@@ -49,7 +49,7 @@ Given the npm package is installed:
 
 ```ts
 import type { AddCertOptions, CAOptions, CertificateOptions, TlsConfig, TlsOptions } from '@stacksjs/tlsx'
-import { addCertToSystemTrustStoreAndSaveCerts, config, forge, generateCert, pki, storeCertificate, tls } from '@stacksjs/tlsx'
+import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, config, forge, generateCertificate, pki, removeCertFromSystemTrustStore, storeCertificate, tls } from '@stacksjs/tlsx'
 
 // Generate a certificate for a single domain
 const cert = await generateCertificate({
@@ -75,6 +75,18 @@ const combinedCert = await generateCertificate({
 
 // Store and trust the certificate
 await addCertToSystemTrustStoreAndSaveCert(cert, rootCA.certificate)
+
+// Remove a specific certificate
+await removeCertFromSystemTrustStore('example.com')
+
+// Remove a certificate with a specific name
+await removeCertFromSystemTrustStore('example.com', {}, 'My Custom Certificate Name')
+
+// Clean up all TLSX certificates from the system trust store
+await cleanupTrustStore()
+
+// Clean up certificates matching a specific pattern
+await cleanupTrustStore({}, 'My Custom Pattern')
 ```
 
 ### CLI
@@ -91,6 +103,27 @@ tlsx secure example.com -d "api.example.com,*.example.com"
 
 # Generate certificate with custom validity and organization
 tlsx secure example.com --validity-days 365 --organization-name "My Company"
+
+# Revoke a certificate for a domain
+tlsx revoke example.com
+
+# Revoke a certificate with a specific name
+tlsx revoke example.com --cert-name "My Custom Certificate"
+
+# Clean up all TLSX certificates from the system trust store
+tlsx cleanup
+
+# Clean up certificates matching a specific pattern
+tlsx cleanup --pattern "My Custom Pattern"
+
+# List all certificates
+tlsx list
+
+# Verify a certificate
+tlsx verify path/to/cert.crt
+
+# Show system configuration and paths
+tlsx info
 
 # Show all available options
 tlsx secure --help
@@ -159,7 +192,7 @@ For casual chit-chat with others using this package:
 
 ## Postcardware
 
-“Software that is free, but hopes for a postcard.” We love receiving postcards from around the world showing where `tlsx` is being used! We showcase them on our website too.
+"Software that is free, but hopes for a postcard." We love receiving postcards from around the world showing where `tlsx` is being used! We showcase them on our website too.
 
 Our address: Stacks.js, 12665 Village Ln #2306, Playa Vista, CA 90094, United States 🌎
 
