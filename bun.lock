@@ -6,7 +6,7 @@
       "devDependencies": {
         "@stacksjs/docs": "^0.70.23",
         "@stacksjs/eslint-config": "^4.14.0-beta.3",
-        "@types/bun": "^1.2.13",
+        "@types/bun": "^1.2.15",
         "bun-plugin-dtsx": "^0.21.12",
         "typescript": "^5.8.3",
       },
@@ -42,7 +42,7 @@
         "vite": "^6.3.5",
       },
       "peerDependencies": {
-        "vite": "^6.0.0",
+        "vite": "^6.3.5",
       },
     },
   },
@@ -542,7 +542,7 @@
 
     "@tybys/wasm-util": ["@tybys/wasm-util@0.9.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw=="],
 
-    "@types/bun": ["@types/bun@1.2.13", "", { "dependencies": { "bun-types": "1.2.13" } }, "sha512-u6vXep/i9VBxoJl3GjZsl/BFIsvML8DfVDO0RYLEwtSZSp981kEO1V5NwRcO1CPJ7AmvpbnDCiMKo3JvbDEjAg=="],
+    "@types/bun": ["@types/bun@1.2.15", "", { "dependencies": { "bun-types": "1.2.15" } }, "sha512-U1ljPdBEphF0nw1MIk0hI7kPg7dFdPyM7EenHsp6W5loNHl7zqy6JQf/RKCgnUn2KDzUpkBwHPnEJEjII594bA=="],
 
     "@types/debug": ["@types/debug@4.1.12", "", { "dependencies": { "@types/ms": "*" } }, "sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ=="],
 
@@ -792,7 +792,7 @@
 
     "bun-plugin-tlsx": ["bun-plugin-tlsx@workspace:packages/bun-plugin"],
 
-    "bun-types": ["bun-types@1.2.13", "", { "dependencies": { "@types/node": "*" } }, "sha512-rRjA1T6n7wto4gxhAO/ErZEtOXyEZEmnIHQfl0Dt1QQSB4QV0iP6BZ9/YB5fZaHFQ2dwHFrmPaRQ9GGMX01k9Q=="],
+    "bun-types": ["bun-types@1.2.15", "", { "dependencies": { "@types/node": "*" } }, "sha512-NarRIaS+iOaQU1JPfyKhZm4AsUOrwUOqRNHY0XxI8GI8jYxiLXLcdjYMG9UKS+fwWasc1uw1htV9AX24dD+p4w=="],
 
     "bunfig": ["bunfig@0.10.0", "", { "bin": { "bunfig": "bin/cli.js" } }, "sha512-WqRX+7ed/VU2U5zY2YtbOH7uP2tW6gwYNVLmP0UfUNrJpC0BLjxxFrXaB5wS5LlBEhNVdA8TfI1Gv69Kj50/dw=="],
 
