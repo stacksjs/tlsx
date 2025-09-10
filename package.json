@@ -49,7 +49,7 @@
     "preview:docs": "bun --bun vitepress preview docs"
   },
   "devDependencies": {
-    "@stacksjs/bumpx": "^0.1.78",
+    "@stacksjs/bumpx": "^0.1.82",
     "@stacksjs/docs": "^0.70.23",
     "@stacksjs/eslint-config": "^4.14.0-beta.3",
     "@stacksjs/gitlint": "^0.1.5",
