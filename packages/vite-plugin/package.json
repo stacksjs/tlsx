@@ -47,14 +47,14 @@
     "typecheck": "bunx tsc --noEmit"
   },
   "peerDependencies": {
-    "vite": "^6.3.5"
+    "vite": "^7.1.7"
   },
   "dependencies": {
     "@stacksjs/tlsx": "workspace:*"
   },
   "devDependencies": {
     "bun-plugin-dtsx": "^0.21.12",
-    "vite": "^6.3.5"
+    "vite": "^7.1.7"
   },
   "simple-git-hooks": {
     "pre-commit": "bunx lint-staged"
