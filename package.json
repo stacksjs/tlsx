@@ -58,7 +58,7 @@
     "buddy-bot": "^0.9.7",
     "bun-git-hooks": "^0.2.19",
     "bun-plugin-dtsx": "^0.21.12",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "overrides": {
     "unconfig": "0.3.10"
