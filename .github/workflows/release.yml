@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@v2.0.2
 
       - name: Use Cached node_modules
         uses: actions/cache@v4.3.0
