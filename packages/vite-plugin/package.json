@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "bun-plugin-dtsx": "^0.21.12",
-    "vite": "^7.1.11"
+    "vite": "^7.1.12"
   },
   "simple-git-hooks": {
     "pre-commit": "bunx lint-staged"
