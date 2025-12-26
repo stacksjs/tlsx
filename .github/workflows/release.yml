@@ -17,7 +17,7 @@ jobs:
       version: ${{ env.VERSION }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5.0.1
         with:
           fetch-depth: 0
 
@@ -42,7 +42,7 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: stacksjs/action-releaser@v1.1.0
+        uses: stacksjs/action-releaser@v1.2.7
         with:
           files: |
             ./packages/tlsx/bin/tlsx-linux-x64.zip
