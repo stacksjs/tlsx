@@ -23,9 +23,19 @@ export const defaultConfig: TlsConfig = {
   verbose: false,
 }
 
-// eslint-disable-next-line antfu/no-top-level-await
-export const config: TlsConfig = await loadConfig({
+// Lazy-loaded config to avoid top-level await (enables bun --compile)
+let _config: TlsConfig | null = null
+
+export async function getConfig(): Promise<TlsConfig> {
+  if (!_config) {
+    _config = await loadConfig({
   name: 'tlsx',
   alias: 'tls',
   defaultConfig,
 })
+  }
+  return _config
+}
+
+// For backwards compatibility - synchronous access with default fallback
+export const config: TlsConfig = defaultConfig
