@@ -1,44 +1,116 @@
 import type { CertDetails } from '../types'
+import crypto from 'node:crypto'
 import fs from 'node:fs'
-import { pki } from 'node-forge'
 import { LOG_CATEGORIES } from '../constants'
 import { debugLog, readCertFromFile } from '../utils'
+
+/**
+ * Gets a certificate from a PEM string or a path to a certificate file.
+ * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
+ * @returns The X509Certificate object.
+ */
+export function getCertificateFromCertPemOrPath(certPemOrPath: string): crypto.X509Certificate {
+  let certPem: string
+
+  if (certPemOrPath.startsWith('-----BEGIN CERTIFICATE-----')) {
+    certPem = certPemOrPath
+  } else {
+    certPem = readCertFromFile(certPemOrPath)
+  }
+
+  return new crypto.X509Certificate(certPem)
+}
+
+/**
+ * Parse the subject or issuer string from X509Certificate
+ */
+function parseDistinguishedName(dn: string): Array<{ shortName: string, value: string }> {
+  const result: Array<{ shortName: string, value: string }> = []
+  const parts = dn.split('\n')
+  for (const part of parts) {
+    const [key, ...valueParts] = part.split('=')
+    const value = valueParts.join('=')
+    if (key && value) {
+      result.push({ shortName: key.trim(), value: value.trim() })
+    }
+  }
+  return result
+}
+
+/**
+ * Get the Common Name from a distinguished name string
+ */
+function getCommonName(dn: string): string {
+  const parts = parseDistinguishedName(dn)
+  const cn = parts.find(p => p.shortName === 'CN')
+  return cn?.value || ''
+}
+
+/**
+ * Extract domains from a certificate's Subject Alternative Names
+ */
+function extractDomainsFromCert(cert: crypto.X509Certificate): string[] {
+  const domains: string[] = []
+
+  // Add CN if it's a valid domain name
+  const cn = getCommonName(cert.subject)
+  if (cn && !/^\d+\.\d+\.\d+\.\d+$/.test(cn)) {
+    domains.push(cn)
+  }
+
+  // Parse subjectAltName - format is like "DNS:example.com, DNS:*.example.com, IP Address:127.0.0.1"
+  const san = cert.subjectAltName
+  if (san) {
+    const entries = san.split(', ')
+    for (const entry of entries) {
+      if (entry.startsWith('DNS:')) {
+        domains.push(entry.slice(4))
+      }
+    }
+  }
+
+  return [...new Set(domains)] // Remove duplicates
+}
 
 /**
  * Checks if a certificate is valid for a given domain.
  * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
  * @param domain - The domain to check.
- * @returns {boolean} - True if the certificate is valid for the domain, false otherwise.
+ * @returns True if the certificate is valid for the domain, false otherwise.
  */
 export function isCertValidForDomain(certPemOrPath: string, domain: string): boolean {
   const cert = getCertificateFromCertPemOrPath(certPemOrPath)
-  const altNames = cert.getExtension('subjectAltName')
+  const domains = extractDomainsFromCert(cert)
 
-  if (altNames) {
-    // @ts-expect-error - altNames is not yet typed at lib level
-    for (const altName of altNames.altNames) {
-      if (altName.value === domain) {
+  for (const certDomain of domains) {
+    if (certDomain === domain) {
+      return true
+    }
+    // Handle wildcard domains
+    if (certDomain.startsWith('*.')) {
+      const wildcardBase = certDomain.slice(2)
+      if (domain.endsWith(wildcardBase) && domain.indexOf('.') === domain.lastIndexOf('.')) {
         return true
       }
     }
   }
 
-  return cert.subject.getField('CN').value === domain
+  return false
 }
 
 /**
  * Parses and extracts details from a certificate.
  * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
- * @returns {CertDetails} - An object containing certificate details.
+ * @returns An object containing certificate details.
  */
 export function parseCertDetails(certPemOrPath: string): CertDetails {
   const cert = getCertificateFromCertPemOrPath(certPemOrPath)
 
   return {
-    subject: cert.subject.attributes,
-    issuer: cert.issuer.attributes,
-    validFrom: cert.validity.notBefore,
-    validTo: cert.validity.notAfter,
+    subject: parseDistinguishedName(cert.subject),
+    issuer: parseDistinguishedName(cert.issuer),
+    validFrom: new Date(cert.validFrom),
+    validTo: new Date(cert.validTo),
     serialNumber: cert.serialNumber,
   }
 }
@@ -46,51 +118,29 @@ export function parseCertDetails(certPemOrPath: string): CertDetails {
 /**
  * Checks if a certificate is expired.
  * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
- * @returns {boolean} - True if the certificate is expired, false otherwise.
+ * @returns True if the certificate is expired, false otherwise.
  */
 export function isCertExpired(certPemOrPath: string): boolean {
   const cert = getCertificateFromCertPemOrPath(certPemOrPath)
   const now = new Date()
-
-  return now > cert.validity.notAfter
+  return now > new Date(cert.validTo)
 }
 
 /**
  * Checks if a certificate will expire soon.
  * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
  * @param daysThreshold - Number of days to consider as "soon". Default is 30.
- * @returns {boolean} - True if the certificate will expire within the threshold, false otherwise.
+ * @returns True if the certificate will expire within the threshold, false otherwise.
  */
 export function willCertExpireSoon(certPemOrPath: string, daysThreshold = 30): boolean {
   const cert = getCertificateFromCertPemOrPath(certPemOrPath)
   const now = new Date()
-  const expiryDate = new Date(cert.validity.notAfter)
+  const expiryDate = new Date(cert.validTo)
 
-  // Calculate the difference in days
   const diffTime = expiryDate.getTime() - now.getTime()
   const diffDays = diffTime / (1000 * 60 * 60 * 24)
 
   return diffDays <= daysThreshold
-}
-
-/**
- * Gets a certificate from a PEM string or a path to a certificate file.
- * @param certPemOrPath - The certificate in PEM format or the path to the certificate file.
- * @returns {pki.Certificate} - The certificate object.
- */
-export function getCertificateFromCertPemOrPath(certPemOrPath: string): pki.Certificate {
-  let certPem: string
-
-  if (certPemOrPath.startsWith('-----BEGIN CERTIFICATE-----')) {
-    // If the input is a PEM string
-    certPem = certPemOrPath
-  }
-  else {
-    // If the input is a path to the certificate file
-    certPem = readCertFromFile(certPemOrPath)
-  }
-
-  return pki.certificateFromPem(certPem)
 }
 
 export interface CertificateValidationResult {
@@ -121,7 +171,6 @@ export function validateCertificate(
   debugLog(LOG_CATEGORIES.CERT, `Validating certificate: ${certificatePath}`, verbose)
 
   try {
-    // Check if certificate exists
     if (!fs.existsSync(certificatePath)) {
       return {
         valid: false,
@@ -137,40 +186,19 @@ export function validateCertificate(
       }
     }
 
-    // Read certificate
     const certPem = fs.readFileSync(certificatePath, 'utf8')
-    const cert = pki.certificateFromPem(certPem)
+    const cert = new crypto.X509Certificate(certPem)
 
-    // Check validity period
     const now = new Date()
-    const notBefore = new Date(cert.validity.notBefore)
-    const notAfter = new Date(cert.validity.notAfter)
+    const notBefore = new Date(cert.validFrom)
+    const notAfter = new Date(cert.validTo)
 
     const expired = now > notAfter
     const notYetValid = now < notBefore
 
-    // Get certificate subject and issuer
-    const subject = cert.subject.getField('CN')?.value || 'Unknown'
-    const issuer = cert.issuer.getField('CN')?.value || 'Unknown'
-
-    // Extract domains from the certificate
-    const domains: string[] = []
-
-    // Add the CN as the first domain if it's a valid domain name (not an IP address)
-    if (subject && !/^\d+\.\d+\.\d+\.\d+$/.test(subject)) {
-      domains.push(subject)
-    }
-
-    // Get subject alt names
-    const altNamesExt = cert.getExtension('subjectAltName')
-    if (altNamesExt && 'altNames' in altNamesExt) {
-      const altNames = altNamesExt.altNames as Array<{ type: number, value: string }>
-      for (const altName of altNames) {
-        if (altName.type === 2) { // DNS name
-          domains.push(altName.value)
-        }
-      }
-    }
+    const subject = getCommonName(cert.subject)
+    const issuer = getCommonName(cert.issuer)
+    const domains = extractDomainsFromCert(cert)
 
     // Validate the issuer if CA certificate path is provided
     let issuerValid = false
@@ -178,17 +206,14 @@ export function validateCertificate(
       if (fs.existsSync(caCertificatePath)) {
         try {
           const caCertPem = fs.readFileSync(caCertificatePath, 'utf8')
-          const caCert = pki.certificateFromPem(caCertPem)
+          const caCert = new crypto.X509Certificate(caCertPem)
 
-          // Check if the certificate was issued by the CA
-          // Compare the issuer of the certificate with the subject of the CA certificate
-          issuerValid = cert.isIssuer(caCert)
-        }
-        catch (error) {
+          // Verify the certificate was signed by the CA
+          issuerValid = cert.verify(caCert.publicKey)
+        } catch (error) {
           debugLog(LOG_CATEGORIES.CERT, `Error validating CA certificate: ${error}`, verbose)
         }
-      }
-      else {
+      } else {
         debugLog(LOG_CATEGORIES.CERT, `CA certificate file not found: ${caCertificatePath}`, verbose)
       }
     }
@@ -206,8 +231,7 @@ export function validateCertificate(
       issuer,
       subject,
     }
-  }
-  catch (error) {
+  } catch (error) {
     debugLog(LOG_CATEGORIES.CERT, `Error validating certificate: ${error}`, verbose)
 
     return {
@@ -238,7 +262,6 @@ export function validateBrowserCompatibility(
   debugLog(LOG_CATEGORIES.CERT, `Validating browser compatibility: ${certificatePath}`, verbose)
 
   try {
-    // Check if certificate exists
     if (!fs.existsSync(certificatePath)) {
       return {
         compatible: false,
@@ -246,9 +269,8 @@ export function validateBrowserCompatibility(
       }
     }
 
-    // Read certificate
     const certPem = fs.readFileSync(certificatePath, 'utf8')
-    const cert = pki.certificateFromPem(certPem)
+    const cert = new crypto.X509Certificate(certPem)
 
     const issues: string[] = []
 
@@ -256,24 +278,21 @@ export function validateBrowserCompatibility(
     let hasLocalhost = false
     let hasWildcard = false
 
-    // Check subject CN for localhost
-    const subject = cert.subject.getField('CN')?.value || ''
-    if (subject === 'localhost') {
+    const cn = getCommonName(cert.subject)
+    if (cn === 'localhost') {
       hasLocalhost = true
     }
 
-    // Check SANs for localhost
-    const altNamesExt = cert.getExtension('subjectAltName')
-    if (altNamesExt && 'altNames' in altNamesExt) {
-      const altNames = altNamesExt.altNames as Array<{ type: number, value: string }>
-      for (const altName of altNames) {
-        if (altName.type === 2) { // DNS name
-          if (altName.value === 'localhost') {
-            hasLocalhost = true
-          }
-          if (altName.value.includes('*')) {
-            hasWildcard = true
-          }
+    // Check SANs
+    const san = cert.subjectAltName
+    if (san) {
+      const entries = san.split(', ')
+      for (const entry of entries) {
+        if (entry === 'DNS:localhost') {
+          hasLocalhost = true
+        }
+        if (entry.includes('*')) {
+          hasWildcard = true
         }
       }
     }
@@ -287,19 +306,17 @@ export function validateBrowserCompatibility(
     }
 
     // Check key usage for serverAuth
-    let hasServerAuth = false
-    const extKeyUsageExt = cert.getExtension('extKeyUsage')
-    if (extKeyUsageExt && 'serverAuth' in extKeyUsageExt) {
-      hasServerAuth = true
-    }
+    const keyUsage = cert.keyUsage
+    const extKeyUsage = cert.extKeyUsage || ''
+    const hasServerAuth = extKeyUsage.includes('TLS Web Server Authentication') || extKeyUsage.includes('1.3.6.1.5.5.7.3.1')
 
     if (!hasServerAuth) {
       issues.push('Certificate lacks Extended Key Usage for serverAuth, which is required by modern browsers.')
     }
 
-    // Check if validity period is longer than 398 days (modern browser limit)
-    const notBefore = new Date(cert.validity.notBefore)
-    const notAfter = new Date(cert.validity.notAfter)
+    // Check if validity period is longer than 398 days
+    const notBefore = new Date(cert.validFrom)
+    const notAfter = new Date(cert.validTo)
 
     const validityDays = (notAfter.getTime() - notBefore.getTime()) / (1000 * 60 * 60 * 24)
     if (validityDays > 398) {
@@ -310,8 +327,7 @@ export function validateBrowserCompatibility(
       compatible: issues.length === 0,
       issues,
     }
-  }
-  catch (error) {
+  } catch (error) {
     debugLog(LOG_CATEGORIES.CERT, `Error validating browser compatibility: ${error}`, verbose)
 
     return {

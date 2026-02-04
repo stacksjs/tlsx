@@ -1,9 +1,17 @@
 import type { CAOptions, Certificate, CertificateOptions } from '../types'
-import forge, { pki } from 'node-forge'
 import { config } from '../config'
 import { CERT_CONSTANTS } from '../constants'
 import { debugLog, getPrimaryDomain } from '../utils'
-import { calculateValidityDates, generateCertificateExtensions, generateRandomSerial } from './utils'
+import {
+  certificateFromPem,
+  createCertificate,
+  generateKeyPair,
+  generateSerialNumber,
+  makeSerialPositive,
+  privateKeyFromPem,
+  privateKeyToPem,
+} from './native-crypto'
+import { calculateValidityDates, generateSubjectAltNames } from './utils'
 
 /**
  * Creates a new Root CA certificate
@@ -15,7 +23,7 @@ export async function createRootCA(options: CAOptions = {}): Promise<Certificate
 
   const keySize = options.keySize || CERT_CONSTANTS.DEFAULT_KEY_SIZE
   debugLog('ca', `Generating ${keySize}-bit RSA key pair`, options.verbose)
-  const { privateKey, publicKey } = pki.rsa.generateKeyPair(keySize)
+  const { privateKey, publicKey } = generateKeyPair(keySize)
 
   const attributes = [
     { shortName: 'C', value: options.countryName || config.countryName },
@@ -24,7 +32,6 @@ export async function createRootCA(options: CAOptions = {}): Promise<Certificate
     { shortName: 'O', value: options.organization || 'Local Development CA' },
     { shortName: 'OU', value: options.organizationalUnit || 'Certificate Authority' },
     { shortName: 'CN', value: options.commonName || 'Local Development Root CA' },
-    ...(options.extraAttributes || []),
   ]
 
   const { notBefore, notAfter } = calculateValidityDates({
@@ -32,36 +39,23 @@ export async function createRootCA(options: CAOptions = {}): Promise<Certificate
     verbose: options.verbose,
   })
 
-  const caCert = pki.createCertificate()
-  caCert.publicKey = publicKey
-  caCert.serialNumber = generateRandomSerial(options.verbose)
-  caCert.validity.notBefore = notBefore
-  caCert.validity.notAfter = notAfter
-  caCert.setSubject(attributes)
-  caCert.setIssuer(attributes)
-
-  caCert.setExtensions([
-    {
-      name: 'basicConstraints',
-      cA: true,
-      critical: true,
-    },
-    {
-      name: 'keyUsage',
+  const { certificate } = createCertificate({
+    serialNumber: generateSerialNumber(),
+    notBefore,
+    notAfter,
+    subject: attributes,
+    publicKey,
+    signingKey: privateKey,
+    isCA: true,
+    keyUsage: {
       keyCertSign: true,
       cRLSign: true,
-      critical: true,
     },
-    {
-      name: 'subjectKeyIdentifier',
-    },
-  ])
-
-  caCert.sign(privateKey, forge.md.sha256.create())
+  })
 
   return {
-    certificate: pki.certificateToPem(caCert),
-    privateKey: pki.privateKeyToPem(privateKey),
+    certificate,
+    privateKey: privateKeyToPem(privateKey),
     notBefore,
     notAfter,
   }
@@ -85,12 +79,12 @@ export async function generateCertificate(options: CertificateOptions): Promise<
     throw new Error('Root CA certificate and private key are required')
   }
 
-  const caCert = pki.certificateFromPem(options.rootCA.certificate)
-  const caKey = pki.privateKeyFromPem(options.rootCA.privateKey)
+  const { subject: caSubject } = certificateFromPem(options.rootCA.certificate)
+  const caKey = privateKeyFromPem(options.rootCA.privateKey)
 
   debugLog('ca', `Generating ${CERT_CONSTANTS.DEFAULT_KEY_SIZE}-bit RSA key pair for host certificate`, options.verbose)
   const keySize = CERT_CONSTANTS.DEFAULT_KEY_SIZE
-  const { privateKey, publicKey } = pki.rsa.generateKeyPair(keySize)
+  const { privateKey, publicKey } = generateKeyPair(keySize)
 
   // Use the primary domain for the CN if no specific commonName is provided
   const commonName = options.commonName || getPrimaryDomain(options)
@@ -108,22 +102,37 @@ export async function generateCertificate(options: CertificateOptions): Promise<
     verbose: options.verbose,
   })
 
-  // Generate certificate
-  const cert = pki.createCertificate()
-  cert.publicKey = publicKey
-  cert.serialNumber = generateRandomSerial(options.verbose)
-  cert.validity.notBefore = notBefore
-  cert.validity.notAfter = notAfter
-  cert.setSubject(attributes)
-  cert.setIssuer(caCert.subject.attributes)
+  // Generate SAN entries
+  const altNames = generateSubjectAltNames(options)
 
-  // Set extensions with proper typing
-  cert.setExtensions(generateCertificateExtensions(options))
-  cert.sign(caKey, forge.md.sha256.create())
+  // Build key usage from options
+  const keyUsage = options.keyUsage || {
+    digitalSignature: true,
+    keyEncipherment: true,
+  }
+
+  // Build extended key usage from options
+  const extendedKeyUsage = options.extKeyUsage || {
+    serverAuth: true,
+  }
+
+  const { certificate } = createCertificate({
+    serialNumber: generateSerialNumber(),
+    notBefore,
+    notAfter,
+    subject: attributes,
+    issuer: caSubject,
+    publicKey,
+    signingKey: caKey,
+    isCA: false,
+    keyUsage,
+    extendedKeyUsage,
+    subjectAltName: altNames,
+  })
 
   return {
-    certificate: pki.certificateToPem(cert),
-    privateKey: pki.privateKeyToPem(privateKey),
+    certificate,
+    privateKey: privateKeyToPem(privateKey),
     notBefore,
     notAfter,
   }

@@ -298,7 +298,8 @@ type IpType = 7
  */
 export interface SubjectAltName {
   type: DnsType | IpType | number
-  value: string
+  value?: string
+  ip?: string // Binary IP bytes for type 7
 }
 
 /**

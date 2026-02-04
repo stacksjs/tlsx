@@ -1,5 +1,5 @@
 import type { CertificateExtension, CertificateOptions, RandomSerialNumber, SubjectAltName } from '../types'
-import forge from 'node-forge'
+import crypto from 'node:crypto'
 import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
 import { debugLog, makeNumberPositive } from '../utils'
 
@@ -32,7 +32,7 @@ export function generateSubjectAltNames(options: CertificateOptions): SubjectAlt
   // Add IP addresses if specified
   if (options.altNameIPs?.length) {
     for (const ip of options.altNameIPs) {
-      altNames.push({ type: 7, value: ip })
+      altNames.push({ type: 7, ip })
     }
   }
 
@@ -58,7 +58,8 @@ export function generateSubjectAltNames(options: CertificateOptions): SubjectAlt
  */
 export function generateRandomSerial(verbose?: boolean): RandomSerialNumber {
   debugLog(LOG_CATEGORIES.CERT, 'Generating random serial number', verbose)
-  const serialNumber = makeNumberPositive(forge.util.bytesToHex(forge.random.getBytesSync(20)))
+  const bytes = crypto.randomBytes(20)
+  const serialNumber = makeNumberPositive(bytes.toString('hex'))
   debugLog(LOG_CATEGORIES.CERT, `Generated serial number: ${serialNumber}`, verbose)
   return serialNumber
 }
@@ -114,24 +115,25 @@ export function generateCertificateExtensions(options: CertificateOptions): Cert
     })
   }
 
-  // Add key usage if specified
-  if (options.keyUsage) {
-    extensions.push({
-      name: 'keyUsage',
-      critical: true,
-      ...options.keyUsage,
-    })
+  // Add key usage - default for server certificates if not specified
+  const keyUsage = options.keyUsage || {
+    digitalSignature: true,
+    keyEncipherment: true,
   }
+  extensions.push({
+    name: 'keyUsage',
+    critical: true,
+    ...keyUsage,
+  })
 
-  // Add extended key usage if specified
-  if (options.extKeyUsage) {
-    extensions.push({
-      name: 'extKeyUsage',
-      ...options.extKeyUsage,
-    })
+  // Add extended key usage - default to serverAuth for server certificates
+  const extKeyUsage = options.extKeyUsage || {
+    serverAuth: true,
   }
+  extensions.push({
+    name: 'extKeyUsage',
+    ...extKeyUsage,
+  })
 
   return extensions
 }
-
-export { forge }

@@ -186,7 +186,11 @@ export function normalizeCertPaths(options: {
   keyPath?: string
   caCertPath?: string
 }): { certPath: string, keyPath: string, caCertPath: string, basePath: string } {
-  const basePath = options.basePath || config.basePath
+  // Default to ~/.stacks/ssl if basePath is empty or not provided
+  const defaultBasePath = path.join(os.homedir(), '.stacks', 'ssl')
+  const basePath = options.basePath && options.basePath.trim() !== ''
+    ? options.basePath
+    : (config.basePath && config.basePath.trim() !== '' ? config.basePath : defaultBasePath)
 
   // Resolve paths properly
   const certPath = options.certPath
