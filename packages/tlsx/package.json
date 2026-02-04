@@ -29,7 +29,6 @@
     "environment",
     "bun",
     "stacks",
-    "node-forge",
     "typescript",
     "javascript"
   ],
@@ -57,9 +56,7 @@
     "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node-forge": "^1.3.14",
     "bunfig": "^0.15.6",
-    "node-forge": "^1.3.3",
     "typescript": "^5.9.3"
   },
   "simple-git-hooks": {
