@@ -1,10 +1,53 @@
 import type { Cert, CertPath, TlsOption } from '../types'
+import { execSync } from 'node:child_process'
 import os from 'node:os'
 import { consola as log } from 'consola'
 import { config } from '../config'
 import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
 import { debugLog, findFoldersWithFile, runCommand } from '../utils'
 import { storeCACertificate, storeCertificate } from './store'
+
+/**
+ * Check if a certificate is already trusted in the system trust store
+ * This helps avoid unnecessary sudo prompts
+ */
+async function isCertAlreadyTrusted(certPath: string, verbose?: boolean): Promise<boolean> {
+  if (os.platform() !== 'darwin') {
+    // For non-macOS platforms, return false to let the normal flow proceed
+    return false
+  }
+
+  try {
+    // Get certificate fingerprint
+    const certFingerprint = execSync(`openssl x509 -noout -fingerprint -sha256 -in "${certPath}"`).toString().trim()
+    const fingerprintValue = certFingerprint.split('=')[1]?.trim() || ''
+
+    if (!fingerprintValue) {
+      debugLog(LOG_CATEGORIES.TRUST, 'Could not extract certificate fingerprint', verbose)
+      return false
+    }
+
+    // Check if the fingerprint exists in the system keychain
+    try {
+      const keychainOutput = execSync(`security find-certificate -a -Z -p | openssl x509 -noout -fingerprint -sha256 2>/dev/null || true`).toString()
+
+      if (keychainOutput.includes(fingerprintValue)) {
+        debugLog(LOG_CATEGORIES.TRUST, 'Certificate fingerprint found in system keychain', verbose)
+        return true
+      }
+    }
+    catch {
+      // Ignore errors in keychain check
+    }
+
+    debugLog(LOG_CATEGORIES.TRUST, 'Certificate fingerprint not found in system keychain', verbose)
+    return false
+  }
+  catch (error) {
+    debugLog(LOG_CATEGORIES.TRUST, `Error checking certificate trust: ${error}`, verbose)
+    return false
+  }
+}
 
 // Define platform-specific trust store handlers
 interface TrustStoreHandler {
@@ -17,6 +60,14 @@ interface TrustStoreHandler {
 const macOSTrustStoreHandler: TrustStoreHandler = {
   platform: 'darwin',
   async addCertificate(caCertPath: string, options?: TlsOption): Promise<void> {
+    // Check if already trusted to avoid unnecessary sudo prompts
+    const alreadyTrusted = await isCertAlreadyTrusted(caCertPath, options?.verbose)
+    if (alreadyTrusted) {
+      debugLog(LOG_CATEGORIES.TRUST, 'Certificate is already trusted, skipping trust store update', options?.verbose)
+      log.success('Certificate is already trusted in system keychain')
+      return
+    }
+
     debugLog(LOG_CATEGORIES.TRUST, 'Adding certificate to macOS keychain', options?.verbose)
     await runCommand(
       `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${caCertPath}`,
