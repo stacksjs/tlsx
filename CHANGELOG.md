@@ -1,5 +1,136 @@
 # Changelog
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.11.0...v0.12.0)
 
+### 🚀 Features
+
+- add function to cleanup the trust store ([a521b2d](https://github.com/stacksjs/tlsx/commit/a521b2d)) _(by Chris <chrisbreuer93@gmail.com>)_
+- allow for using env vars ([0952b1c](https://github.com/stacksjs/tlsx/commit/0952b1c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- add vite plugin ([b035e7b](https://github.com/stacksjs/tlsx/commit/b035e7b)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.12.0 ([d53af85](https://github.com/stacksjs/tlsx/commit/d53af85)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([b63671c](https://github.com/stacksjs/tlsx/commit/b63671c)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([40aebe6](https://github.com/stacksjs/tlsx/commit/40aebe6)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([f873408](https://github.com/stacksjs/tlsx/commit/f873408)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([00c6e90](https://github.com/stacksjs/tlsx/commit/00c6e90)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([0f111f7](https://github.com/stacksjs/tlsx/commit/0f111f7)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([2f127b6](https://github.com/stacksjs/tlsx/commit/2f127b6)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([dc636bd](https://github.com/stacksjs/tlsx/commit/dc636bd)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([4dbc7fd](https://github.com/stacksjs/tlsx/commit/4dbc7fd)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([eb541dd](https://github.com/stacksjs/tlsx/commit/eb541dd)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **deps**: update actions/checkout action to v6 (#59) ([72d8961](https://github.com/stacksjs/tlsx/commit/72d8961)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#59](https://github.com/stacksjs/tlsx/issues/59), [#59](https://github.com/stacksjs/tlsx/issues/59))
+- **deps**: update actions/cache action to v5 (#252) ([29c61d9](https://github.com/stacksjs/tlsx/commit/29c61d9)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#252](https://github.com/stacksjs/tlsx/issues/252), [#252](https://github.com/stacksjs/tlsx/issues/252))
+- wip ([566f90b](https://github.com/stacksjs/tlsx/commit/566f90b)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([78f184e](https://github.com/stacksjs/tlsx/commit/78f184e)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([95a823a](https://github.com/stacksjs/tlsx/commit/95a823a)) _(by Chris <chrisbreuer93@gmail.com>)_
+- update cover and og-image ([c8dbbc2](https://github.com/stacksjs/tlsx/commit/c8dbbc2)) _(by cab-mikee <mike.cabz32@gmail.com>)_
+- **deps**: update dependency actions/checkout to v5.0.0 (#52) ([813cda3](https://github.com/stacksjs/tlsx/commit/813cda3)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#52](https://github.com/stacksjs/tlsx/issues/52), [#52](https://github.com/stacksjs/tlsx/issues/52))
+- **deps**: update all non-major dependencies (#53) ([8915410](https://github.com/stacksjs/tlsx/commit/8915410)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#53](https://github.com/stacksjs/tlsx/issues/53), [#53](https://github.com/stacksjs/tlsx/issues/53))
+- **deps**: update dependency typescript to ^5.9.3 (#54) ([ec2ab2c](https://github.com/stacksjs/tlsx/commit/ec2ab2c)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#54](https://github.com/stacksjs/tlsx/issues/54), [#54](https://github.com/stacksjs/tlsx/issues/54))
+- **deps**: update dependency vite to 7.1.7 (#48) ([7dfb106](https://github.com/stacksjs/tlsx/commit/7dfb106)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#48](https://github.com/stacksjs/tlsx/issues/48), [#48](https://github.com/stacksjs/tlsx/issues/48))
+- **deps**: update dependency bunfig to 0.15.0 (#47) ([61bdf8e](https://github.com/stacksjs/tlsx/commit/61bdf8e)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#47](https://github.com/stacksjs/tlsx/issues/47), [#47](https://github.com/stacksjs/tlsx/issues/47))
+- **deps**: update dependency actions/checkout to v5.0.0 (#46) ([dfcada2](https://github.com/stacksjs/tlsx/commit/dfcada2)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#46](https://github.com/stacksjs/tlsx/issues/46), [#46](https://github.com/stacksjs/tlsx/issues/46))
+- **deps**: update all non-major dependencies (#43) ([1b927a9](https://github.com/stacksjs/tlsx/commit/1b927a9)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#43](https://github.com/stacksjs/tlsx/issues/43), [#43](https://github.com/stacksjs/tlsx/issues/43))
+- **deps**: update dependency buddy-bot to 0.9.7 (#51) ([bb39ae1](https://github.com/stacksjs/tlsx/commit/bb39ae1)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#51](https://github.com/stacksjs/tlsx/issues/51), [#51](https://github.com/stacksjs/tlsx/issues/51))
+- update tooling ([5fb9c61](https://github.com/stacksjs/tlsx/commit/5fb9c61)) _(by Adelino Ngomacha <adelinob335@gmail.com>)_
+- **deps**: update dependency @types/bun to ^1.2.15 (#42) ([77cddaa](https://github.com/stacksjs/tlsx/commit/77cddaa)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#42](https://github.com/stacksjs/tlsx/issues/42), [#42](https://github.com/stacksjs/tlsx/issues/42))
+- remove unused scripts ([7bf530b](https://github.com/stacksjs/tlsx/commit/7bf530b)) _(by Chris <chrisbreuer93@gmail.com>)_
+- update deps ([e951625](https://github.com/stacksjs/tlsx/commit/e951625)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_
+- adjust readme ([822f0e0](https://github.com/stacksjs/tlsx/commit/822f0e0)) _(by Chris <chrisbreuer93@gmail.com>)_
+- lint ([8227caf](https://github.com/stacksjs/tlsx/commit/8227caf)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([1e3793a](https://github.com/stacksjs/tlsx/commit/1e3793a)) _(by Chris <chrisbreuer93@gmail.com>)_
+- several minor updates ([fbe3200](https://github.com/stacksjs/tlsx/commit/fbe3200)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: update peerdependency vite to v6 (#41) ([821e579](https://github.com/stacksjs/tlsx/commit/821e579)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#41](https://github.com/stacksjs/tlsx/issues/41), [#41](https://github.com/stacksjs/tlsx/issues/41))
+- use constants ([c124897](https://github.com/stacksjs/tlsx/commit/c124897)) _(by Chris <chrisbreuer93@gmail.com>)_
+- improve platform handling ([8592948](https://github.com/stacksjs/tlsx/commit/8592948)) _(by Chris <chrisbreuer93@gmail.com>)_
+- refactor certificate file ([1bc36f5](https://github.com/stacksjs/tlsx/commit/1bc36f5)) _(by Chris <chrisbreuer93@gmail.com>)_
+- minor updates ([6a1cdef](https://github.com/stacksjs/tlsx/commit/6a1cdef)) _(by Chris <chrisbreuer93@gmail.com>)_
+- adjust build ([67fe1e7](https://github.com/stacksjs/tlsx/commit/67fe1e7)) _(by Chris <chrisbreuer93@gmail.com>)_
+- add publish script ([0049f66](https://github.com/stacksjs/tlsx/commit/0049f66)) _(by Chris <chrisbreuer93@gmail.com>)_
+- resolve type issues ([637a75c](https://github.com/stacksjs/tlsx/commit/637a75c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- add context7 mcp option ([72cddd9](https://github.com/stacksjs/tlsx/commit/72cddd9)) _(by Chris <chrisbreuer93@gmail.com>)_
+- adjust workflows ([6db5998](https://github.com/stacksjs/tlsx/commit/6db5998)) _(by Chris <chrisbreuer93@gmail.com>)_
+- lint ([709fdd8](https://github.com/stacksjs/tlsx/commit/709fdd8)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 📄 Miscellaneous
+
+- Merge pull request #1408 from stacksjs/renovate/all-minor-patch ([69a6501](https://github.com/stacksjs/tlsx/commit/69a6501)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#1408](https://github.com/stacksjs/tlsx/issues/1408), [#1408](https://github.com/stacksjs/tlsx/issues/1408))
+- Merge pull request #49 from stacksjs/buddy-bot/update-non-major-updates-1756303582808 ([cc4e5f1](https://github.com/stacksjs/tlsx/commit/cc4e5f1)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#49](https://github.com/stacksjs/tlsx/issues/49), [#49](https://github.com/stacksjs/tlsx/issues/49))
+
+### Contributors
+
+- _Adelino Ngomacha <adelinob335@gmail.com>_
+- _Chris <chrisbreuer93@gmail.com>_
+- _[renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot])_
+- _cab-mikee <mike.cabz32@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.11.0...HEAD)
+
+### 🚀 Features
+
+- add function to cleanup the trust store ([a521b2d](https://github.com/stacksjs/tlsx/commit/a521b2d)) _(by Chris <chrisbreuer93@gmail.com>)_
+- allow for using env vars ([0952b1c](https://github.com/stacksjs/tlsx/commit/0952b1c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- add vite plugin ([b035e7b](https://github.com/stacksjs/tlsx/commit/b035e7b)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- wip ([b63671c](https://github.com/stacksjs/tlsx/commit/b63671c)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([40aebe6](https://github.com/stacksjs/tlsx/commit/40aebe6)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([f873408](https://github.com/stacksjs/tlsx/commit/f873408)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([00c6e90](https://github.com/stacksjs/tlsx/commit/00c6e90)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([0f111f7](https://github.com/stacksjs/tlsx/commit/0f111f7)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([2f127b6](https://github.com/stacksjs/tlsx/commit/2f127b6)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([dc636bd](https://github.com/stacksjs/tlsx/commit/dc636bd)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([4dbc7fd](https://github.com/stacksjs/tlsx/commit/4dbc7fd)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([eb541dd](https://github.com/stacksjs/tlsx/commit/eb541dd)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **deps**: update actions/checkout action to v6 (#59) ([72d8961](https://github.com/stacksjs/tlsx/commit/72d8961)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#59](https://github.com/stacksjs/tlsx/issues/59), [#59](https://github.com/stacksjs/tlsx/issues/59))
+- **deps**: update actions/cache action to v5 (#252) ([29c61d9](https://github.com/stacksjs/tlsx/commit/29c61d9)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#252](https://github.com/stacksjs/tlsx/issues/252), [#252](https://github.com/stacksjs/tlsx/issues/252))
+- wip ([566f90b](https://github.com/stacksjs/tlsx/commit/566f90b)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([78f184e](https://github.com/stacksjs/tlsx/commit/78f184e)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([95a823a](https://github.com/stacksjs/tlsx/commit/95a823a)) _(by Chris <chrisbreuer93@gmail.com>)_
+- update cover and og-image ([c8dbbc2](https://github.com/stacksjs/tlsx/commit/c8dbbc2)) _(by cab-mikee <mike.cabz32@gmail.com>)_
+- **deps**: update dependency actions/checkout to v5.0.0 (#52) ([813cda3](https://github.com/stacksjs/tlsx/commit/813cda3)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#52](https://github.com/stacksjs/tlsx/issues/52), [#52](https://github.com/stacksjs/tlsx/issues/52))
+- **deps**: update all non-major dependencies (#53) ([8915410](https://github.com/stacksjs/tlsx/commit/8915410)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#53](https://github.com/stacksjs/tlsx/issues/53), [#53](https://github.com/stacksjs/tlsx/issues/53))
+- **deps**: update dependency typescript to ^5.9.3 (#54) ([ec2ab2c](https://github.com/stacksjs/tlsx/commit/ec2ab2c)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#54](https://github.com/stacksjs/tlsx/issues/54), [#54](https://github.com/stacksjs/tlsx/issues/54))
+- **deps**: update dependency vite to 7.1.7 (#48) ([7dfb106](https://github.com/stacksjs/tlsx/commit/7dfb106)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#48](https://github.com/stacksjs/tlsx/issues/48), [#48](https://github.com/stacksjs/tlsx/issues/48))
+- **deps**: update dependency bunfig to 0.15.0 (#47) ([61bdf8e](https://github.com/stacksjs/tlsx/commit/61bdf8e)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#47](https://github.com/stacksjs/tlsx/issues/47), [#47](https://github.com/stacksjs/tlsx/issues/47))
+- **deps**: update dependency actions/checkout to v5.0.0 (#46) ([dfcada2](https://github.com/stacksjs/tlsx/commit/dfcada2)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#46](https://github.com/stacksjs/tlsx/issues/46), [#46](https://github.com/stacksjs/tlsx/issues/46))
+- **deps**: update all non-major dependencies (#43) ([1b927a9](https://github.com/stacksjs/tlsx/commit/1b927a9)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#43](https://github.com/stacksjs/tlsx/issues/43), [#43](https://github.com/stacksjs/tlsx/issues/43))
+- **deps**: update dependency buddy-bot to 0.9.7 (#51) ([bb39ae1](https://github.com/stacksjs/tlsx/commit/bb39ae1)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#51](https://github.com/stacksjs/tlsx/issues/51), [#51](https://github.com/stacksjs/tlsx/issues/51))
+- update tooling ([5fb9c61](https://github.com/stacksjs/tlsx/commit/5fb9c61)) _(by Adelino Ngomacha <adelinob335@gmail.com>)_
+- **deps**: update dependency @types/bun to ^1.2.15 (#42) ([77cddaa](https://github.com/stacksjs/tlsx/commit/77cddaa)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#42](https://github.com/stacksjs/tlsx/issues/42), [#42](https://github.com/stacksjs/tlsx/issues/42))
+- remove unused scripts ([7bf530b](https://github.com/stacksjs/tlsx/commit/7bf530b)) _(by Chris <chrisbreuer93@gmail.com>)_
+- update deps ([e951625](https://github.com/stacksjs/tlsx/commit/e951625)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_
+- adjust readme ([822f0e0](https://github.com/stacksjs/tlsx/commit/822f0e0)) _(by Chris <chrisbreuer93@gmail.com>)_
+- lint ([8227caf](https://github.com/stacksjs/tlsx/commit/8227caf)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([1e3793a](https://github.com/stacksjs/tlsx/commit/1e3793a)) _(by Chris <chrisbreuer93@gmail.com>)_
+- several minor updates ([fbe3200](https://github.com/stacksjs/tlsx/commit/fbe3200)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: update peerdependency vite to v6 (#41) ([821e579](https://github.com/stacksjs/tlsx/commit/821e579)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#41](https://github.com/stacksjs/tlsx/issues/41), [#41](https://github.com/stacksjs/tlsx/issues/41))
+- use constants ([c124897](https://github.com/stacksjs/tlsx/commit/c124897)) _(by Chris <chrisbreuer93@gmail.com>)_
+- improve platform handling ([8592948](https://github.com/stacksjs/tlsx/commit/8592948)) _(by Chris <chrisbreuer93@gmail.com>)_
+- refactor certificate file ([1bc36f5](https://github.com/stacksjs/tlsx/commit/1bc36f5)) _(by Chris <chrisbreuer93@gmail.com>)_
+- minor updates ([6a1cdef](https://github.com/stacksjs/tlsx/commit/6a1cdef)) _(by Chris <chrisbreuer93@gmail.com>)_
+- adjust build ([67fe1e7](https://github.com/stacksjs/tlsx/commit/67fe1e7)) _(by Chris <chrisbreuer93@gmail.com>)_
+- add publish script ([0049f66](https://github.com/stacksjs/tlsx/commit/0049f66)) _(by Chris <chrisbreuer93@gmail.com>)_
+- resolve type issues ([637a75c](https://github.com/stacksjs/tlsx/commit/637a75c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- add context7 mcp option ([72cddd9](https://github.com/stacksjs/tlsx/commit/72cddd9)) _(by Chris <chrisbreuer93@gmail.com>)_
+- adjust workflows ([6db5998](https://github.com/stacksjs/tlsx/commit/6db5998)) _(by Chris <chrisbreuer93@gmail.com>)_
+- lint ([709fdd8](https://github.com/stacksjs/tlsx/commit/709fdd8)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 📄 Miscellaneous
+
+- Merge pull request #1408 from stacksjs/renovate/all-minor-patch ([69a6501](https://github.com/stacksjs/tlsx/commit/69a6501)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#1408](https://github.com/stacksjs/tlsx/issues/1408), [#1408](https://github.com/stacksjs/tlsx/issues/1408))
+- Merge pull request #49 from stacksjs/buddy-bot/update-non-major-updates-1756303582808 ([cc4e5f1](https://github.com/stacksjs/tlsx/commit/cc4e5f1)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#49](https://github.com/stacksjs/tlsx/issues/49), [#49](https://github.com/stacksjs/tlsx/issues/49))
+
+### Contributors
+
+- _Adelino Ngomacha <adelinob335@gmail.com>_
+- _Chris <chrisbreuer93@gmail.com>_
+- _[renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot])_
+- _cab-mikee <mike.cabz32@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
 
 ## v0.10.0...main
 
@@ -665,7 +796,6 @@
 
 ## ...main
 
-
 ### 🏡 Chore
 
 - Wip ([b032de5](https://github.com/stacksjs/tlsx/commit/b032de5))
@@ -679,4 +809,3 @@
 ### ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
-
