@@ -29,7 +29,7 @@
     "node_modules",
     "dist",
     "docs/bunpress.config.ts",
-    "eslint.config.ts",
+    "pickier.config.ts",
     "buddy-bot.config.ts"
   ]
 }

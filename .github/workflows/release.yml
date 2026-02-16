@@ -1,47 +1,39 @@
-name: Release
+name: Releaser
 
 on:
   push:
     tags:
       - 'v*'
-
-permissions:
-  contents: write
-  packages: write
-  id-token: write
+  workflow_dispatch:
 
 jobs:
   npm:
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ env.VERSION }}
+    permissions:
+      contents: write
+      id-token: write
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6.0.2
+      - name: Checkout
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2.1.2
+        uses: oven-sh/setup-bun@v2
 
-      - name: Use Cached node_modules
-        uses: actions/cache@v5.0.3
-        with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            node-modules-
+      - name: Setup Pantry
+        uses: home-lang/pantry-setup@v1
 
       - name: Install Dependencies
         run: bun install
 
-      - name: Publish to npm
-        run: ./scripts/publish.sh
+      - name: Publish
+        run: pantry npm:publish --access public
         env:
-          BUN_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        id: create_release
         uses: stacksjs/action-releaser@v1.2.9
         with:
           files: |
@@ -50,14 +42,5 @@ jobs:
             ./packages/tlsx/bin/tlsx-windows-x64.zip
             ./packages/tlsx/bin/tlsx-darwin-x64.zip
             ./packages/tlsx/bin/tlsx-darwin-arm64.zip
-          # --- Homebrew tap update support ---
-          # Path to your Homebrew formula template (update this path as needed)
-          # homebrewFormula: .github/homebrew-formula.rb
-          # The owner/repo of your Homebrew tap (update this value as needed)
-          # homebrewRepo: stacksjs/homebrew-tap
-          # Optionally uncomment and set these if you need custom values:
-          # homebrewBranch: main
-          # homebrewPath: Formula
-          # homebrewCommitFormat: "update: {{ formula }} to {{ version }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
