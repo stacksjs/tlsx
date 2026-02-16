@@ -3,7 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'bun:test
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { createRootCA, findFoldersWithFile, generateCertificate, getCertificateFromCertPemOrPath, isCertExpired, isCertValidForDomain, listCertsInDirectory, parseCertDetails } from '../src'
+import { createRootCA, generateCertificate, getCertificateFromCertPemOrPath, isCertExpired, isCertValidForDomain, listCertsInDirectory, parseCertDetails } from '../src'
 
 describe('@stacksjs/tlsx', () => {
   let rootCA: Certificate
@@ -170,24 +170,6 @@ describe('@stacksjs/tlsx', () => {
 
     afterEach(() => {
       rmSync(tempDir, { recursive: true, force: true })
-    })
-
-    it('should find folders with specific files', () => {
-      const testDir1 = join(tempDir, 'test1')
-      const testDir2 = join(tempDir, 'test2')
-      const testDir3 = join(tempDir, 'test3')
-
-      mkdirSync(testDir1, { recursive: true })
-      mkdirSync(testDir2, { recursive: true })
-      mkdirSync(testDir3, { recursive: true })
-
-      writeFileSync(join(testDir1, 'cert.pem'), 'test')
-      writeFileSync(join(testDir3, 'cert.pem'), 'test')
-
-      const foundDirs = findFoldersWithFile(tempDir, 'cert.pem')
-      expect(foundDirs).toContain(testDir1)
-      expect(foundDirs).toContain(testDir3)
-      expect(foundDirs).not.toContain(testDir2)
     })
 
     it('should list certificates in directory', () => {

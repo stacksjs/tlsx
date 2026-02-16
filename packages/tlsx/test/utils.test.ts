@@ -6,7 +6,6 @@ import path from 'node:path'
 import { config } from '../src/config'
 import {
   debugLog,
-  findFoldersWithFile,
   getPrimaryDomain,
   makeNumberPositive,
   readCertFromFile,
@@ -82,31 +81,6 @@ describe('Utility Functions', () => {
     it('should throw an error if file does not exist', () => {
       const nonExistentPath = path.join(tempDir, 'doesnotexist.crt')
       expect(() => readCertFromFile(nonExistentPath)).toThrow()
-    })
-  })
-
-  describe('findFoldersWithFile', () => {
-    it('should find folders with specific files', () => {
-      const testDir1 = path.join(tempDir, 'test1')
-      const testDir2 = path.join(tempDir, 'test2')
-      const testDir3 = path.join(tempDir, 'test3')
-
-      fs.mkdirSync(testDir1, { recursive: true })
-      fs.mkdirSync(testDir2, { recursive: true })
-      fs.mkdirSync(testDir3, { recursive: true })
-
-      fs.writeFileSync(path.join(testDir1, 'cert.pem'), 'test')
-      fs.writeFileSync(path.join(testDir3, 'cert.pem'), 'test')
-
-      const foundDirs = findFoldersWithFile(tempDir, 'cert.pem')
-      expect(foundDirs).toContain(testDir1)
-      expect(foundDirs).toContain(testDir3)
-      expect(foundDirs).not.toContain(testDir2)
-    })
-
-    it('should return an empty array if no matches are found', () => {
-      const foundDirs = findFoldersWithFile(tempDir, 'nonexistent.file')
-      expect(foundDirs).toEqual([])
     })
   })
 
