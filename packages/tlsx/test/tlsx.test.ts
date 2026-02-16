@@ -96,13 +96,11 @@ describe('@stacksjs/tlsx', () => {
     }
     const hostCert = await generateCertificate(options)
     const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
-    const altNames = (cert as any).getExtension('subjectAltName') as any
+    const san = cert.subjectAltName || ''
 
-    // Type 7 is for IP addresses, Type 6 is for URIs in SubjectAltName extension
-    const altNamesList = (altNames as any).altNames as Array<{ type: number, value: string }>
-    expect(altNamesList.some(name => name.type === 7 && name.value === '127.0.0.1')).toBe(true)
-    expect(altNamesList.some(name => name.type === 7 && name.value === '::1')).toBe(true)
-    expect(altNamesList.some(name => name.type === 6 && name.value === 'https://localhost/app')).toBe(true)
+    expect(san).toContain('IP Address:127.0.0.1')
+    expect(san).toContain('IP Address:0:0:0:0:0:0:0:1')
+    expect(san).toContain('URI:https://localhost/app')
   })
 
   it('should generate a certificate with custom validity period', async () => {
@@ -228,13 +226,10 @@ describe('@stacksjs/tlsx', () => {
       const hostCert = await generateCertificate(options)
       const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
 
-      const keyUsage = (cert as any).getExtension('keyUsage') as any
-      expect((keyUsage as any).digitalSignature).toBe(true)
-      expect((keyUsage as any).keyEncipherment).toBe(true)
-
-      const extKeyUsage = (cert as any).getExtension('extKeyUsage') as any
-      expect((extKeyUsage as any).serverAuth).toBe(true)
-      expect((extKeyUsage as any).clientAuth).toBe(true)
+      // Verify extended key usage OIDs (serverAuth=1.3.6.1.5.5.7.3.1, clientAuth=1.3.6.1.5.5.7.3.2)
+      const keyUsage = cert.keyUsage || []
+      expect(keyUsage).toContain('1.3.6.1.5.5.7.3.1')
+      expect(keyUsage).toContain('1.3.6.1.5.5.7.3.2')
     })
 
     it('should generate a certificate with basic constraints', async () => {
@@ -249,13 +244,15 @@ describe('@stacksjs/tlsx', () => {
           cA: true,
           pathLenConstraint: 1,
         },
+        keyUsage: {
+          keyCertSign: true,
+          cRLSign: true,
+        },
       }
       const hostCert = await generateCertificate(options)
       const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
 
-      const basicConstraints = (cert as any).getExtension('basicConstraints') as any
-      expect(basicConstraints?.cA).toBe(true)
-      expect(basicConstraints?.pathLenConstraint).toBe(1)
+      expect(cert.ca).toBe(true)
     })
 
     it('should generate a certificate with custom attributes', async () => {

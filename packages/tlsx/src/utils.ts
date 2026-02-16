@@ -55,12 +55,14 @@ export function listCertsInDirectory(dirPath?: string): string[] {
 
   // If no certificates are found in the default directory, check the fallback path
   const stacksDir = path.join(os.homedir(), '.stacks', 'ssl')
-  certFiles.push(
-    ...fs
-      .readdirSync(stacksDir)
-      .filter(file => file.endsWith('.crt'))
-      .map(file => path.join(stacksDir, file)),
-  )
+  if (fs.existsSync(stacksDir)) {
+    certFiles.push(
+      ...fs
+        .readdirSync(stacksDir)
+        .filter(file => file.endsWith('.crt'))
+        .map(file => path.join(stacksDir, file)),
+    )
+  }
 
   return certFiles
 }

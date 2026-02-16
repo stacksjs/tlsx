@@ -34,6 +34,7 @@
     "javascript"
   ],
   "scripts": {
+    "build": "bun --bun build.ts",
     "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
     "test": "bun test",
     "lint": "bunx --bun pickier lint . --config pickier.config.ts --max-warnings 9999",
@@ -51,6 +52,7 @@
   },
   "devDependencies": {
     "better-dx": "^0.2.5",
+    "consola": "^3.4.2",
     "typescript": "^5.9.3"
   },
   "git-hooks": {

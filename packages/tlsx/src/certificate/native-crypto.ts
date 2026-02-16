@@ -330,8 +330,11 @@ function encodeSubjectAltName(altNames: SubjectAltNameEntry[]): Buffer {
 /**
  * Encode Basic Constraints extension
  */
-function encodeBasicConstraints(isCA: boolean): Buffer {
+function encodeBasicConstraints(isCA: boolean, pathLenConstraint?: number): Buffer {
   if (isCA) {
+    if (pathLenConstraint !== undefined) {
+      return encodeSequence(encodeTLV(0x01, Buffer.from([0xFF])), encodeInteger(pathLenConstraint))
+    }
     return encodeSequence(encodeTLV(0x01, Buffer.from([0xFF]))) // BOOLEAN TRUE
   }
   return encodeSequence() // Empty sequence for non-CA
@@ -394,7 +397,7 @@ export interface CertificateParams {
   issuer: Array<{ shortName: string, value: string }>
   publicKey: crypto.KeyObject
   extensions?: {
-    basicConstraints?: { isCA: boolean, critical?: boolean }
+    basicConstraints?: { isCA: boolean, critical?: boolean, pathLenConstraint?: number }
     keyUsage?: { digitalSignature?: boolean, keyEncipherment?: boolean, keyCertSign?: boolean, cRLSign?: boolean, critical?: boolean }
     extendedKeyUsage?: { serverAuth?: boolean, clientAuth?: boolean }
     subjectAltName?: SubjectAltNameEntry[]
@@ -437,7 +440,7 @@ function buildTBSCertificate(params: CertificateParams): Buffer {
       extList.push(encodeExtension(
         OID.BASIC_CONSTRAINTS,
         params.extensions.basicConstraints.critical ?? true,
-        encodeBasicConstraints(params.extensions.basicConstraints.isCA),
+        encodeBasicConstraints(params.extensions.basicConstraints.isCA, params.extensions.basicConstraints.pathLenConstraint),
       ))
     }
 
@@ -544,6 +547,7 @@ export interface CreateCertificateOptions {
   publicKey: crypto.KeyObject
   signingKey: crypto.KeyObject
   isCA?: boolean
+  pathLenConstraint?: number
   keyUsage?: { digitalSignature?: boolean, keyEncipherment?: boolean, keyCertSign?: boolean, cRLSign?: boolean }
   extendedKeyUsage?: { serverAuth?: boolean, clientAuth?: boolean }
   subjectAltName?: SubjectAltNameEntry[]
@@ -561,7 +565,7 @@ export function createCertificate(options: CreateCertificateOptions): { certific
     issuer: options.issuer || options.subject,
     publicKey: options.publicKey,
     extensions: {
-      basicConstraints: { isCA: options.isCA ?? false, critical: true },
+      basicConstraints: { isCA: options.isCA ?? false, critical: true, pathLenConstraint: options.pathLenConstraint },
       subjectKeyIdentifier: calculateSubjectKeyIdentifier(options.publicKey),
     },
   }

@@ -207,13 +207,6 @@ describe('tlsx CLI', () => {
       expect(result.domain).toBe('example.com')
 
       // Simulate what the CLI would do
-      const mockCert = {
-        certificate: '-----BEGIN CERTIFICATE-----\nTest\n-----END CERTIFICATE-----',
-        privateKey: '-----BEGIN PRIVATE KEY-----\nTest\n-----END PRIVATE KEY-----',
-        notBefore: new Date(),
-        notAfter: new Date(),
-      }
-
       const caCert = await mockCreateRootCA()
       const hostCert = await mockGenerateCertificate({
         domain: 'example.com',
@@ -231,8 +224,8 @@ describe('tlsx CLI', () => {
         domain: 'example.com',
       }))
       expect(mockAddCertToSystemTrustStore).toHaveBeenCalledWith(
-        mockCert,
-        mockCert.certificate,
+        caCert,
+        caCert.certificate,
       )
     })
   })
