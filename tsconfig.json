@@ -24,5 +24,12 @@
     "verbatimModuleSyntax": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "docs/bunpress.config.ts",
+    "eslint.config.ts",
+    "buddy-bot.config.ts"
+  ]
 }

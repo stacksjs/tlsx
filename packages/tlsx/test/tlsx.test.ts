@@ -96,7 +96,7 @@ describe('@stacksjs/tlsx', () => {
     }
     const hostCert = await generateCertificate(options)
     const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
-    const altNames = cert.getExtension('subjectAltName') as any
+    const altNames = (cert as any).getExtension('subjectAltName') as any
 
     // Type 7 is for IP addresses, Type 6 is for URIs in SubjectAltName extension
     const altNamesList = (altNames as any).altNames as Array<{ type: number, value: string }>
@@ -228,11 +228,11 @@ describe('@stacksjs/tlsx', () => {
       const hostCert = await generateCertificate(options)
       const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
 
-      const keyUsage = cert.getExtension('keyUsage') as any
+      const keyUsage = (cert as any).getExtension('keyUsage') as any
       expect((keyUsage as any).digitalSignature).toBe(true)
       expect((keyUsage as any).keyEncipherment).toBe(true)
 
-      const extKeyUsage = cert.getExtension('extKeyUsage') as any
+      const extKeyUsage = (cert as any).getExtension('extKeyUsage') as any
       expect((extKeyUsage as any).serverAuth).toBe(true)
       expect((extKeyUsage as any).clientAuth).toBe(true)
     })
@@ -253,7 +253,7 @@ describe('@stacksjs/tlsx', () => {
       const hostCert = await generateCertificate(options)
       const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
 
-      const basicConstraints = cert.getExtension('basicConstraints') as any
+      const basicConstraints = (cert as any).getExtension('basicConstraints') as any
       expect(basicConstraints?.cA).toBe(true)
       expect(basicConstraints?.pathLenConstraint).toBe(1)
     })
