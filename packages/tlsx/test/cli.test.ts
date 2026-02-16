@@ -7,7 +7,7 @@ import {
   generateCertificate,
 } from '../src/certificate'
 import { config } from '../src/config'
-import { listCertsInDirectory, normalizeCertPaths } from '../src/utils'
+import { debugLog, findFoldersWithFile, getPrimaryDomain, listCertsInDirectory, makeNumberPositive, normalizeCertPaths, readCertFromFile, runCommand } from '../src/utils'
 
 // Create a mock implementation of the CLI
 function mockCliRun(command: string) {
@@ -97,13 +97,16 @@ function mockCliRun(command: string) {
 }
 
 // Mock dependencies to avoid executing real commands in tests
-mock.module('../src/utils', () => {
-  const original = require.cache[require.resolve('../src/utils')]
-  return {
-    ...original,
-    runCommand: mock(() => Promise.resolve({ stdout: 'Success', stderr: '' })),
-  }
-})
+mock.module('../src/utils', () => ({
+  debugLog,
+  findFoldersWithFile,
+  getPrimaryDomain,
+  listCertsInDirectory,
+  makeNumberPositive,
+  normalizeCertPaths,
+  readCertFromFile,
+  runCommand: mock(() => Promise.resolve({ stdout: 'Success', stderr: '' })),
+}))
 
 // Mock the certificate trust functions
 const mockAddCertToSystemTrustStore = mock((_cert: any, _caCert: any) => Promise.resolve('/path/to/cert.crt'))
