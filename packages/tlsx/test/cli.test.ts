@@ -7,7 +7,7 @@ import {
   generateCertificate,
 } from '../src/certificate'
 import { config } from '../src/config'
-import { debugLog, findFoldersWithFile, getPrimaryDomain, listCertsInDirectory, makeNumberPositive, normalizeCertPaths, readCertFromFile, runCommand } from '../src/utils'
+import { listCertsInDirectory, normalizeCertPaths } from '../src/utils'
 
 // Create a mock implementation of the CLI
 function mockCliRun(command: string) {
@@ -96,32 +96,10 @@ function mockCliRun(command: string) {
   throw new Error(`Unknown command: ${cmd}`)
 }
 
-// Mock dependencies to avoid executing real commands in tests
-mock.module('../src/utils', () => ({
-  debugLog,
-  findFoldersWithFile,
-  getPrimaryDomain,
-  listCertsInDirectory,
-  makeNumberPositive,
-  normalizeCertPaths,
-  readCertFromFile,
-  runCommand: mock(() => Promise.resolve({ stdout: 'Success', stderr: '' })),
-}))
-
 // Mock the certificate trust functions
 const mockAddCertToSystemTrustStore = mock((_cert: any, _caCert: any) => Promise.resolve('/path/to/cert.crt'))
 const mockRemoveCertFromSystemTrustStore = mock((_domain: string, _options?: any, _certName?: string) => Promise.resolve(undefined))
 const mockCleanupTrustStore = mock((_options?: any, _pattern?: string) => Promise.resolve(undefined))
-
-mock.module('../src/certificate/trust', () => {
-  const original = require.cache[require.resolve('../src/certificate/trust')]
-  return {
-    ...original,
-    addCertToSystemTrustStoreAndSaveCert: mockAddCertToSystemTrustStore,
-    removeCertFromSystemTrustStore: mockRemoveCertFromSystemTrustStore,
-    cleanupTrustStore: mockCleanupTrustStore,
-  }
-})
 
 // Mock the certificate validation function
 const mockValidateCertificate = mock((_certPath: string, _caCertPath?: string) => ({
@@ -135,14 +113,6 @@ const mockValidateCertificate = mock((_certPath: string, _caCertPath?: string) =
   issuer: 'Test CA',
   subject: 'example.com',
 }))
-
-mock.module('../src/certificate/validation', () => {
-  const original = require.cache[require.resolve('../src/certificate/validation')]
-  return {
-    ...original,
-    validateCertificate: mockValidateCertificate,
-  }
-})
 
 describe('tlsx CLI', () => {
   let tempDir: string
