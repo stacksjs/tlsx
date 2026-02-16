@@ -1,4 +1,25 @@
 # Changelog
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.12.0...v0.13.0)
+
+### 🧹 Chores
+
+- release v0.13.0 ([fa88a16](https://github.com/stacksjs/tlsx/commit/fa88a16)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([eaebc81](https://github.com/stacksjs/tlsx/commit/eaebc81)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.12.0...HEAD)
+
+### 🧹 Chores
+
+- wip ([eaebc81](https://github.com/stacksjs/tlsx/commit/eaebc81)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.11.0...v0.12.0)
 
 ### 🚀 Features
