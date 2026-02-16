@@ -57,7 +57,7 @@ describe('Utility Functions', () => {
   let tempDir: string
 
   beforeEach(() => {
-    tempDir = path.join(os.tmpdir(), `tlsx-utils-test-${Date.now()}`)
+    tempDir = path.join(os.tmpdir(), `tlsx-utils-test-${Date.now()}-${Math.random().toString(36).slice(2)}`)
     fs.mkdirSync(tempDir, { recursive: true })
   })
 

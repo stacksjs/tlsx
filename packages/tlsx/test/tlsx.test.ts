@@ -164,7 +164,7 @@ describe('@stacksjs/tlsx', () => {
     let tempDir: string
 
     beforeEach(() => {
-      tempDir = join(tmpdir(), `tlsx-test-${Date.now()}`)
+      tempDir = join(tmpdir(), `tlsx-test-${Date.now()}-${Math.random().toString(36).slice(2)}`)
       mkdirSync(tempDir, { recursive: true })
     })
 

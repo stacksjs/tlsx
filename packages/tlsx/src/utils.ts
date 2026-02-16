@@ -83,17 +83,31 @@ export function findFoldersWithFile(rootDir: string, fileName: string): string[]
 
   function search(dir: string) {
     try {
+      if (!fs.existsSync(dir)) {
+        return
+      }
+
       const files = fs.readdirSync(dir)
 
       for (const file of files) {
         const filePath = path.join(dir, file)
-        const stats = fs.lstatSync(filePath)
+        try {
+          const stats = fs.lstatSync(filePath)
 
-        if (stats.isDirectory()) {
-          search(filePath)
+          if (stats.isSymbolicLink()) {
+            continue
+          }
+
+          if (stats.isDirectory()) {
+            search(filePath)
+          }
+          else if (file === fileName) {
+            result.push(dir)
+          }
         }
-        else if (file === fileName) {
-          result.push(dir)
+        catch {
+          // Skip files that can't be stat'd (broken symlinks, permission issues)
+          continue
         }
       }
     }
