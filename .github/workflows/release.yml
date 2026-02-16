@@ -17,7 +17,7 @@ jobs:
       version: ${{ env.VERSION }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
 
