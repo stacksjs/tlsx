@@ -1,5 +1,5 @@
 import type { CAOptions, Certificate, CertificateOptions } from '../src/types'
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'bun:test'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -8,7 +8,7 @@ import { createRootCA, findFoldersWithFile, generateCertificate, getCertificateF
 describe('@stacksjs/tlsx', () => {
   let rootCA: Certificate
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     rootCA = await createRootCA()
   })
 
