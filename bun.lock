@@ -11,14 +11,14 @@
     },
     "packages/bun-plugin": {
       "name": "bun-plugin-tlsx",
-      "version": "0.12.0",
+      "version": "0.13.0",
       "devDependencies": {
         "bun-plugin-dtsx": "^0.21.17",
       },
     },
     "packages/tlsx": {
       "name": "@stacksjs/tlsx",
-      "version": "0.12.0",
+      "version": "0.13.0",
       "bin": {
         "tlsx": "./dist/bin/cli.js",
       },
@@ -33,7 +33,7 @@
     },
     "packages/vite-plugin": {
       "name": "vite-plugin-tlsx",
-      "version": "0.12.0",
+      "version": "0.13.0",
       "dependencies": {
         "@stacksjs/tlsx": "workspace:*",
       },
