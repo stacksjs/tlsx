@@ -51,7 +51,7 @@
     "preview:docs": "bun --bun vitepress preview docs"
   },
   "devDependencies": {
-    "better-dx": "^0.2.5",
+    "better-dx": "^0.2.6",
     "consola": "^3.4.2",
     "typescript": "^5.9.3"
   },
