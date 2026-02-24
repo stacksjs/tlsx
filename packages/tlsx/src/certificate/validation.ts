@@ -306,7 +306,7 @@ export function validateBrowserCompatibility(
     }
 
     // Check key usage for serverAuth
-    const keyUsage = cert.keyUsage
+    const _keyUsage = cert.keyUsage
     const extKeyUsage = (cert as any).extKeyUsage || ''
     const hasServerAuth = extKeyUsage.includes('TLS Web Server Authentication') || extKeyUsage.includes('1.3.6.1.5.5.7.3.1')
 

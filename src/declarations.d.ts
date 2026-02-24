@@ -7,7 +7,7 @@ declare module 'cac' {
     version(version: string): CAC
     parse(argv?: string[]): any
   }
-  export function cac(name?: string): CAC
+  export function cac(_name?: string): CAC
   export default cac
 }
 
@@ -24,5 +24,5 @@ declare module 'consola' {
   }
   export const consola: ConsolaInstance
   export default consola
-  export function createConsola(options?: any): ConsolaInstance
+  export function createConsola(_options?: any): ConsolaInstance
 }

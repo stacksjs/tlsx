@@ -108,13 +108,13 @@ function encodeInteger(value: Buffer | bigint | number): Buffer {
   let buf: Buffer
   if (typeof value === 'bigint') {
     const hex = value.toString(16).padStart(2, '0')
-    buf = Buffer.from(hex.length % 2 ? '0' + hex : hex, 'hex')
+    buf = Buffer.from(hex.length % 2 ? `0${hex}` : hex, 'hex')
   } else if (typeof value === 'number') {
     if (value === 0) {
       buf = Buffer.from([0])
     } else {
       const hex = value.toString(16).padStart(2, '0')
-      buf = Buffer.from(hex.length % 2 ? '0' + hex : hex, 'hex')
+      buf = Buffer.from(hex.length % 2 ? `0${hex}` : hex, 'hex')
     }
   } else {
     buf = value

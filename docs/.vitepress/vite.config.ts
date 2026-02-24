@@ -11,7 +11,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 
 // Detect if running in Bun
-const IS_BUN = typeof process !== 'undefined' &&
+const _IS_BUN = typeof process !== 'undefined' &&
   typeof process.versions !== 'undefined' &&
   typeof process.versions.bun !== 'undefined'
 
@@ -32,7 +32,7 @@ const certExists = fs.existsSync(CERT_PATH)
 const keyExists = fs.existsSync(KEY_PATH)
 
 // Create HTTPS config if certificates exist
-const httpsConfig = certExists && keyExists ? {
+const _httpsConfig = certExists && keyExists ? {
   key: fs.readFileSync(KEY_PATH, 'utf-8'),
   cert: fs.readFileSync(CERT_PATH, 'utf-8'),
 } : undefined
