@@ -2,7 +2,7 @@
 
 ## About
 
-A TLS/HTTPS library with automation.
+tlsx is a TLS certificate management library and CLI (similar to mkcert) that provides zero-config HTTPS for local development. It generates, stores, and trusts SSL certificates with multi-domain and wildcard support, cross-platform system trust store integration (macOS, Linux, Windows), and certificate lifecycle management (generate, revoke, cleanup, list, verify). Configuration is managed via `tls.config.ts` with options for domain, validity, organization, and certificate paths.
 
 ## Linting
 
