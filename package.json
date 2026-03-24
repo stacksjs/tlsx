@@ -53,7 +53,7 @@
   "devDependencies": {
     "better-dx": "^0.2.7",
     "consola": "^3.4.2",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "git-hooks": {
     "pre-commit": {
