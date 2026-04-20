@@ -1,7 +1,8 @@
 # Changelog
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.12.0...v0.13.0)
 
-### 🧹 Chores
+## 🧹 Chores
 
 - release v0.13.0 ([fa88a16](https://github.com/stacksjs/tlsx/commit/fa88a16)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 - wip ([eaebc81](https://github.com/stacksjs/tlsx/commit/eaebc81)) _(by glennmichael123 <gtorregosa@gmail.com>)_

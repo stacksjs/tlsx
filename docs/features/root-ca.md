@@ -36,6 +36,7 @@ tlsx secure example.localhost
 ```
 
 This creates:
+
 - `~/.stacks/ssl/example.localhost.ca.crt` - Root CA certificate
 - `~/.stacks/ssl/example.localhost.ca.key` - Root CA private key
 
@@ -204,7 +205,7 @@ await untrustRootCA({
 # CLI
 tlsx ca list
 
-# Output:
+# Output
 # Name                    Created       Status
 # My Development CA       2024-01-01    Trusted
 # Old CA                  2023-01-01    Not Trusted
@@ -226,13 +227,13 @@ cas.forEach((ca) => {
 # CLI
 tlsx ca info ~/.stacks/ssl/my-ca.crt
 
-# Output:
+# Output
 # Subject:     CN=My Development CA, O=My Company
 # Issuer:      CN=My Development CA, O=My Company
 # Valid From:  2024-01-01
 # Valid To:    2034-01-01
 # Key Size:    2048 bits
-# Fingerprint: SHA256:abc123...
+# Fingerprint: SHA256:abc123
 ```
 
 ### Delete CA
@@ -260,6 +261,7 @@ await deleteRootCA({
 Share a CA across your development team:
 
 1. **Create CA**:
+
    ```bash
    tlsx ca create --name "Team Dev CA" --output ./team-ca
    ```
@@ -267,11 +269,13 @@ Share a CA across your development team:
 2. **Distribute** (securely share `team-ca.crt` only, not the private key)
 
 3. **Team members trust the CA**:
+
    ```bash
    tlsx ca trust --cert ./team-ca.crt
    ```
 
 4. **Generate individual certificates** (requires private key):
+
    ```bash
    tlsx secure app.localhost --ca-cert ./team-ca.crt --ca-key ./team-ca.key
    ```
@@ -282,13 +286,16 @@ Use a dedicated CA for CI/CD environments:
 
 ```yaml
 # .github/workflows/test.yml
+
 - name: Setup CA
+
   run: |
-    # Create CI-specific CA
+# Create CI-specific CA
     tlsx ca create --name "CI CA" --output ./ci-ca
     tlsx ca trust --cert ./ci-ca.crt
 
 - name: Generate certificates
+
   run: |
     tlsx secure app.localhost \
       --ca-cert ./ci-ca.crt \

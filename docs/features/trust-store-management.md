@@ -120,6 +120,7 @@ Requires: sudo/admin password
 ```
 
 **Manual verification**:
+
 1. Open "Keychain Access" app
 2. Select "System" keychain
 3. Search for your certificate name
@@ -158,6 +159,7 @@ Requires: Administrator
 ```
 
 **Manual verification**:
+
 1. Open "certmgr.msc"
 2. Navigate to "Trusted Root Certification Authorities"
 3. Find your certificate
@@ -200,7 +202,7 @@ Edge uses Windows Certificate Manager - automatically supported.
 # CLI
 tlsx list --trusted
 
-# Output:
+# Output
 # Name                    Type    Trusted    Expires
 # example.localhost       Host    Yes        2025-01-01
 # My Development CA       CA      Yes        2034-01-01
@@ -212,7 +214,7 @@ tlsx list --trusted
 # CLI
 tlsx verify example.localhost
 
-# Output:
+# Output
 # Certificate: example.localhost
 # Status: Trusted
 # Chain: Valid
@@ -293,6 +295,7 @@ tlsx secure example.localhost
 1. **Restart browser** after adding certificate
 2. **Clear browser cache** and SSL state
 3. **Verify certificate is trusted**:
+
    ```bash
    tlsx verify example.localhost
    ```
@@ -306,6 +309,7 @@ tlsx trust ./cert.crt --firefox
 ```
 
 Or manually import in Firefox:
+
 1. Settings → Privacy & Security → Certificates
 2. View Certificates → Authorities → Import
 

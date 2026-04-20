@@ -2,7 +2,7 @@
 
 `tlsx` integrates with your operating system's trust store to ensure that your locally generated certificates are trusted by all applications on your system.
 
-## What is a System Trust Store?
+## What is a System Trust Store
 
 A trust store (or certificate store) is a database of trusted certificates used by the operating system and applications to verify the identity of secure connections. When you generate a self-signed certificate, it isn't automatically trusted by your system until it's added to this trust store.
 

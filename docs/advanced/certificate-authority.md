@@ -2,7 +2,7 @@
 
 `tlsx` allows you to create and manage your own Certificate Authority (CA) for signing local development certificates.
 
-## What is a Certificate Authority?
+## What is a Certificate Authority
 
 A Certificate Authority (CA) is an entity that issues digital certificates. Each certificate verifies the ownership of a public key by the named subject of the certificate. In the context of `tlsx`, a local CA is created to sign certificates for your development domains, enabling them to be trusted by your system.
 

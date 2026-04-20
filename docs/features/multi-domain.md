@@ -2,7 +2,7 @@
 
 `tlsx` provides robust support for securing multiple domains with a single certificate, making it ideal for complex local development environments.
 
-## What is Multi-domain Support?
+## What is Multi-domain Support
 
 Multi-domain support allows a single SSL/TLS certificate to secure multiple different domain names. This is implemented using Subject Alternative Names (SANs) within the certificate, which list all domains the certificate is valid for.
 

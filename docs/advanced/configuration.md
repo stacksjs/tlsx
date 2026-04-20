@@ -282,6 +282,7 @@ export default {
 ```
 
 Recommended key sizes:
+
 - **2048**: Standard, good balance
 - **3072**: Enhanced security
 - **4096**: Maximum security (slower)

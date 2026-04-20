@@ -132,7 +132,7 @@ import { generateCertificate } from '@stacksjs/tlsx'
 
 const limit = pLimit(4) // Max 4 concurrent generations
 
-const domains = Array.from({ length: 20 }, (_, i) => `app${i}.localhost`)
+const domains = Array.from({ length: 20 }, (*, i) => `app${i}.localhost`)
 
 const certificates = await Promise.all(
   domains.map((domain) =>
@@ -173,18 +173,18 @@ await cleanup()
 # Run performance benchmark
 tlsx benchmark
 
-# Output:
+# Output
 # Certificate Generation Benchmark
 # ================================
 # Key Size: 2048 bits
 # Iterations: 100
 #
-# Results:
-#   Min:     45ms
-#   Max:     89ms
-#   Avg:     52ms
-#   P95:     67ms
-#   P99:     82ms
+# Results
+# Min:     45ms
+# Max:     89ms
+# Avg:     52ms
+# P95:     67ms
+# P99:     82ms
 ```
 
 ### Custom Benchmarks
@@ -260,13 +260,16 @@ import { generateCertificate } from '@stacksjs/tlsx'
 
 ```yaml
 # GitHub Actions
+
 - name: Cache certificates
+
   uses: actions/cache@v3
   with:
     path: ~/.stacks/ssl
     key: ${{ runner.os }}-certs-${{ hashFiles('tlsx.config.ts') }}
 
 - name: Generate certificates
+
   run: tlsx secure app.localhost
 ```
 
@@ -279,7 +282,9 @@ jobs:
       matrix:
         domain: [api, web, admin, docs]
     steps:
+
       - run: tlsx secure ${{ matrix.domain }}.localhost
+
 ```
 
 ## Monitoring
@@ -304,7 +309,7 @@ console.log(metrics)
 
 ```bash
 # Enable profiling
-NODE_OPTIONS="--prof" tlsx secure app.localhost
+NODE*OPTIONS="--prof" tlsx secure app.localhost
 
 # Analyze profile
 node --prof-process isolate-*.log > profile.txt

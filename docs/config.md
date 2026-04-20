@@ -8,138 +8,166 @@ import type { TlsConfig } from '@stacksjs/tlsx'
 
 export default {
   /**
-   * The domain name to use for the certificate.
-   * This will be used as the Common Name (CN) in the certificate.
-   * @default 'stacks.localhost'
-   * @example 'stacks.localhost'
-   * @example 'example.com'
-   * @example 'www.example.com'
-   * @example 'subdomain.example.com'
-   * @example 'subdomain.subdomain.example.com'
-   * @example 'my-app.local'
-   */
+
+   _ The domain name to use for the certificate.
+   _ This will be used as the Common Name (CN) in the certificate.
+   _ @default 'stacks.localhost'
+   _ @example 'stacks.localhost'
+   _ @example 'example.com'
+   _ @example 'www.example.com'
+   _ @example 'subdomain.example.com'
+   _ @example 'subdomain.subdomain.example.com'
+   _ @example 'my-app.local'
+
+   _/
   domain: 'stacks.localhost',
 
   /**
-   * The host certificate Common Name (CN).
-   * This is the domain name that the certificate is issued for.
-   * @default 'stacks.localhost'
-   * @example 'stacks.localhost'
-   * @example 'example.com'
-   * @example 'www.example.com'
-   * @example 'subdomain.example.com'
-   * @example 'subdomain.subdomain.example.com'
-   * @example 'my-app.local'
-   */
+
+   _ The host certificate Common Name (CN).
+   _ This is the domain name that the certificate is issued for.
+   _ @default 'stacks.localhost'
+   _ @example 'stacks.localhost'
+   _ @example 'example.com'
+   _ @example 'www.example.com'
+   _ @example 'subdomain.example.com'
+   _ @example 'subdomain.subdomain.example.com'
+   _ @example 'my-app.local'
+
+   _/
   hostCertCN: 'stacks.localhost',
 
   /**
-   * The path to the CA certificate file.
-   * @default '~/.stacks/ssl/tlsx.localhost.ca.crt'
-   * @example '~/.stacks/ssl/tlsx.localhost.ca.crt'
-   * @example '~/.stacks/ssl/ca.crt'
-   * @example '/etc/ssl/ca.crt'
-   * @example '/usr/local/etc/ssl/tlsx.localhost.ca.crt'
+
+   _ The path to the CA certificate file.
+   _ @default '~/.stacks/ssl/tlsx.localhost.ca.crt'
+   _ @example '~/.stacks/ssl/tlsx.localhost.ca.crt'
+   _ @example '~/.stacks/ssl/ca.crt'
+   _ @example '/etc/ssl/ca.crt'
+   _ @example '/usr/local/etc/ssl/tlsx.localhost.ca.crt'
+
    */
   caCertPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.ca.crt`),
 
   /**
-   * The path to the certificate file.
-   * @default '~/.stacks/ssl/tlsx.localhost.crt'
-   * @example '/etc/ssl/tlsx.localhost.crt'
-   * @example '/usr/local/etc/ssl/tlsx.localhost.crt'
+
+   _ The path to the certificate file.
+   _ @default '~/.stacks/ssl/tlsx.localhost.crt'
+   _ @example '/etc/ssl/tlsx.localhost.crt'
+   _ @example '/usr/local/etc/ssl/tlsx.localhost.crt'
+
    */
   certPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt`),
 
   /**
-   * The path to the private key file.
-   * @default '~/.stacks/ssl/tlsx.localhost.crt.key'
-   * @example '/etc/ssl/tlsx.localhost.crt.key'
-   * @example '/usr/local/etc/ssl/tlsx.localhost.crt.key'
+
+   _ The path to the private key file.
+   _ @default '~/.stacks/ssl/tlsx.localhost.crt.key'
+   _ @example '/etc/ssl/tlsx.localhost.crt.key'
+   _ @example '/usr/local/etc/ssl/tlsx.localhost.crt.key'
+
    */
   keyPath: path.join(os.homedir(), '.stacks', 'ssl', `tlsx.localhost.crt.key`),
 
   /**
-   * Alternative name IP addresses.
-   * @default ['127.0.0.1']
-   * @example ['127.0.0.1']
-   */
+
+   _ Alternative name IP addresses.
+   _ @default ['127.0.0.1']
+   _ @example ['127.0.0.1']
+
+   _/
   altNameIPs: ['127.0.0.1'],
 
   /**
-   * Alternative name URIs.
-   * @default ['localhost']
-   * @example ['localhost']
-   */
+
+   _ Alternative name URIs.
+   _ @default ['localhost']
+   _ @example ['localhost']
+
+   _/
   altNameURIs: ['localhost'],
 
   /**
-   * Organization name.
-   * @default 'stacksjs.org'
-   * @example 'stacksjs.org'
-   * @example 'example.com'
-   * @example 'My Company, Inc.'
-   */
+
+   _ Organization name.
+   _ @default 'stacksjs.org'
+   _ @example 'stacksjs.org'
+   _ @example 'example.com'
+   _ @example 'My Company, Inc.'
+
+   _/
   organizationName: 'stacksjs.org',
 
   /**
-   * Country name.
-   * @default 'US'
-   * @example 'US'
-   * @example 'DE'
-   * @example 'CA'
-   * @example 'GB'
+
+   _ Country name.
+   _ @default 'US'
+   _ @example 'US'
+   _ @example 'DE'
+   _ @example 'CA'
+   _ @example 'GB'
+
    */
   countryName: 'US',
 
   /**
-   * State name.
-   * @default 'California'
-   * @example 'California'
-   * @example 'New York'
-   * @example 'Texas'
-   * @example 'Florida'
+
+   _ State name.
+   _ @default 'California'
+   _ @example 'California'
+   _ @example 'New York'
+   _ @example 'Texas'
+   _ @example 'Florida'
+
    */
   stateName: 'California',
 
   /**
-   * Locality name.
-   * @default 'Playa Vista'
-   * @example 'Playa Vista'
-   * @example 'Los Angeles'
-   * @example 'San Francisco'
-   * @example 'New York'
+
+   _ Locality name.
+   _ @default 'Playa Vista'
+   _ @example 'Playa Vista'
+   _ @example 'Los Angeles'
+   _ @example 'San Francisco'
+   _ @example 'New York'
+
    */
   localityName: 'Playa Vista',
 
   /**
-   * The common name for the certificate.
-   * @default 'stacks.localhost'
-   * @example 'stacks.localhost'
-   * @example 'example.com'
-   * @example 'www.example.com'
-   * @example 'subdomain.example.com'
-   * @example 'subdomain.subdomain.example.com'
-   * @example 'my-app.local'
-   * @example 'localhost'
-   */
+
+   _ The common name for the certificate.
+   _ @default 'stacks.localhost'
+   _ @example 'stacks.localhost'
+   _ @example 'example.com'
+   _ @example 'www.example.com'
+   _ @example 'subdomain.example.com'
+   _ @example 'subdomain.subdomain.example.com'
+   _ @example 'my-app.local'
+   _ @example 'localhost'
+
+   _/
   commonName: 'stacks.localhost',
 
   /**
-   * The number of days the certificate is valid for.
-   * @default 180
-   * @example 180
-   * @example 365
-   * @example 730
-   * @example 1095
+
+   _ The number of days the certificate is valid for.
+   _ @default 180
+   _ @example 180
+   _ @example 365
+   _ @example 730
+   _ @example 1095
+
    */
   validityDays: 180,
 
   /**
-   * Verbose output.
-   * @default false
-   * @example true
-   */
+
+   _ Verbose output.
+   _ @default false
+   _ @example true
+
+   _/
   verbose: false,
 } satisfies TlsConfig
 ```

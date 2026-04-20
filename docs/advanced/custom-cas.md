@@ -225,7 +225,7 @@ COPY ./ca/team-ca.crt /usr/local/share/ca-certificates/
 # Update trust store
 RUN update-ca-certificates
 
-# Your app...
+# Your app
 ```
 
 ### Kubernetes Secret

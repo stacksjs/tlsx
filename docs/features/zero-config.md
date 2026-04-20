@@ -2,7 +2,7 @@
 
 `tlsx` is designed to work with zero configuration required, making it easy to get started with secure local development.
 
-## What is Zero-Config?
+## What is Zero-Config
 
 Zero-config means that `tlsx` works out of the box with sensible defaults, eliminating the need for complex setup and configuration. It follows the "convention over configuration" principle, allowing you to focus on your development instead of certificate management.
 
