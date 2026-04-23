@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "bunfig": "^0.15.6",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "simple-git-hooks": {
     "pre-commit": "bun lint-staged"
