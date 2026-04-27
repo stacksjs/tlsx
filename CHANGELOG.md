@@ -1,4 +1,32 @@
 # Changelog
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.1...v0.13.2)
+
+### 🐛 Bug Fixes
+
+- **tlsx**: add cac as explicit dependency ([cdf33d6](https://github.com/stacksjs/tlsx/commit/cdf33d6))
+- chain pantry publish:commit calls for single-arg CLI ([664ea19](https://github.com/stacksjs/tlsx/commit/664ea19))
+
+### 🧹 Chores
+
+- release v0.13.2 ([be19418](https://github.com/stacksjs/tlsx/commit/be19418))
+- fresh install to pick up pickier 0.1.21 ([aa64cb2](https://github.com/stacksjs/tlsx/commit/aa64cb2))
+- fix lint errors ([6dfbe52](https://github.com/stacksjs/tlsx/commit/6dfbe52))
+- update vscode config ([24e10de](https://github.com/stacksjs/tlsx/commit/24e10de))
+- update vscode config ([944f0a3](https://github.com/stacksjs/tlsx/commit/944f0a3))
+- update dependencies ([840c388](https://github.com/stacksjs/tlsx/commit/840c388))
+- repo cleanup and modernization ([b718ad8](https://github.com/stacksjs/tlsx/commit/b718ad8))
+- repo cleanup and modernization ([4cc7af2](https://github.com/stacksjs/tlsx/commit/4cc7af2))
+- remove redundant docs/.vitepress ([d0b3376](https://github.com/stacksjs/tlsx/commit/d0b3376))
+- remove .zed and .cursor folders ([95907b2](https://github.com/stacksjs/tlsx/commit/95907b2))
+
+### 📄 Miscellaneous
+
+- Merge remote-tracking branch 'origin/main' ([077be63](https://github.com/stacksjs/tlsx/commit/077be63))
+
+### Contributors
+
+- Chris <chrisbreuer93@gmail.com>
+- glennmichael123 <gtorregosa@gmail.com>
 
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.12.0...v0.13.0)
 
