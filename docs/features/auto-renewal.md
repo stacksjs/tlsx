@@ -139,7 +139,7 @@ await renewCertificate({
 # CLI
 tlsx check
 
-# Output:
+# Output
 # Domain                  Status      Expires In
 # app.localhost           Valid       120 days
 # api.localhost           Expiring    15 days
@@ -201,7 +201,7 @@ const watcher = await watchCertificates({
 Restart services after renewal:
 
 ```ts
-import { exec } from 'node:child_process'
+import { exec } from 'node:child*process'
 
 const watcher = await watchCertificates({
   onRenew: async (cert) => {
@@ -223,26 +223,32 @@ name: Certificate Renewal
 
 on:
   schedule:
+
     - cron: '0 0 * * 0' # Weekly
 
 jobs:
   renew:
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v1
 
       - name: Install tlsx
+
         run: bun add -g @stacksjs/tlsx
 
       - name: Check certificates
+
         run: tlsx check
 
       - name: Renew if needed
+
         run: tlsx renew --threshold 30
 
       - name: Commit renewed certs
+
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
@@ -254,7 +260,7 @@ jobs:
 ### Pre-commit Hook
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # .git/hooks/pre-commit
 
 # Check certificate status
@@ -293,7 +299,7 @@ import { watchCertificates } from '@stacksjs/tlsx'
 
 watchCertificates({
   onRenew: async (cert) => {
-    await fetch(process.env.SLACK_WEBHOOK, {
+    await fetch(process.env.SLACK*WEBHOOK, {
       method: 'POST',
       body: JSON.stringify({
         text: `Certificate renewed for ${cert.domain}`,

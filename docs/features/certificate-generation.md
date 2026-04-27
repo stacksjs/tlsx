@@ -21,6 +21,7 @@ tlsx secure example.localhost
 ```
 
 This creates:
+
 - `~/.stacks/ssl/example.localhost.ca.crt` - Root CA certificate
 - `~/.stacks/ssl/example.localhost.crt` - Host certificate
 - `~/.stacks/ssl/example.localhost.crt.key` - Private key
@@ -91,6 +92,7 @@ const cert = await generateCertificate({
 ```
 
 This covers:
+
 - `app.example.localhost`
 - `api.example.localhost`
 - `admin.example.localhost`

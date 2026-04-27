@@ -1,47 +1,8 @@
 # Changelog
-[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.0...v0.13.1)
-
-### 🚀 Features
-
-- honor SUDO_PASSWORD env in runCommand + add release scripts ([b9b642d](https://github.com/stacksjs/tlsx/commit/b9b642d))
-
-### 🧹 Chores
-
-- release v0.13.1 ([b21f9fa](https://github.com/stacksjs/tlsx/commit/b21f9fa))
-- use Pantry action for publish-commit and add job dependencies ([0272ceb](https://github.com/stacksjs/tlsx/commit/0272ceb))
-- remove file ignores from pickier config ([4d025b3](https://github.com/stacksjs/tlsx/commit/4d025b3))
-- add CLAUDE.md and CHANGELOG.md to pickier ignores ([5c4625e](https://github.com/stacksjs/tlsx/commit/5c4625e))
-- remove .pickierignore ([a72b997](https://github.com/stacksjs/tlsx/commit/a72b997))
-- update better-dx to ^0.2.7 ([17c128b](https://github.com/stacksjs/tlsx/commit/17c128b))
-- enrich CLAUDE.md with detailed project context from README ([bf14525](https://github.com/stacksjs/tlsx/commit/bf14525))
-- replace cac with @stacksjs/clapp and update CLAUDE.md ([5de1e62](https://github.com/stacksjs/tlsx/commit/5de1e62))
-- add proper claude code guidelines ([7de85d8](https://github.com/stacksjs/tlsx/commit/7de85d8))
-- use pantry monorepo action instead of pantry-setup ([7564d6e](https://github.com/stacksjs/tlsx/commit/7564d6e))
-- ignore claude config in linter ([a82fcf2](https://github.com/stacksjs/tlsx/commit/a82fcf2))
-- add claude code guidelines ([f98682c](https://github.com/stacksjs/tlsx/commit/f98682c))
-- wip ([23c46fe](https://github.com/stacksjs/tlsx/commit/23c46fe))
-- wip ([0da300f](https://github.com/stacksjs/tlsx/commit/0da300f))
-- wip ([b96f98f](https://github.com/stacksjs/tlsx/commit/b96f98f))
-- wip ([1b632b7](https://github.com/stacksjs/tlsx/commit/1b632b7))
-- wip ([e4a47bf](https://github.com/stacksjs/tlsx/commit/e4a47bf))
-- wip ([e4c3aa3](https://github.com/stacksjs/tlsx/commit/e4c3aa3))
-- wip ([17c0205](https://github.com/stacksjs/tlsx/commit/17c0205))
-- wip ([e977f5e](https://github.com/stacksjs/tlsx/commit/e977f5e))
-- wip ([6c7aa25](https://github.com/stacksjs/tlsx/commit/6c7aa25))
-- wip ([414f1a4](https://github.com/stacksjs/tlsx/commit/414f1a4))
-- wip ([e0157a2](https://github.com/stacksjs/tlsx/commit/e0157a2))
-- wip ([4ab24da](https://github.com/stacksjs/tlsx/commit/4ab24da))
-- wip ([2cd7814](https://github.com/stacksjs/tlsx/commit/2cd7814))
-- wip ([1a649b0](https://github.com/stacksjs/tlsx/commit/1a649b0))
-
-### Contributors
-
-- Chris <chrisbreuer93@gmail.com>
-- glennmichael123 <gtorregosa@gmail.com>
 
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.12.0...v0.13.0)
 
-### 🧹 Chores
+## 🧹 Chores
 
 - release v0.13.0 ([fa88a16](https://github.com/stacksjs/tlsx/commit/fa88a16)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 - wip ([eaebc81](https://github.com/stacksjs/tlsx/commit/eaebc81)) _(by glennmichael123 <gtorregosa@gmail.com>)_

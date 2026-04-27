@@ -17,3 +17,5 @@ storage
 rp
 .env
 /pantry
+.zed
+.cursor

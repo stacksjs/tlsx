@@ -34,5 +34,3 @@ features:
     icon: 💻
     details: Use as a library or as a CLI.
 ---
-
-<Home />

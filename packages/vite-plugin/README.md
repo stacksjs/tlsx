@@ -105,7 +105,7 @@ If you encounter an `ERR_SSL_PROTOCOL_ERROR` in your browser:
 
 ### All Browsers
 
-1. Try using `http://localhost:5173` instead of `https://localhost:5173`
+1. Try using `<http://localhost:5173>` instead of `<https://localhost:5173>`
 2. Set `forceRegeneration: true` in your plugin options to create fresh certificates
 3. Restart your browser after generating new certificates
 

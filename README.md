@@ -60,7 +60,7 @@ const cert = await generateCertificate({
 
 // Generate a certificate for multiple domains
 const multiDomainCert = await generateCertificate({
-  domains: ['example.com', 'api.example.com', '*.example.com'],
+  domains: ['example.com', 'api.example.com', '_.example.com'],
   rootCA: existingCA,
   validityDays: 365,
 })
@@ -68,7 +68,7 @@ const multiDomainCert = await generateCertificate({
 // Generate a certificate with both primary domain and additional domains
 const combinedCert = await generateCertificate({
   domain: 'example.com',
-  domains: ['api.example.com', '*.example.com'],
+  domains: ['api.example.com', '_.example.com'],
   rootCA: existingCA,
   validityDays: 365,
 })
@@ -96,10 +96,10 @@ await cleanupTrustStore({}, 'My Custom Pattern')
 tlsx secure example.com
 
 # Generate certificate for multiple domains
-tlsx secure -d "example.com,api.example.com,*.example.com"
+tlsx secure -d "example.com,api.example.com,_.example.com"
 
 # Generate certificate with primary domain and additional domains
-tlsx secure example.com -d "api.example.com,*.example.com"
+tlsx secure example.com -d "api.example.com,_.example.com"
 
 # Generate certificate with custom validity and organization
 tlsx secure example.com --validity-days 365 --organization-name "My Company"

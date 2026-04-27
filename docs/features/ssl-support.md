@@ -2,7 +2,7 @@
 
 `tlsx` provides robust SSL support out of the box, making HTTPS available by default for your local development environment.
 
-## What is SSL Support?
+## What is SSL Support
 
 SSL (Secure Sockets Layer) and its successor TLS (Transport Layer Security) are protocols that provide secure communication over a computer network. When implemented on a website, it enables the HTTPS protocol, which creates an encrypted connection between the web server and the browser.
 

@@ -47,7 +47,7 @@ plugin({
 
 ## Features
 
-- Custom domain names for local development (e.g., `https://my-app.test`)
+- Custom domain names for local development (e.g., `<https://my-app.test>`)
 - Automatic HTTPS support via rpx
 - Auto-detection of project name from `package.json`
 - Automatic cleanup on process exit

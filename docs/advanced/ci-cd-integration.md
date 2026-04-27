@@ -26,25 +26,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v1
+
         with:
           bun-version: latest
 
       - name: Install dependencies
+
         run: bun install
 
       - name: Generate certificates
+
         run: |
           bunx @stacksjs/tlsx secure app.localhost
 
       - name: Start server with HTTPS
+
         run: |
           bun run start &
           sleep 5
 
       - name: Run tests
+
         run: bun test
 ```
 
@@ -60,11 +66,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v1
 
       - name: Cache certificates
+
         uses: actions/cache@v3
         with:
           path: ~/.stacks/ssl
@@ -73,12 +81,14 @@ jobs:
             ${{ runner.os }}-certs-
 
       - name: Generate certificates (if not cached)
+
         run: |
           if [ ! -f ~/.stacks/ssl/app.localhost.crt ]; then
             bunx @stacksjs/tlsx secure app.localhost
           fi
 
       - name: Run tests
+
         run: bun test
 ```
 
@@ -94,11 +104,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v1
 
       - name: Generate certificates
+
         run: |
           cat > tlsx.config.ts << 'EOF'
           export default {
@@ -112,6 +124,7 @@ jobs:
           bunx @stacksjs/tlsx generate
 
       - name: Run E2E tests
+
         run: bun run test:e2e
 ```
 
@@ -122,6 +135,7 @@ jobs:
 ```yaml
 # .gitlab-ci.yml
 stages:
+
   - test
 
 variables:
@@ -134,12 +148,15 @@ test:
   cache:
     key: ${CI_COMMIT_REF_SLUG}-certs
     paths:
+
       - .ssl/
 
   script:
+
     - bun install
     - bunx @stacksjs/tlsx secure app.localhost --cert-path $TLSX_CERT_PATH
     - bun test
+
 ```
 
 ### With Services
@@ -150,15 +167,20 @@ test:
   image: oven/bun:latest
 
   services:
+
     - name: postgres:15
+
       alias: db
 
   before_script:
+
     - bun install
     - bunx @stacksjs/tlsx secure app.localhost
 
   script:
+
     - bun run test:integration
+
 ```
 
 ## CircleCI
@@ -170,37 +192,49 @@ version: 2.1
 jobs:
   test:
     docker:
+
       - image: oven/bun:latest
 
     steps:
+
       - checkout
 
       - restore_cache:
+
           keys:
+
             - certs-{{ checksum "tlsx.config.ts" }}
             - certs-
 
       - run:
+
           name: Install dependencies
           command: bun install
 
       - run:
+
           name: Generate certificates
           command: bunx @stacksjs/tlsx secure app.localhost
 
       - save_cache:
+
           paths:
+
             - ~/.stacks/ssl
+
           key: certs-{{ checksum "tlsx.config.ts" }}
 
       - run:
+
           name: Run tests
           command: bun test
 
 workflows:
   test:
     jobs:
+
       - test
+
 ```
 
 ## Docker Integration
@@ -240,15 +274,20 @@ services:
   app:
     build: .
     volumes:
+
       - certs:/app/.ssl
+
     environment:
+
       - SSL_CERT=/app/.ssl/app.localhost.crt
       - SSL_KEY=/app/.ssl/app.localhost.key
 
   cert-generator:
     image: oven/bun:latest
     volumes:
+
       - certs:/ssl
+
     command: bunx @stacksjs/tlsx secure app.localhost --cert-path /ssl
     restart: "no"
 
@@ -291,19 +330,27 @@ spec:
   template:
     spec:
       containers:
+
         - name: tlsx
+
           image: oven/bun:latest
           command:
+
             - sh
             - -c
             - |
+
               bun add -g @stacksjs/tlsx
               bunx @stacksjs/tlsx secure app.localhost --cert-path /certs
           volumeMounts:
+
             - name: certs
+
               mountPath: /certs
       volumes:
+
         - name: certs
+
           emptyDir: {}
       restartPolicy: Never
 ```
@@ -330,7 +377,7 @@ data:
 
 ```bash
 # .husky/pre-commit
-#!/bin/sh
+# !/bin/sh
 
 # Check if certificates need renewal
 bunx @stacksjs/tlsx check --quiet
@@ -412,23 +459,27 @@ name: Certificate Renewal
 
 on:
   schedule:
-    - cron: '0 0 1 * *' # Monthly
+
+    - cron: '0 0 1 _ _' # Monthly
 
 jobs:
   renew:
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v1
 
       - name: Check and renew certificates
+
         run: |
           bunx @stacksjs/tlsx check
           bunx @stacksjs/tlsx renew --threshold 30
 
       - name: Commit renewed certificates
+
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -443,7 +494,9 @@ jobs:
 
 ```yaml
 # Use secrets for sensitive data
+
 - name: Generate certificates
+
   env:
     CA_PASSWORD: ${{ secrets.CA_PASSWORD }}
   run: |
@@ -455,12 +508,14 @@ jobs:
 
 ```yaml
 # Don't upload private keys as artifacts
+
 - uses: actions/upload-artifact@v3
+
   with:
     name: certificates
     path: |
-      .ssl/*.crt
-      !.ssl/*.key  # Exclude private keys
+      .ssl/_.crt
+      !.ssl/_.key  # Exclude private keys
 ```
 
 ## Troubleshooting
@@ -474,7 +529,9 @@ jobs:
 ### Debug Mode
 
 ```yaml
+
 - name: Generate certificates (debug)
+
   run: |
     bunx @stacksjs/tlsx secure app.localhost --verbose
   env:

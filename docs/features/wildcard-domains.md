@@ -2,7 +2,7 @@
 
 `tlsx` supports wildcard domain certificates, allowing you to secure multiple subdomains with a single certificate.
 
-## What are Wildcard Domains?
+## What are Wildcard Domains
 
 A wildcard certificate is a digital certificate that can be used with multiple subdomains of a domain. For example, a single wildcard certificate for `*.example.com` can secure `api.example.com`, `app.example.com`, `store.example.com`, and any other subdomain of `example.com`.
 
