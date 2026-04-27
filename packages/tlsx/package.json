@@ -58,7 +58,7 @@
     "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
-    "bunfig": "^0.15.6",
+    "bunfig": "^0.15.7",
     "typescript": "^5.9.3"
   },
   "simple-git-hooks": {
