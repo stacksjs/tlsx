@@ -128,7 +128,44 @@ interface CommandResult {
 }
 
 /**
- * Executes a shell command and returns the result
+ * Get sudo password from environment variable if set.
+ * When set, sudo invocations automatically pipe the password via `sudo -S`
+ * so the user is never prompted (useful for `./buddy dev` where reading
+ * /etc/hosts and adding certs to the keychain both need sudo).
+ */
+export function getSudoPassword(): string | undefined {
+  return process.env.SUDO_PASSWORD
+}
+
+/**
+ * Rewrite a command so the caller's sudo invocations are non-interactive
+ * when SUDO_PASSWORD is set. We only touch leading `sudo ` (and pipelines
+ * like `... | sudo ...`) — embedded `sudo` words elsewhere in the command
+ * are left untouched. The transform is shape-preserving: it adds `-S` and
+ * a stdin pipe, never reorders arguments.
+ */
+function maybePipeSudoPassword(command: string): string {
+  const pwd = getSudoPassword()
+  if (!pwd || !/(^|\|\s*|&&\s*|;\s*)sudo\s/.test(command))
+    return command
+
+  const escapedPwd = pwd.replace(/'/g, `'\\''`)
+  // Replace any `sudo ` that doesn't already use `-S` or `-n` with one that
+  // reads the password from stdin, and prefix the whole pipeline with the
+  // password echo. Each leading sudo gets the same stdin (sudo caches creds
+  // for ~5 minutes after the first call within a process tree).
+  const transformed = command.replace(/(^|\|\s*|&&\s*|;\s*)sudo(?!\s+-[Sn])(\s+)/g, '$1sudo -S$2')
+  return `echo '${escapedPwd}' | ${transformed}`
+}
+
+/**
+ * Executes a shell command and returns the result.
+ *
+ * When the command starts with (or pipes into) `sudo` and `SUDO_PASSWORD` is
+ * set in the environment, the password is piped via `sudo -S` so no
+ * interactive prompt is shown. Commands that already pass `-S` or `-n`
+ * are left as-is.
+ *
  * @param command - The shell command to execute
  * @param options - Optional execution options
  * @param options.cwd - The cwd
@@ -140,8 +177,9 @@ export async function runCommand(
   command: string,
   options: { cwd?: string, timeout?: number } = {},
 ): Promise<CommandResult> {
+  const finalCommand = maybePipeSudoPassword(command)
   try {
-    const { stdout, stderr } = await execAsync(command, {
+    const { stdout, stderr } = await execAsync(finalCommand, {
       cwd: options.cwd || process.cwd(),
       timeout: options.timeout || 30000, // Default 30s timeout
     })
@@ -152,7 +190,9 @@ export async function runCommand(
     }
   }
   catch (error: any) {
-    // Enhance error message with command details
+    // Enhance error message with command details. We log the original
+    // command (without the piped password) so error reports stay readable
+    // and never leak secrets.
     const enhancedError = new Error(
       `Failed to execute command: ${command}\nError: ${error.message}`,
     )

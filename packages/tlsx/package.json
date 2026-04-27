@@ -35,6 +35,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "bun": "./src/index.ts",
       "import": "./dist/src/index.js"
     }
   },
@@ -45,7 +46,8 @@
   },
   "files": [
     "README.md",
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "lint": "bunx --bun eslint .",
