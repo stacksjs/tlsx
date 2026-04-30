@@ -40,8 +40,8 @@
   ],
   "scripts": {
     "build": "bun build.ts",
-    "lint": "bunx --bun eslint .",
-    "lint:fix": "bunx --bun eslint . --fix",
+    "lint": "bunx --bun pickier .",
+    "lint:fix": "bunx --bun pickier . --fix",
     "prepublishOnly": "bun --bun run build",
     "test": "bun test",
     "typecheck": "bunx tsc --noEmit"
@@ -53,13 +53,12 @@
     "@stacksjs/tlsx": "workspace:*"
   },
   "devDependencies": {
-    "bun-plugin-dtsx": "^0.21.17",
     "vite": "^7.3.1"
   },
   "simple-git-hooks": {
     "pre-commit": "bunx lint-staged"
   },
   "lint-staged": {
-    "*.{js,ts}": "bunx eslint . --fix"
+    "*.{js,ts}": "bunx pickier . --fix"
   }
 }

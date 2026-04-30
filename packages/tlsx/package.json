@@ -50,8 +50,8 @@
     "src"
   ],
   "scripts": {
-    "lint": "bunx --bun eslint .",
-    "lint:fix": "bunx --bun eslint . --fix",
+    "lint": "bunx --bun pickier .",
+    "lint:fix": "bunx --bun pickier . --fix",
     "fresh": "bunx rimraf node_modules/ bun.lock && bun i",
     "prepublishOnly": "bun --bun run build",
     "test": "bun test",
@@ -65,14 +65,12 @@
     "pre-commit": "bun lint-staged"
   },
   "lint-staged": {
-    "*.{js,ts}": "bunx eslint . --fix"
+    "*.{js,ts}": "bunx pickier . --fix"
   },
   "workspaces": [
     "packages/*"
   ],
   "dependencies": {
-    "@stacksjs/clapp": "^0.2.0",
-    "cac": "^6.7.14",
-    "consola": "^3.4.2"
+    "@stacksjs/clapp": "^0.2.0"
   }
 }

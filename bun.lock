@@ -6,26 +6,21 @@
       "name": "tlsx",
       "devDependencies": {
         "better-dx": "^0.2.7",
-        "consola": "^3.4.2",
         "typescript": "^5.9.3",
       },
     },
     "packages/bun-plugin": {
       "name": "bun-plugin-tlsx",
-      "version": "0.13.0",
-      "devDependencies": {
-        "bun-plugin-dtsx": "^0.21.17",
-      },
+      "version": "0.13.2",
     },
     "packages/tlsx": {
       "name": "@stacksjs/tlsx",
-      "version": "0.13.0",
+      "version": "0.13.2",
       "bin": {
         "tlsx": "./dist/bin/cli.js",
       },
       "dependencies": {
         "@stacksjs/clapp": "^0.2.0",
-        "consola": "^3.4.2",
       },
       "devDependencies": {
         "bunfig": "^0.15.6",
@@ -34,12 +29,11 @@
     },
     "packages/vite-plugin": {
       "name": "vite-plugin-tlsx",
-      "version": "0.13.0",
+      "version": "0.13.2",
       "dependencies": {
         "@stacksjs/tlsx": "workspace:*",
       },
       "devDependencies": {
-        "bun-plugin-dtsx": "^0.21.17",
         "vite": "^7.3.1",
       },
       "peerDependencies": {
@@ -255,8 +249,6 @@
     "color-name": ["color-name@1.1.4", "", {}, "sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA=="],
 
     "compress-commons": ["compress-commons@6.0.2", "", { "dependencies": { "crc-32": "^1.2.0", "crc32-stream": "^6.0.0", "is-stream": "^2.0.1", "normalize-path": "^3.0.0", "readable-stream": "^4.0.0" } }, "sha512-6FqVXeETqWPoGcfzrXb37E50NP0LXT8kAMu5ooZayhWWdgEY4lBEEcbQNXtkuKQsGduxiIcI4gOTsxTmuq/bSg=="],
-
-    "consola": ["consola@3.4.2", "", {}, "sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA=="],
 
     "core-util-is": ["core-util-is@1.0.3", "", {}, "sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ=="],
 

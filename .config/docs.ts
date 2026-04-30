@@ -1,4 +1,4 @@
-import type { BunPressConfig } from 'bunpress'
+import type { BunPressConfig } from '@stacksjs/bunpress'
 
 export default {
   title: 'tlsx',

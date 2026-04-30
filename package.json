@@ -49,13 +49,12 @@
     "release:major": "bun --bun run changelog:generate && bunx --bun bumpx major --recursive --yes && cd packages/tlsx && bun publish",
     "postinstall": "bunx git-hooks",
     "typecheck": "bun --bun tsc --noEmit",
-    "dev:docs": "bun --bun vitepress dev docs",
-    "build:docs": "bun --bun vitepress build docs",
-    "preview:docs": "bun --bun vitepress preview docs"
+    "dev:docs": "bun --bun bunpress dev docs",
+    "build:docs": "bun --bun bunpress build docs",
+    "preview:docs": "bun --bun bunpress preview docs"
   },
   "devDependencies": {
     "better-dx": "^0.2.7",
-    "consola": "^3.4.2",
     "typescript": "^5.9.3"
   },
   "git-hooks": {
