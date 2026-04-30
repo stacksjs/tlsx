@@ -71,6 +71,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "@stacksjs/clapp": "^0.2.0"
+    "@stacksjs/clapp": "^0.2.0",
+    "consola": "^3.4.2"
   }
 }
