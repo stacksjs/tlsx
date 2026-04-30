@@ -1,0 +1,105 @@
+{
+  "version": "1.0.0",
+  "lockfileVersion": 2,
+  "workspaces": {
+    "": {
+      "name": "tlsx",
+      "devDependencies": {
+        "better-dx": "^0.2.7",
+        "consola": "^3.4.2",
+        "typescript": "^5.9.3"
+      }
+    },
+    "packages/bun-plugin": {
+      "name": "bun-plugin-tlsx",
+      "version": "0.13.2",
+      "devDependencies": {
+        "bun-plugin-dtsx": "^0.21.17"
+      }
+    },
+    "packages/tlsx": {
+      "name": "@stacksjs/tlsx",
+      "version": "0.13.2",
+      "dependencies": {
+        "@stacksjs/clapp": "^0.2.0",
+        "cac": "^6.7.14",
+        "consola": "^3.4.2"
+      },
+      "devDependencies": {
+        "bunfig": "^0.15.6",
+        "typescript": "^5.9.3"
+      }
+    },
+    "packages/vite-plugin": {
+      "name": "vite-plugin-tlsx",
+      "version": "0.13.2",
+      "dependencies": {
+        "@stacksjs/tlsx": "workspace:*"
+      },
+      "devDependencies": {
+        "bun-plugin-dtsx": "^0.21.17",
+        "vite": "^7.3.1"
+      }
+    }
+  },
+  "packages": {
+    "@stacksjs/clapp@^0.2.0": {
+      "name": "@stacksjs/clapp",
+      "version": "^0.2.0",
+      "source": "npm",
+      "dependencies": {
+        "mri": "^1.2.0",
+        "wrap-ansi": "^9.0.0"
+      },
+      "bin": {
+        "@stacksjs/clapp": "./dist/bin/cli.js",
+        "clapp": "./dist/bin/cli.js"
+      }
+    },
+    "better-dx@^0.2.7": {
+      "name": "better-dx",
+      "version": "^0.2.7",
+      "source": "npm"
+    },
+    "bun-plugin-dtsx@^0.21.17": {
+      "name": "bun-plugin-dtsx",
+      "version": "^0.21.17",
+      "source": "npm",
+      "dependencies": {
+        "@stacksjs/dtsx": "^0.9.8"
+      }
+    },
+    "bunfig@^0.15.6": {
+      "name": "bunfig",
+      "version": "^0.15.6",
+      "source": "npm",
+      "dependencies": {
+        "@stacksjs/clapp": "^0.2.0",
+        "@stacksjs/clarity": "^0.3.24"
+      },
+      "bin": {
+        "bunfig": "./bin/cli.js"
+      }
+    },
+    "cac@^6.7.14": {
+      "name": "cac",
+      "version": "^6.7.14",
+      "source": "npm"
+    },
+    "consola@^3.4.2": {
+      "name": "consola",
+      "version": "^3.4.2",
+      "source": "npm"
+    },
+    "typescriptlang.org@^5.9.3": {
+      "name": "typescriptlang.org",
+      "version": "^5.9.3",
+      "source": "npm"
+    },
+    "vitejs.dev@^7.3.1": {
+      "name": "vitejs.dev",
+      "version": "^7.3.1",
+      "source": "npm"
+    }
+  }
+}
