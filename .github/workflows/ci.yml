@@ -103,6 +103,6 @@ jobs:
 
       - name: Publish Commit
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: pantry publish:commit './packages/tlsx' && pantry publish:commit './packages/bun-plugin' && pantry publish:commit './packages/vite-plugin'
+        run: pantry publish:commit './packages/tlsx' && pantry publish:commit './packages/bun-plugin'
         env:
           PANTRY_REGISTRY_TOKEN: ${{ secrets.PANTRY_TOKEN }}
