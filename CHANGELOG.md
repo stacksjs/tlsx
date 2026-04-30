@@ -1,47 +1,48 @@
 # Changelog
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.2...v0.13.3)
 
-### 🐛 Bug Fixes
+## 🐛 Bug Fixes
 
 - add setup-bun to publish-commit job ([6f23f40](https://github.com/stacksjs/tlsx/commit/6f23f40)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 
-### 🧹 Chores
+## 🧹 Chores
 
 - release v0.13.3 ([b31182c](https://github.com/stacksjs/tlsx/commit/b31182c)) _(by Chris <chrisbreuer93@gmail.com>)_
 - wip ([e597517](https://github.com/stacksjs/tlsx/commit/e597517)) _(by Chris <chrisbreuer93@gmail.com>)_
 - minor adjustments ([6a9061f](https://github.com/stacksjs/tlsx/commit/6a9061f)) _(by Chris <chrisbreuer93@gmail.com>)_
 - fresh install to pick up dtsx 0.9.14 and bunfig 0.15.9 ([47eff01](https://github.com/stacksjs/tlsx/commit/47eff01)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 
-### Contributors
+## Contributors
 
 - _Chris <chrisbreuer93@gmail.com>_
 - _glennmichael123 <gtorregosa@gmail.com>_
 
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.2...HEAD)
 
-### 🐛 Bug Fixes
+## 🐛 Bug Fixes
 
 - add setup-bun to publish-commit job ([6f23f40](https://github.com/stacksjs/tlsx/commit/6f23f40)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 
-### 🧹 Chores
+## 🧹 Chores
 
 - wip ([e597517](https://github.com/stacksjs/tlsx/commit/e597517)) _(by Chris <chrisbreuer93@gmail.com>)_
 - minor adjustments ([6a9061f](https://github.com/stacksjs/tlsx/commit/6a9061f)) _(by Chris <chrisbreuer93@gmail.com>)_
 - fresh install to pick up dtsx 0.9.14 and bunfig 0.15.9 ([47eff01](https://github.com/stacksjs/tlsx/commit/47eff01)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 
-### Contributors
+## Contributors
 
 - _Chris <chrisbreuer93@gmail.com>_
 - _glennmichael123 <gtorregosa@gmail.com>_
 
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.1...v0.13.2)
 
-### 🐛 Bug Fixes
+## 🐛 Bug Fixes
 
 - **tlsx**: add cac as explicit dependency ([cdf33d6](https://github.com/stacksjs/tlsx/commit/cdf33d6))
 - chain pantry publish:commit calls for single-arg CLI ([664ea19](https://github.com/stacksjs/tlsx/commit/664ea19))
 
-### 🧹 Chores
+## 🧹 Chores
 
 - release v0.13.2 ([be19418](https://github.com/stacksjs/tlsx/commit/be19418))
 - fresh install to pick up pickier 0.1.21 ([aa64cb2](https://github.com/stacksjs/tlsx/commit/aa64cb2))
@@ -54,11 +55,11 @@
 - remove redundant docs/.vitepress ([d0b3376](https://github.com/stacksjs/tlsx/commit/d0b3376))
 - remove .zed and .cursor folders ([95907b2](https://github.com/stacksjs/tlsx/commit/95907b2))
 
-### 📄 Miscellaneous
+## 📄 Miscellaneous
 
 - Merge remote-tracking branch 'origin/main' ([077be63](https://github.com/stacksjs/tlsx/commit/077be63))
 
-### Contributors
+## Contributors
 
 - Chris <chrisbreuer93@gmail.com>
 - glennmichael123 <gtorregosa@gmail.com>
@@ -70,29 +71,29 @@
 - release v0.13.0 ([fa88a16](https://github.com/stacksjs/tlsx/commit/fa88a16)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 - wip ([eaebc81](https://github.com/stacksjs/tlsx/commit/eaebc81)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 
-### Contributors
+## Contributors
 
 - _glennmichael123 <gtorregosa@gmail.com>_
 
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.12.0...HEAD)
 
-### 🧹 Chores
+## 🧹 Chores
 
 - wip ([eaebc81](https://github.com/stacksjs/tlsx/commit/eaebc81)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 
-### Contributors
+## Contributors
 
 - _glennmichael123 <gtorregosa@gmail.com>_
 
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.11.0...v0.12.0)
 
-### 🚀 Features
+## 🚀 Features
 
 - add function to cleanup the trust store ([a521b2d](https://github.com/stacksjs/tlsx/commit/a521b2d)) _(by Chris <chrisbreuer93@gmail.com>)_
 - allow for using env vars ([0952b1c](https://github.com/stacksjs/tlsx/commit/0952b1c)) _(by Chris <chrisbreuer93@gmail.com>)_
 - add vite plugin ([b035e7b](https://github.com/stacksjs/tlsx/commit/b035e7b)) _(by Chris <chrisbreuer93@gmail.com>)_
 
-### 🧹 Chores
+## 🧹 Chores
 
 - release v0.12.0 ([d53af85](https://github.com/stacksjs/tlsx/commit/d53af85)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 - wip ([b63671c](https://github.com/stacksjs/tlsx/commit/b63671c)) _(by glennmichael123 <gtorregosa@gmail.com>)_
@@ -138,12 +139,12 @@
 - adjust workflows ([6db5998](https://github.com/stacksjs/tlsx/commit/6db5998)) _(by Chris <chrisbreuer93@gmail.com>)_
 - lint ([709fdd8](https://github.com/stacksjs/tlsx/commit/709fdd8)) _(by Chris <chrisbreuer93@gmail.com>)_
 
-### 📄 Miscellaneous
+## 📄 Miscellaneous
 
 - Merge pull request #1408 from stacksjs/renovate/all-minor-patch ([69a6501](https://github.com/stacksjs/tlsx/commit/69a6501)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#1408](https://github.com/stacksjs/tlsx/issues/1408), [#1408](https://github.com/stacksjs/tlsx/issues/1408))
 - Merge pull request #49 from stacksjs/buddy-bot/update-non-major-updates-1756303582808 ([cc4e5f1](https://github.com/stacksjs/tlsx/commit/cc4e5f1)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#49](https://github.com/stacksjs/tlsx/issues/49), [#49](https://github.com/stacksjs/tlsx/issues/49))
 
-### Contributors
+## Contributors
 
 - _Adelino Ngomacha <adelinob335@gmail.com>_
 - _Chris <chrisbreuer93@gmail.com>_
@@ -153,13 +154,13 @@
 
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.11.0...HEAD)
 
-### 🚀 Features
+## 🚀 Features
 
 - add function to cleanup the trust store ([a521b2d](https://github.com/stacksjs/tlsx/commit/a521b2d)) _(by Chris <chrisbreuer93@gmail.com>)_
 - allow for using env vars ([0952b1c](https://github.com/stacksjs/tlsx/commit/0952b1c)) _(by Chris <chrisbreuer93@gmail.com>)_
 - add vite plugin ([b035e7b](https://github.com/stacksjs/tlsx/commit/b035e7b)) _(by Chris <chrisbreuer93@gmail.com>)_
 
-### 🧹 Chores
+## 🧹 Chores
 
 - wip ([b63671c](https://github.com/stacksjs/tlsx/commit/b63671c)) _(by glennmichael123 <gtorregosa@gmail.com>)_
 - wip ([40aebe6](https://github.com/stacksjs/tlsx/commit/40aebe6)) _(by glennmichael123 <gtorregosa@gmail.com>)_
@@ -204,12 +205,12 @@
 - adjust workflows ([6db5998](https://github.com/stacksjs/tlsx/commit/6db5998)) _(by Chris <chrisbreuer93@gmail.com>)_
 - lint ([709fdd8](https://github.com/stacksjs/tlsx/commit/709fdd8)) _(by Chris <chrisbreuer93@gmail.com>)_
 
-### 📄 Miscellaneous
+## 📄 Miscellaneous
 
 - Merge pull request #1408 from stacksjs/renovate/all-minor-patch ([69a6501](https://github.com/stacksjs/tlsx/commit/69a6501)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#1408](https://github.com/stacksjs/tlsx/issues/1408), [#1408](https://github.com/stacksjs/tlsx/issues/1408))
 - Merge pull request #49 from stacksjs/buddy-bot/update-non-major-updates-1756303582808 ([cc4e5f1](https://github.com/stacksjs/tlsx/commit/cc4e5f1)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#49](https://github.com/stacksjs/tlsx/issues/49), [#49](https://github.com/stacksjs/tlsx/issues/49))
 
-### Contributors
+## Contributors
 
 - _Adelino Ngomacha <adelinob335@gmail.com>_
 - _Chris <chrisbreuer93@gmail.com>_
@@ -221,11 +222,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.10.0...main)
 
-### 🚀 Enhancements
+## 🚀 Enhancements
 
 - Add bun plugin ([ea9ba9f](https://github.com/stacksjs/tlsx/commit/ea9ba9f))
 
-### 📖 Documentation
+## 📖 Documentation
 
 - Several updates ([9f2cf5b](https://github.com/stacksjs/tlsx/commit/9f2cf5b))
 - Minor improvements ([ad4fe66](https://github.com/stacksjs/tlsx/commit/ad4fe66))
@@ -244,7 +245,7 @@
 - Add features and advanced sections ([f2ed949](https://github.com/stacksjs/tlsx/commit/f2ed949))
 - Adjust config ([0ad0e00](https://github.com/stacksjs/tlsx/commit/0ad0e00))
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Update readme ([4880929](https://github.com/stacksjs/tlsx/commit/4880929))
 - Add bunfig ([d46942c](https://github.com/stacksjs/tlsx/commit/d46942c))
@@ -269,7 +270,7 @@
 - Update deps ([9b6d18d](https://github.com/stacksjs/tlsx/commit/9b6d18d))
 - Add types export ([04873b7](https://github.com/stacksjs/tlsx/commit/04873b7))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
 - Cab-mikee ([@cab-mikee](https://github.com/cab-mikee))
@@ -278,11 +279,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.9.0...main)
 
-### 🚀 Enhancements
+## 🚀 Enhancements
 
 - Allow creating cert for multiple domains ([182414b](https://github.com/stacksjs/tlsx/commit/182414b))
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Lint changes ([24af332](https://github.com/stacksjs/tlsx/commit/24af332))
 - Enhance team css ([9bc4103](https://github.com/stacksjs/tlsx/commit/9bc4103))
@@ -295,7 +296,7 @@
 - Several command improvements ([b0849dd](https://github.com/stacksjs/tlsx/commit/b0849dd))
 - Add example ([25ca3ea](https://github.com/stacksjs/tlsx/commit/25ca3ea))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 - Cab-mikee ([@cab-mikee](http://github.com/cab-mikee))
@@ -304,7 +305,7 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.5...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Doc updates ([48d20a1](https://github.com/stacksjs/tlsx/commit/48d20a1))
 - Use tlsx links ([ee3c538](https://github.com/stacksjs/tlsx/commit/ee3c538))
@@ -319,7 +320,7 @@
 - Minor adjustments ([31ada27](https://github.com/stacksjs/tlsx/commit/31ada27))
 - Add params jsdocs ([af38d30](https://github.com/stacksjs/tlsx/commit/af38d30))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -327,11 +328,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.4...main)
 
-### 🩹 Fixes
+## 🩹 Fixes
 
 - Adjust paths after splitting ([7102a68](https://github.com/stacksjs/tlsx/commit/7102a68))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -339,14 +340,14 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.3...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Use bun instead of bunx ([004201f](https://github.com/stacksjs/tlsx/commit/004201f))
 - Update bun version ([595d8ff](https://github.com/stacksjs/tlsx/commit/595d8ff))
 - Adjust vitepress config ([6c05a1c](https://github.com/stacksjs/tlsx/commit/6c05a1c))
 - Add minification and splitting to build ([92ce125](https://github.com/stacksjs/tlsx/commit/92ce125))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -354,15 +355,15 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.2...main)
 
-### 🩹 Fixes
+## 🩹 Fixes
 
 - Ensure caCertPath is properly defined ([c2f6545](https://github.com/stacksjs/tlsx/commit/c2f6545))
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Ensure default basePath is defined ([ed0d76a](https://github.com/stacksjs/tlsx/commit/ed0d76a))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -370,11 +371,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.1...main)
 
-### 🩹 Fixes
+## 🩹 Fixes
 
 - Ensure certPath & certKeyPath are properly defined ([553dc9b](https://github.com/stacksjs/tlsx/commit/553dc9b))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -382,11 +383,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.8.0...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Export default config ([ab6f0aa](https://github.com/stacksjs/tlsx/commit/ab6f0aa))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -394,17 +395,17 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.6...main)
 
-### 🚀 Enhancements
+## 🚀 Enhancements
 
 - Add `basePath` option ([562e339](https://github.com/stacksjs/tlsx/commit/562e339))
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Rename to rootCA ([36b0d80](https://github.com/stacksjs/tlsx/commit/36b0d80))
 - Update generateCertificate name ([a334711](https://github.com/stacksjs/tlsx/commit/a334711))
 - Make hostCertCN optional ([3c1cb49](https://github.com/stacksjs/tlsx/commit/3c1cb49))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -412,11 +413,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.5...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Add number type ([1d19e8c](https://github.com/stacksjs/tlsx/commit/1d19e8c))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -424,11 +425,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.4...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Make subjectAltNames nullable ([c527087](https://github.com/stacksjs/tlsx/commit/c527087))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -436,11 +437,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.3...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Ensure rootCAObject is nullable ([e2de06f](https://github.com/stacksjs/tlsx/commit/e2de06f))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -448,11 +449,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.2...main)
 
-### 🩹 Fixes
+## 🩹 Fixes
 
 - Use nullable types ([1334809](https://github.com/stacksjs/tlsx/commit/1334809))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -460,12 +461,12 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.1...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Improve types ([3674dfe](https://github.com/stacksjs/tlsx/commit/3674dfe))
 - Adjust default config ([d27b2bf](https://github.com/stacksjs/tlsx/commit/d27b2bf))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
 
@@ -473,11 +474,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.7.0...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Update TlsConfig type ([47dc3cb](https://github.com/stacksjs/tlsx/commit/47dc3cb))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -485,16 +486,16 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.6.0...main)
 
-### 🚀 Enhancements
+## 🚀 Enhancements
 
 - Allow for more configurations ([0e92763](https://github.com/stacksjs/tlsx/commit/0e92763))
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Adjust readme ([a55cb5c](https://github.com/stacksjs/tlsx/commit/a55cb5c))
 - Lint ([f6aef6d](https://github.com/stacksjs/tlsx/commit/f6aef6d))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -502,11 +503,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.6...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Improve dynamic usage of config and options ([6b1d90a](https://github.com/stacksjs/tlsx/commit/6b1d90a))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -514,11 +515,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.5...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Add missing verbose type ([76ab785](https://github.com/stacksjs/tlsx/commit/76ab785))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -526,11 +527,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.4...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Improve storeCert debug log ([0b7682e](https://github.com/stacksjs/tlsx/commit/0b7682e))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -538,11 +539,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.3...main)
 
-### 🩹 Fixes
+## 🩹 Fixes
 
 - Remove AddCertOption ([3b9aed2](https://github.com/stacksjs/tlsx/commit/3b9aed2))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -550,11 +551,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.2...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Improve logging ([39aa7bf](https://github.com/stacksjs/tlsx/commit/39aa7bf))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -562,11 +563,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.1...main)
 
-### 🩹 Fixes
+## 🩹 Fixes
 
 - Use tlsx debug prefix ([6796d0a](https://github.com/stacksjs/tlsx/commit/6796d0a))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -574,12 +575,12 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.5.0...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Update readme ([dc7bafe](https://github.com/stacksjs/tlsx/commit/dc7bafe))
 - Ensure verbose output is configurable ([b225a04](https://github.com/stacksjs/tlsx/commit/b225a04))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -587,15 +588,15 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.3...main)
 
-### 🚀 Enhancements
+## 🚀 Enhancements
 
 - Add debug logs ([27b5da2](https://github.com/stacksjs/tlsx/commit/27b5da2))
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Adjust vscode settings ([03066d2](https://github.com/stacksjs/tlsx/commit/03066d2))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -603,11 +604,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.2...main)
 
-### 🚀 Enhancements
+## 🚀 Enhancements
 
 - Dummy feature test ([8298433](https://github.com/stacksjs/tlsx/commit/8298433))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -615,13 +616,13 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.1...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Remove unused scripts ([d3c5b41](https://github.com/stacksjs/tlsx/commit/d3c5b41))
 - Adjust prepublish script ([acbe75d](https://github.com/stacksjs/tlsx/commit/acbe75d))
 - Remove `body_path` ([96c65a0](https://github.com/stacksjs/tlsx/commit/96c65a0))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -629,14 +630,14 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.4.0...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Adjust links ([07e45ca](https://github.com/stacksjs/tlsx/commit/07e45ca))
 - Remove postcompile ([8e8315e](https://github.com/stacksjs/tlsx/commit/8e8315e))
 - Adjust bin logic ([bcf4781](https://github.com/stacksjs/tlsx/commit/bcf4781))
 - Adjust package.json ([332ef74](https://github.com/stacksjs/tlsx/commit/332ef74))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -644,15 +645,15 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.3...main)
 
-### 🚀 Enhancements
+## 🚀 Enhancements
 
 - Compile & release bin for all OS ([338502a](https://github.com/stacksjs/tlsx/commit/338502a))
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Lint ([461ff31](https://github.com/stacksjs/tlsx/commit/461ff31))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -660,12 +661,12 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.2...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Add bunfig ([2935d40](https://github.com/stacksjs/tlsx/commit/2935d40))
 - Use devdeps ([9eaf06a](https://github.com/stacksjs/tlsx/commit/9eaf06a))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -673,15 +674,15 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.1...main)
 
-### 🩹 Fixes
+## 🩹 Fixes
 
 - Export name ([9ae58ce](https://github.com/stacksjs/tlsx/commit/9ae58ce))
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Remove unused calls ([5f8b22d](https://github.com/stacksjs/tlsx/commit/5f8b22d))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -689,12 +690,12 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.3.0...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Add Cert interface ([f96689a](https://github.com/stacksjs/tlsx/commit/f96689a))
 - Minor updates ([f4bc353](https://github.com/stacksjs/tlsx/commit/f4bc353))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -702,13 +703,13 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.2.0...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Lint ([2c50c25](https://github.com/stacksjs/tlsx/commit/2c50c25))
 - Update cert generation ([8e9e8e1](https://github.com/stacksjs/tlsx/commit/8e9e8e1))
 - Adjust default validityDays ([ed67220](https://github.com/stacksjs/tlsx/commit/ed67220))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -716,11 +717,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.3...main)
 
-### 🚀 Enhancements
+## 🚀 Enhancements
 
 - Add caCertPath, certPath and keyPath ([62a4fa3](https://github.com/stacksjs/tlsx/commit/62a4fa3))
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Remove due to prepublishOnly ([12991d6](https://github.com/stacksjs/tlsx/commit/12991d6))
 - Lint ([705f5c6](https://github.com/stacksjs/tlsx/commit/705f5c6))
@@ -734,7 +735,7 @@
 - Make use of config ([bea49da](https://github.com/stacksjs/tlsx/commit/bea49da))
 - Several improvements ([174ff4e](https://github.com/stacksjs/tlsx/commit/174ff4e))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris ([@chrisbbreuer](http://github.com/chrisbbreuer))
 
@@ -742,11 +743,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.2...main)
 
-### 🩹 Fixes
+## 🩹 Fixes
 
 - Remove bu ([19ec3d1](https://github.com/stacksjs/tlsx/commit/19ec3d1))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
 
@@ -754,11 +755,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.1...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Adjust post-compile ([8099adf](https://github.com/stacksjs/tlsx/commit/8099adf))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
 
@@ -766,11 +767,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.1.0...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Adjust compile script ([8d43394](https://github.com/stacksjs/tlsx/commit/8d43394))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
 
@@ -778,7 +779,7 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.0.4...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Wip ([37ba2a4](https://github.com/stacksjs/tlsx/commit/37ba2a4))
 - Wip ([e804cdd](https://github.com/stacksjs/tlsx/commit/e804cdd))
@@ -833,11 +834,11 @@
 - Wip ([b526938](https://github.com/stacksjs/tlsx/commit/b526938))
 - Wip ([4d16e32](https://github.com/stacksjs/tlsx/commit/4d16e32))
 
-### ✅ Tests
+## ✅ Tests
 
 - Fix eslint errors ([ce1ef5e](https://github.com/stacksjs/tlsx/commit/ce1ef5e))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
 - Shicosoft <shicoweb@gmail.com>
@@ -847,11 +848,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.0.3...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Wip ([662f301](https://github.com/stacksjs/tlsx/commit/662f301))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
 
@@ -859,11 +860,11 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.0.2...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Wip ([e9d2b37](https://github.com/stacksjs/tlsx/commit/e9d2b37))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
 
@@ -871,17 +872,17 @@
 
 [compare changes](https://github.com/stacksjs/tlsx/compare/v0.0.1...main)
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Wip ([b51ae09](https://github.com/stacksjs/tlsx/commit/b51ae09))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
 
 ## ...main
 
-### 🏡 Chore
+## 🏡 Chore
 
 - Wip ([b032de5](https://github.com/stacksjs/tlsx/commit/b032de5))
 - Wip ([0bf0741](https://github.com/stacksjs/tlsx/commit/0bf0741))
@@ -891,6 +892,6 @@
 - Wip ([3d46d13](https://github.com/stacksjs/tlsx/commit/3d46d13))
 - Wip ([6a160d4](https://github.com/stacksjs/tlsx/commit/6a160d4))
 
-### ❤️ Contributors
+## ❤️ Contributors
 
 - Chris <chrisbreuer93@gmail.com>
