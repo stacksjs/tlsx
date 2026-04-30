@@ -67,9 +67,6 @@
   "lint-staged": {
     "*.{js,ts}": "bunx pickier . --fix"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "dependencies": {
     "@stacksjs/clapp": "^0.2.0",
     "consola": "^3.4.2"
