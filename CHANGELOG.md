@@ -1,4 +1,39 @@
 # Changelog
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.2...v0.13.3)
+
+### 🐛 Bug Fixes
+
+- add setup-bun to publish-commit job ([6f23f40](https://github.com/stacksjs/tlsx/commit/6f23f40)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.13.3 ([b31182c](https://github.com/stacksjs/tlsx/commit/b31182c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- wip ([e597517](https://github.com/stacksjs/tlsx/commit/e597517)) _(by Chris <chrisbreuer93@gmail.com>)_
+- minor adjustments ([6a9061f](https://github.com/stacksjs/tlsx/commit/6a9061f)) _(by Chris <chrisbreuer93@gmail.com>)_
+- fresh install to pick up dtsx 0.9.14 and bunfig 0.15.9 ([47eff01](https://github.com/stacksjs/tlsx/commit/47eff01)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.2...HEAD)
+
+### 🐛 Bug Fixes
+
+- add setup-bun to publish-commit job ([6f23f40](https://github.com/stacksjs/tlsx/commit/6f23f40)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- wip ([e597517](https://github.com/stacksjs/tlsx/commit/e597517)) _(by Chris <chrisbreuer93@gmail.com>)_
+- minor adjustments ([6a9061f](https://github.com/stacksjs/tlsx/commit/6a9061f)) _(by Chris <chrisbreuer93@gmail.com>)_
+- fresh install to pick up dtsx 0.9.14 and bunfig 0.15.9 ([47eff01](https://github.com/stacksjs/tlsx/commit/47eff01)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.1...v0.13.2)
 
 ### 🐛 Bug Fixes
