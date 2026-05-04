@@ -5,7 +5,7 @@
     "": {
       "name": "tlsx",
       "devDependencies": {
-        "better-dx": "^0.2.7",
+        "better-dx": "^0.2.12",
         "typescript": "^5.9.3",
       },
     },
@@ -20,11 +20,11 @@
         "tlsx": "./dist/bin/cli.js",
       },
       "dependencies": {
-        "@stacksjs/clapp": "^0.2.0",
+        "@stacksjs/clapp": "^0.2.7",
         "consola": "^3.4.2",
       },
       "devDependencies": {
-        "bunfig": "^0.15.6",
+        "bunfig": "^0.15.11",
         "typescript": "^5.9.3",
       },
     },
