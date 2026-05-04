@@ -58,7 +58,7 @@
     "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
-    "bunfig": "^0.15.6",
+    "bunfig": "^0.15.11",
     "typescript": "^5.9.3"
   },
   "simple-git-hooks": {
@@ -68,7 +68,7 @@
     "*.{js,ts}": "bunx pickier . --fix"
   },
   "dependencies": {
-    "@stacksjs/clapp": "^0.2.0",
+    "@stacksjs/clapp": "^0.2.7",
     "consola": "^3.4.2"
   }
 }
