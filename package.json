@@ -54,7 +54,7 @@
     "preview:docs": "bun --bun bunpress preview docs"
   },
   "devDependencies": {
-    "better-dx": "^0.2.7",
+    "better-dx": "^0.2.12",
     "typescript": "^5.9.3"
   },
   "git-hooks": {
