@@ -39,8 +39,8 @@
   ],
   "scripts": {
     "build": "bun build.ts",
-    "lint": "bunx --bun pickiers .",
-    "lint:fix": "bunx --bun pickiers . --fix",
+    "lint": "bunx --bun pickier .",
+    "lint:fix": "bunx --bun pickier . --fix",
     "prepublishOnly": "bun --bun run build",
     "test": "bun test",
     "typecheck": "bunx tsc --noEmit"
@@ -49,6 +49,6 @@
     "pre-commit": "bunx lint-staged"
   },
   "lint-staged": {
-    "*.{js,ts}": "bunx pickiers . --fix"
+    "*.{js,ts}": "bunx pickier . --fix"
   }
 }
