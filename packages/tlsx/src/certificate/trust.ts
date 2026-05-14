@@ -4,7 +4,7 @@ import os from 'node:os'
 import { consola as log } from 'consola'
 import { config } from '../config'
 import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
-import { debugLog, findFoldersWithFile, runCommand } from '../utils'
+import { debugLog, findFoldersWithFile, runCommand, safeStringify } from '../utils'
 import { storeCACertificate, storeCertificate } from './store'
 
 /**
@@ -187,7 +187,7 @@ const trustStoreHandlers: Record<string, TrustStoreHandler> = {
  * @returns The path to the stored certificate
  */
 export async function addCertToSystemTrustStoreAndSaveCert(cert: Cert, caCert: string, options?: TlsOption): Promise<CertPath> {
-  debugLog(LOG_CATEGORIES.TRUST, `Adding certificate to system trust store with options: ${JSON.stringify(options)}`, options?.verbose)
+  debugLog(LOG_CATEGORIES.TRUST, `Adding certificate to system trust store with options: ${safeStringify(options)}`, options?.verbose)
   debugLog(LOG_CATEGORIES.TRUST, 'Storing certificate and private key', options?.verbose)
   const certPath = storeCertificate(cert, options)
 

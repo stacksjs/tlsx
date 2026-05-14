@@ -2,7 +2,7 @@ import type { Cert, CertPath, TlsOption } from '../types'
 import fs from 'node:fs'
 import path from 'node:path'
 import { LOG_CATEGORIES } from '../constants'
-import { debugLog, normalizeCertPaths } from '../utils'
+import { debugLog, normalizeCertPaths, safeStringify } from '../utils'
 
 /**
  * Store a certificate and its private key
@@ -11,7 +11,7 @@ import { debugLog, normalizeCertPaths } from '../utils'
  * @returns Path to the stored certificate
  */
 export function storeCertificate(cert: Cert, options?: TlsOption): CertPath {
-  debugLog(LOG_CATEGORIES.STORAGE, `Storing certificate and private key with options: ${JSON.stringify(options)}`, options?.verbose)
+  debugLog(LOG_CATEGORIES.STORAGE, `Storing certificate and private key with options: ${safeStringify(options)}`, options?.verbose)
   const { certPath, keyPath } = normalizeCertPaths({
     basePath: options?.basePath,
     certPath: options?.certPath,

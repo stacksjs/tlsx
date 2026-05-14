@@ -1,7 +1,7 @@
 import type { CAOptions, Certificate, CertificateOptions } from '../types'
 import { config } from '../config'
 import { CERT_CONSTANTS } from '../constants'
-import { debugLog, getPrimaryDomain } from '../utils'
+import { debugLog, getPrimaryDomain, safeStringify } from '../utils'
 import {
   certificateFromPem,
   createCertificate,
@@ -68,7 +68,7 @@ export async function createRootCA(options: CAOptions = {}): Promise<Certificate
  */
 export async function generateCertificate(options: CertificateOptions): Promise<Certificate> {
   debugLog('ca', 'Generating new certificate', options.verbose)
-  debugLog('ca', `Options: ${JSON.stringify(options)}`, options.verbose)
+  debugLog('ca', `Options: ${safeStringify(options)}`, options.verbose)
 
   // Validate that at least one domain is specified
   if (!options.domain && !options.domains?.length) {

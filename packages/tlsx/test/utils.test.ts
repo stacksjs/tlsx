@@ -9,6 +9,7 @@ import {
   getPrimaryDomain,
   makeNumberPositive,
   readCertFromFile,
+  safeStringify,
 } from '../src/utils'
 
 // Need to mock listCertsInDirectory to isolate the test
@@ -220,6 +221,30 @@ describe('Utility Functions', () => {
       console.debug = originalConsoleDebug
 
       expect(logged).toBe(false)
+    })
+  })
+
+  describe('safeStringify', () => {
+    it('redacts secrets and PEM material without hiding paths', () => {
+      const output = safeStringify({
+        certPath: '/tmp/rpx/cert.pem',
+        keyPath: '/tmp/rpx/key.pem',
+        rootCA: {
+          certificate: '-----BEGIN CERTIFICATE-----\nsecret\n-----END CERTIFICATE-----',
+          privateKey: '-----BEGIN PRIVATE KEY-----\nsecret\n-----END PRIVATE KEY-----',
+        },
+        env: {
+          SUDO_PASSWORD: 'secret',
+          API_TOKEN: 'token',
+        },
+      })
+
+      expect(output).toContain('/tmp/rpx/cert.pem')
+      expect(output).toContain('/tmp/rpx/key.pem')
+      expect(output).not.toContain('BEGIN CERTIFICATE')
+      expect(output).not.toContain('BEGIN PRIVATE KEY')
+      expect(output).not.toContain('secret')
+      expect(output).not.toContain('token')
     })
   })
 })
