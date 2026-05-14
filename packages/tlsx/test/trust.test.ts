@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import os from 'node:os'
-import { consola } from 'consola'
 // Now import the functions that use the mocked dependencies
 import { cleanupTrustStore, removeCertFromSystemTrustStore } from '../src/certificate/trust'
 import { config } from '../src/config'
+import { log } from '../src/utils'
 
 // Mock modules before importing the functions we want to test
 // Mock the utils module
@@ -40,12 +40,12 @@ describe('Trust Store Management', () => {
       configurable: true,
     })
 
-    // Spy on consola log methods
+    // Spy on tlsx log methods
     logSpy = {
-      info: spyOn(consola, 'info'),
-      warn: spyOn(consola, 'warn'),
-      success: spyOn(consola, 'success'),
-      error: spyOn(consola, 'error'),
+      info: spyOn(log, 'info'),
+      warn: spyOn(log, 'warn'),
+      success: spyOn(log, 'success'),
+      error: spyOn(log, 'error'),
     }
 
     // Default mock implementation for runCommand

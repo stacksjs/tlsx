@@ -7,6 +7,14 @@ import process from 'node:process'
 import { promisify } from 'node:util'
 import { config } from './config'
 
+export const log = {
+  info: (...args: unknown[]): void => console.log(...args),
+  warn: (...args: unknown[]): void => console.warn(...args),
+  success: (...args: unknown[]): void => console.log(...args),
+  error: (...args: unknown[]): void => console.error(...args),
+  debug: (...args: unknown[]): void => console.debug(...args),
+}
+
 /**
  * Reads a certificate from a file.
  * @param certPath - Path to the certificate file.

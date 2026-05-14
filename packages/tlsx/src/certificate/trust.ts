@@ -1,10 +1,9 @@
 import type { Cert, CertPath, TlsOption } from '../types'
 import { execSync } from 'node:child_process'
 import os from 'node:os'
-import { consola as log } from 'consola'
 import { config } from '../config'
 import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
-import { debugLog, findFoldersWithFile, runCommand, safeStringify } from '../utils'
+import { debugLog, findFoldersWithFile, log, runCommand, safeStringify } from '../utils'
 import { storeCACertificate, storeCertificate } from './store'
 
 /**

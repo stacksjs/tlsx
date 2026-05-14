@@ -68,8 +68,6 @@
     "*.{js,ts}": "bunx pickier . --fix"
   },
   "dependencies": {
-    "@stacksjs/clapp": "^0.2.0",
-    "cac": "^6.7.14",
-    "consola": "^3.4.2"
+    "@stacksjs/clapp": "^0.2.0"
   }
 }

@@ -1,12 +1,10 @@
 import os from 'node:os'
 import process from 'node:process'
-import { CAC } from 'cac'
-import { consola as log } from 'consola'
-import { version } from '../package.json'
+import { CLI } from '@stacksjs/clapp'
 import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, createRootCA, generateCertificate, removeCertFromSystemTrustStore } from '../src/certificate'
 import { validateCertificate } from '../src/certificate/validation'
 import { config } from '../src/config'
-import { listCertsInDirectory, normalizeCertPaths } from '../src/utils'
+import { listCertsInDirectory, log, normalizeCertPaths } from '../src/utils'
 
 interface CliOptions {
   keyPath?: string
@@ -24,7 +22,8 @@ interface CliOptions {
   verbose?: boolean
 }
 
-const cli = new CAC('tlsx')
+const cli = new CLI('tlsx')
+const version = '0.13.5'
 
 cli
   .command('secure [domain]', 'Auto generate a self-signed SSL certificate for one or multiple domains')
@@ -336,4 +335,4 @@ cli
 
 cli.version(version)
 cli.help()
-cli.parse()
+cli.run()
