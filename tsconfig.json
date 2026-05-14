@@ -27,7 +27,9 @@
   },
   "exclude": [
     "node_modules",
+    "pantry",
     "dist",
+    "**/dist",
     "docs/bunpress.config.ts",
     "pickier.config.ts",
     "buddy-bot.config.ts"
