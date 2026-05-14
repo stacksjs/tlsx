@@ -1,4 +1,68 @@
 # Changelog
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.3...v0.13.4)
+
+### 🐛 Bug Fixes
+
+- **tlsx**: redact sensitive debug metadata ([ab7a1b7](https://github.com/stacksjs/tlsx/commit/ab7a1b7)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **lint**: typo \`pickiers\` → \`pickier\` in bun-plugin scripts ([93daddb](https://github.com/stacksjs/tlsx/commit/93daddb)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **changelog**: demote h3 sections to h2 ([4661b47](https://github.com/stacksjs/tlsx/commit/4661b47)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🤖 Continuous Integration
+
+- drop publish:commit step for nonexistent vite-plugin package ([4f09f6b](https://github.com/stacksjs/tlsx/commit/4f09f6b)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- drop redundant setup-bun (pantry installs bun via deps.yaml) ([1e6a52a](https://github.com/stacksjs/tlsx/commit/1e6a52a)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.13.4 ([29a0c31](https://github.com/stacksjs/tlsx/commit/29a0c31)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: update better-dx tooling ([01edb64](https://github.com/stacksjs/tlsx/commit/01edb64)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: configure pickier git hooks ([65fd62c](https://github.com/stacksjs/tlsx/commit/65fd62c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: run pickier in git hooks ([53c7d94](https://github.com/stacksjs/tlsx/commit/53c7d94)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: ignore generated typecheck output ([ce6e45d](https://github.com/stacksjs/tlsx/commit/ce6e45d)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: consume dtsx through better-dx ([2983149](https://github.com/stacksjs/tlsx/commit/2983149)) _(by Chris <chrisbreuer93@gmail.com>)_
+- refresh bun.lock to pick up bun-plugin-dtsx@0.9.18 ([a085fd0](https://github.com/stacksjs/tlsx/commit/a085fd0)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock and apply pickier --fix ([7063285](https://github.com/stacksjs/tlsx/commit/7063285)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock ([ecc7a6f](https://github.com/stacksjs/tlsx/commit/ecc7a6f)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock to pick up latest pickier ([17a4992](https://github.com/stacksjs/tlsx/commit/17a4992)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- remove stale workspaces field from leaf package.json ([ffe9bb4](https://github.com/stacksjs/tlsx/commit/ffe9bb4)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([5f17c1c](https://github.com/stacksjs/tlsx/commit/5f17c1c)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.3...HEAD)
+
+## 🐛 Bug Fixes
+
+- **tlsx**: redact sensitive debug metadata ([ab7a1b7](https://github.com/stacksjs/tlsx/commit/ab7a1b7)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **lint**: typo \`pickiers\` → \`pickier\` in bun-plugin scripts ([93daddb](https://github.com/stacksjs/tlsx/commit/93daddb)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **changelog**: demote h3 sections to h2 ([4661b47](https://github.com/stacksjs/tlsx/commit/4661b47)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🤖 Continuous Integration
+
+- drop publish:commit step for nonexistent vite-plugin package ([4f09f6b](https://github.com/stacksjs/tlsx/commit/4f09f6b)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- drop redundant setup-bun (pantry installs bun via deps.yaml) ([1e6a52a](https://github.com/stacksjs/tlsx/commit/1e6a52a)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🧹 Chores
+
+- **tlsx**: update better-dx tooling ([01edb64](https://github.com/stacksjs/tlsx/commit/01edb64)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: configure pickier git hooks ([65fd62c](https://github.com/stacksjs/tlsx/commit/65fd62c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: run pickier in git hooks ([53c7d94](https://github.com/stacksjs/tlsx/commit/53c7d94)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: ignore generated typecheck output ([ce6e45d](https://github.com/stacksjs/tlsx/commit/ce6e45d)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: consume dtsx through better-dx ([2983149](https://github.com/stacksjs/tlsx/commit/2983149)) _(by Chris <chrisbreuer93@gmail.com>)_
+- refresh bun.lock to pick up bun-plugin-dtsx@0.9.18 ([a085fd0](https://github.com/stacksjs/tlsx/commit/a085fd0)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock and apply pickier --fix ([7063285](https://github.com/stacksjs/tlsx/commit/7063285)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock ([ecc7a6f](https://github.com/stacksjs/tlsx/commit/ecc7a6f)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- refresh bun.lock to pick up latest pickier ([17a4992](https://github.com/stacksjs/tlsx/commit/17a4992)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- remove stale workspaces field from leaf package.json ([ffe9bb4](https://github.com/stacksjs/tlsx/commit/ffe9bb4)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- wip ([5f17c1c](https://github.com/stacksjs/tlsx/commit/5f17c1c)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
 
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.2...v0.13.3)
 
