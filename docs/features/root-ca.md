@@ -13,7 +13,7 @@ A Root CA in tlsx:
 
 ## How It Works
 
-```
+```text
 Root CA (trusted by your system)
         │
         │ signs

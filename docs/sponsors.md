@@ -128,4 +128,4 @@ You can also try to convince your employer to sponsor Stacks as a business. This
 
 #### Thanks to Vue.js for the inspiration of this sponsorship page
 
-*You can find their sponsorship page [here](https://vuejs.org/sponsor/).*
+*You can find [the Vue.js sponsorship page](https://vuejs.org/sponsor/).*
