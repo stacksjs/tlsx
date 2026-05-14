@@ -1,4 +1,33 @@
 # Changelog
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.4...v0.13.5)
+
+### 🐛 Bug Fixes
+
+- **tlsx**: restore publish dependencies ([7ed896d](https://github.com/stacksjs/tlsx/commit/7ed896d)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.13.5 ([51fbd03](https://github.com/stacksjs/tlsx/commit/51fbd03)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: rely on release workflow publishing ([13a3b0b](https://github.com/stacksjs/tlsx/commit/13a3b0b)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.4...HEAD)
+
+### 🐛 Bug Fixes
+
+- **tlsx**: restore publish dependencies ([7ed896d](https://github.com/stacksjs/tlsx/commit/7ed896d)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- **tlsx**: rely on release workflow publishing ([13a3b0b](https://github.com/stacksjs/tlsx/commit/13a3b0b)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.3...v0.13.4)
 
 ### 🐛 Bug Fixes
