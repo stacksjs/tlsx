@@ -1,4 +1,28 @@
 # Changelog
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.5...v0.13.6)
+
+### 🐛 Bug Fixes
+
+- **tlsx**: use clapp for cli runtime ([46f9179](https://github.com/stacksjs/tlsx/commit/46f9179)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.13.6 ([28e76c4](https://github.com/stacksjs/tlsx/commit/28e76c4)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.5...HEAD)
+
+### 🐛 Bug Fixes
+
+- **tlsx**: use clapp for cli runtime ([46f9179](https://github.com/stacksjs/tlsx/commit/46f9179)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.4...v0.13.5)
 
 ### 🐛 Bug Fixes
