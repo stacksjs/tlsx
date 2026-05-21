@@ -1,7 +1,7 @@
 import os from 'node:os'
 import process from 'node:process'
 import { CLI } from '@stacksjs/clapp'
-import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, createRootCA, generateCertificate, removeCertFromSystemTrustStore } from '../src/certificate'
+import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, createRootCA, generateCertificate, installCA, removeCertFromSystemTrustStore, uninstallCA } from '../src/certificate'
 import { validateCertificate } from '../src/certificate/validation'
 import { config } from '../src/config'
 import { listCertsInDirectory, log, normalizeCertPaths } from '../src/utils'
@@ -329,6 +329,79 @@ cli
     }
     catch (error) {
       log.error(`Failed to clean up certificates: ${error}`)
+      process.exit(1)
+    }
+  })
+
+cli
+  .command('install', 'Install the local Root CA into the system trust store (mkcert-style)')
+  .option('-ca, --ca-path <ca>', 'CA file path', { default: config.caCertPath })
+  .option('--base-path <path>', 'Override the directory holding the CA cert + key')
+  .option('--common-name <name>', 'Common Name for the CA when generating', { default: config.commonName })
+  .option('--country-name <name>', 'Country Name for the CA when generating', { default: config.countryName })
+  .option('--state-name <name>', 'State Name for the CA when generating', { default: config.stateName })
+  .option('--locality-name <name>', 'Locality Name for the CA when generating', { default: config.localityName })
+  .option('--organization-name <name>', 'Organization Name for the CA when generating', { default: config.organizationName })
+  .option('--validity-years <years>', 'Validity period for a freshly minted CA, in years')
+  .option('--verbose', 'Enable verbose logging', { default: config.verbose })
+  .usage('tlsx install [options]')
+  .example('tlsx install')
+  .example('tlsx install --base-path ~/.config/myproject/ssl')
+  .action(async (options?: { 'caPath'?: string, 'basePath'?: string, 'commonName'?: string, 'countryName'?: string, 'stateName'?: string, 'localityName'?: string, 'organizationName'?: string, 'validityYears'?: string | number, 'verbose'?: boolean }) => {
+    try {
+      const result = await installCA({
+        caCertPath: options?.caPath,
+        basePath: options?.basePath,
+        verbose: options?.verbose,
+        ca: {
+          commonName: options?.commonName,
+          countryName: options?.countryName,
+          stateName: options?.stateName,
+          localityName: options?.localityName,
+          organization: options?.organizationName,
+          validityYears: options?.validityYears !== undefined ? Number(options.validityYears) : undefined,
+          verbose: options?.verbose,
+        },
+      })
+      log.info(`CA cert: ${result.caCertPath}`)
+      log.info(`CA key:  ${result.caKeyPath}`)
+      if (!result.generated)
+        log.info('(reused existing CA on disk)')
+      if (result.alreadyTrusted)
+        log.info('(already trusted, no trust-store changes)')
+    }
+    catch (err) {
+      log.error(`tlsx install failed: ${err}`)
+      process.exit(1)
+    }
+  })
+
+cli
+  .command('uninstall', 'Remove the local Root CA from the system trust store')
+  .option('-ca, --ca-path <ca>', 'CA file path', { default: config.caCertPath })
+  .option('--base-path <path>', 'Override the directory holding the CA cert + key')
+  .option('--cert-name <name>', 'Override the CN used to identify the CA in the trust store')
+  .option('--delete-files', 'Also remove the CA cert + key from disk', { default: false })
+  .option('--verbose', 'Enable verbose logging', { default: config.verbose })
+  .usage('tlsx uninstall [options]')
+  .example('tlsx uninstall')
+  .example('tlsx uninstall --delete-files')
+  .action(async (options?: { 'caPath'?: string, 'basePath'?: string, 'certName'?: string, 'deleteFiles'?: boolean, 'verbose'?: boolean }) => {
+    try {
+      const result = await uninstallCA({
+        caCertPath: options?.caPath,
+        basePath: options?.basePath,
+        certName: options?.certName,
+        deleteFiles: options?.deleteFiles ?? false,
+        verbose: options?.verbose,
+      })
+      if (!result.removedFromTrustStore)
+        log.warn('Trust store removal did not succeed; check verbose output')
+      if (options?.deleteFiles && !result.filesDeleted)
+        log.warn(`No CA files found to delete at ${result.caCertPath}`)
+    }
+    catch (err) {
+      log.error(`tlsx uninstall failed: ${err}`)
       process.exit(1)
     }
   })

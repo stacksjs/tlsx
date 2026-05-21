@@ -1,9 +1,11 @@
-import type { Cert, CertPath, TlsOption } from '../types'
+import type { CAOptions, Cert, CertPath, TlsOption } from '../types'
 import { execSync } from 'node:child_process'
+import fs from 'node:fs'
 import os from 'node:os'
 import { config } from '../config'
 import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
-import { debugLog, findFoldersWithFile, log, runCommand, safeStringify } from '../utils'
+import { debugLog, findFoldersWithFile, log, normalizeCertPaths, runCommand, safeStringify } from '../utils'
+import { createRootCA } from './generate'
 import { storeCACertificate, storeCertificate } from './store'
 
 /**
@@ -351,4 +353,159 @@ export async function cleanupTrustStore(options?: TlsOption, certNamePattern?: s
     debugLog(LOG_CATEGORIES.TRUST, `Error cleaning up trust store: ${error}`, verbose)
     throw new Error(`Failed to clean up trust store: ${error}`)
   }
+}
+
+export interface InstallCAOptions extends TlsOption {
+  /** Forwarded to `createRootCA` when generating a fresh CA. */
+  ca?: CAOptions
+}
+
+export interface InstallCAResult {
+  caCertPath: string
+  caKeyPath: string
+  /** True if a fresh CA was minted (vs. reusing the existing one on disk). */
+  generated: boolean
+  /** True if we actually wrote to the system trust store on this run. */
+  trustInstalled: boolean
+  /** True if the CA was already trusted before this call. */
+  alreadyTrusted: boolean
+}
+
+/**
+ * mkcert-style "install the local CA" — idempotent. Generates the Root CA on
+ * first run, persists it under the configured `basePath`, and installs ONLY
+ * the CA cert into the system trust store. Subsequent host certs derived from
+ * this CA are trusted automatically without re-prompting.
+ *
+ * Subsequent calls are no-ops if the CA is already on disk and trusted.
+ */
+export async function installCA(options?: InstallCAOptions): Promise<InstallCAResult> {
+  const verbose = options?.verbose ?? config.verbose
+  const { caCertPath, basePath } = normalizeCertPaths({
+    basePath: options?.basePath,
+    caCertPath: options?.caCertPath,
+  })
+  // Co-locate the CA private key next to the cert. We use a fixed `.key`
+  // filename to keep this discoverable from the install/uninstall pair.
+  const caKeyPath = caCertPath.replace(/\.crt$/, '.key')
+
+  debugLog(LOG_CATEGORIES.TRUST, `installCA: caCertPath=${caCertPath}`, verbose)
+  debugLog(LOG_CATEGORIES.TRUST, `installCA: basePath=${basePath}`, verbose)
+
+  // Reuse the existing CA on disk if both files are present. Generating a new
+  // CA when one already exists would orphan every host cert that derives from it.
+  let generated = false
+  if (!(fs.existsSync(caCertPath) && fs.existsSync(caKeyPath))) {
+    debugLog(LOG_CATEGORIES.TRUST, 'No existing Root CA found, generating one', verbose)
+    const ca = await createRootCA({ ...options?.ca, verbose })
+    storeCACertificate(ca.certificate, { ...options, basePath, caCertPath })
+    fs.writeFileSync(caKeyPath, ca.privateKey, { mode: 0o600 })
+    generated = true
+    log.success(`Generated new Root CA at ${caCertPath}`)
+  }
+  else {
+    debugLog(LOG_CATEGORIES.TRUST, 'Reusing existing Root CA on disk', verbose)
+    log.info(`Using existing Root CA at ${caCertPath}`)
+  }
+
+  const platform = os.platform()
+  const handler = trustStoreHandlers[platform]
+  if (!handler)
+    throw new Error(`installCA: unsupported platform: ${platform}`)
+
+  // The macOS handler already detects "already trusted" via fingerprint match
+  // and short-circuits without sudo. We mirror that signal up to callers.
+  const alreadyTrusted = await isCertAlreadyTrusted(caCertPath, verbose)
+  if (alreadyTrusted) {
+    log.success('Root CA is already trusted in the system store')
+    return { caCertPath, caKeyPath, generated, trustInstalled: false, alreadyTrusted: true }
+  }
+
+  await handler.addCertificate(caCertPath, options)
+  log.success('Root CA installed in the system trust store')
+  return { caCertPath, caKeyPath, generated, trustInstalled: true, alreadyTrusted: false }
+}
+
+export interface UninstallCAOptions extends TlsOption {
+  /**
+   * Override the CN used to identify the CA in the trust store. Defaults to
+   * the CN baked into the on-disk CA certificate, falling back to
+   * `config.commonName`.
+   */
+  certName?: string
+  /** Also delete the CA cert + key from `basePath`. Default: false. */
+  deleteFiles?: boolean
+}
+
+export interface UninstallCAResult {
+  removedFromTrustStore: boolean
+  filesDeleted: boolean
+  caCertPath: string
+  caKeyPath: string
+}
+
+/**
+ * Inverse of `installCA`. Removes the Root CA from the system trust store
+ * (using its on-disk CN when available) and optionally deletes the cert + key
+ * from `basePath`.
+ */
+export async function uninstallCA(options?: UninstallCAOptions): Promise<UninstallCAResult> {
+  const verbose = options?.verbose ?? config.verbose
+  const { caCertPath } = normalizeCertPaths({
+    basePath: options?.basePath,
+    caCertPath: options?.caCertPath,
+  })
+  const caKeyPath = caCertPath.replace(/\.crt$/, '.key')
+
+  // Prefer the CN baked into the actual CA file (more reliable than guessing
+  // from config when the user customized commonName at generation time).
+  let certName = options?.certName
+  if (!certName && fs.existsSync(caCertPath)) {
+    try {
+      const cnLine = execSync(`openssl x509 -noout -subject -in "${caCertPath}"`).toString().trim()
+      const m = cnLine.match(/CN\s*=\s*([^,/]+)/)
+      certName = m?.[1]?.trim()
+      debugLog(LOG_CATEGORIES.TRUST, `uninstallCA: extracted CN from cert: ${certName}`, verbose)
+    }
+    catch (err) {
+      debugLog(LOG_CATEGORIES.TRUST, `uninstallCA: openssl CN extraction failed: ${err}`, verbose)
+    }
+  }
+  certName = certName ?? config.commonName
+
+  const platform = os.platform()
+  const handler = trustStoreHandlers[platform]
+  if (!handler?.removeCertificate)
+    throw new Error(`uninstallCA: removing certificates is not supported on ${platform}`)
+
+  let removedFromTrustStore = false
+  try {
+    await handler.removeCertificate(caCertPath, options, certName)
+    removedFromTrustStore = true
+    log.success(`Root CA "${certName}" removed from the system trust store`)
+  }
+  catch (err) {
+    debugLog(LOG_CATEGORIES.TRUST, `uninstallCA: handler.removeCertificate failed: ${err}`, verbose)
+    log.warn(`Could not remove Root CA from trust store: ${(err as Error).message}`)
+  }
+
+  let filesDeleted = false
+  if (options?.deleteFiles) {
+    for (const p of [caCertPath, caKeyPath]) {
+      try {
+        if (fs.existsSync(p)) {
+          fs.unlinkSync(p)
+          debugLog(LOG_CATEGORIES.TRUST, `uninstallCA: deleted ${p}`, verbose)
+          filesDeleted = true
+        }
+      }
+      catch (err) {
+        debugLog(LOG_CATEGORIES.TRUST, `uninstallCA: failed to delete ${p}: ${err}`, verbose)
+      }
+    }
+    if (filesDeleted)
+      log.success('Removed CA cert + key from disk')
+  }
+
+  return { removedFromTrustStore, filesDeleted, caCertPath, caKeyPath }
 }
