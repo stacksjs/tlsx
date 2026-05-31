@@ -191,23 +191,23 @@ and the certificate's expiry `Date`.
 ```bash
 # Issue a wildcard cert via DNS-01 (Porkbun), production
 PORKBUN_API_KEY=... PORKBUN_SECRET_KEY=... \
-  tlsx acme issue --domains "example.com,_.example.com" --method dns-01 --dir ./certs --prod
+  tlsx acme:issue --domains "example.com,_.example.com" --method dns-01 --dir ./certs --prod
 
 # Issue a single-domain cert via HTTP-01 (needs a webserver on :80), staging
-tlsx acme issue --domains example.com --method http-01 --dir ./certs
+tlsx acme:issue --domains example.com --method http-01 --dir ./certs
 
 # Reuse/persist an ACME account key across runs
-tlsx acme issue -d example.com --method http-01 --dir ./certs --account-key ./acme-account.key
+tlsx acme:issue -d example.com --method http-01 --dir ./certs --account-key ./acme-account.key
 
 # Renew everything in a directory that expires within 30 days
-tlsx acme renew --dir ./certs --days 30 --prod
+tlsx acme:renew --dir ./certs --days 30 --prod
 ```
 
 **Output filenames** (written into `--dir`): for a domain `example.com` the CLI
 writes `example.com.crt` (the full leaf+chain bundle) and `example.com.key`
 (plus `example.com.chain.crt` when an intermediate chain is present). A
 **wildcard** `*.example.com` is written as `_wildcard.example.com.crt` /
-`_wildcard.example.com.key` (mkcert/Let's Encrypt convention). `tlsx acme renew`
+`_wildcard.example.com.key` (mkcert/Let's Encrypt convention). `tlsx acme:renew`
 re-derives the domains from each certificate's SANs and rewrites the same files.
 
 ## Configuration

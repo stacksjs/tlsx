@@ -418,7 +418,7 @@ cli
   })
 
 cli
-  .command('acme issue', 'Obtain a REAL certificate from Let\'s Encrypt (ACME / RFC 8555)')
+  .command('acme:issue', 'Obtain a REAL certificate from Let\'s Encrypt (ACME / RFC 8555)')
   .option('-d, --domains <domains>', 'Domains (comma-separated); wildcards require --method dns-01')
   .option('--method <method>', 'Challenge method: dns-01 or http-01', { default: 'dns-01' })
   .option('--dir <directory>', 'Output directory for <domain>.crt / <domain>.key', { default: process.cwd() })
@@ -427,9 +427,9 @@ cli
   .option('--account-key <path>', 'Reuse an existing ACME account key (PEM); created + saved if absent')
   .option('--prod', 'Use Let\'s Encrypt production (default: staging)', { default: false })
   .option('--verbose', 'Enable verbose logging', { default: config.verbose })
-  .usage('tlsx acme issue --domains a.com,*.b.com --method dns-01 --dir ./certs [--prod]')
-  .example('tlsx acme issue -d example.com --method http-01 --dir ./certs')
-  .example('tlsx acme issue -d "example.com,*.example.com" --method dns-01 --dir ./certs --prod')
+  .usage('tlsx acme:issue --domains a.com,*.b.com --method dns-01 --dir ./certs [--prod]')
+  .example('tlsx acme:issue -d example.com --method http-01 --dir ./certs')
+  .example('tlsx acme:issue -d "example.com,*.example.com" --method dns-01 --dir ./certs --prod')
   .action(async (options?: { domains?: string, method?: string, dir?: string, email?: string, dnsProvider?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
     const opts = options || {}
     const domains = (opts.domains ?? '').split(',').map(d => d.trim()).filter(Boolean)
@@ -498,7 +498,7 @@ cli
   })
 
 cli
-  .command('acme renew', 'Renew ACME certificates in a directory that expire soon')
+  .command('acme:renew', 'Renew ACME certificates in a directory that expire soon')
   .option('-d, --domains <domains>', 'Domains to renew (comma-separated); inferred from --dir if omitted')
   .option('--dir <directory>', 'Directory holding <domain>.crt / <domain>.key', { default: process.cwd() })
   .option('--days <days>', 'Renew if expiring within this many days', { default: 30 })
@@ -507,8 +507,8 @@ cli
   .option('--account-key <path>', 'Reuse an existing ACME account key (PEM)')
   .option('--prod', 'Use Let\'s Encrypt production (default: staging)', { default: false })
   .option('--verbose', 'Enable verbose logging', { default: config.verbose })
-  .usage('tlsx acme renew --dir ./certs --days 30')
-  .example('tlsx acme renew --dir ./certs --days 30 --prod')
+  .usage('tlsx acme:renew --dir ./certs --days 30')
+  .example('tlsx acme:renew --dir ./certs --days 30 --prod')
   .action(async (options?: { domains?: string, dir?: string, days?: string | number, method?: string, email?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
     const opts = options || {}
     const outDir = opts.dir ?? process.cwd()
