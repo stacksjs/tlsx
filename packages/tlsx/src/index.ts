@@ -1,3 +1,4 @@
+export * from './acme'
 export * from './certificate'
 export { config, defaultConfig } from './config'
 export * from './constants'
