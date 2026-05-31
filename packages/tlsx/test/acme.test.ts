@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import type { KeyObject } from 'node:crypto'
 import { createPublicKey, generateKeyPairSync } from 'node:crypto'
+import fs from 'node:fs'
+import os from 'node:os'
 import { base64urlDecode, base64urlDecodeToString, base64urlEncode } from '../src/acme/base64url'
 import {
   AcmeClient,
@@ -11,7 +13,7 @@ import {
 } from '../src/acme/client'
 import { buildCsr, buildCsrBase64url } from '../src/acme/csr'
 import { PorkbunDnsProvider, splitApexAndSubdomain } from '../src/acme/dns'
-import { Http01Store } from '../src/acme/http01'
+import { FileHttp01Store, Http01Store } from '../src/acme/http01'
 import { jwkFromKey, jwkThumbprint, signJws } from '../src/acme/jws'
 
 describe('acme/base64url', () => {
@@ -199,6 +201,26 @@ describe('acme/http01 store', () => {
     expect(store.handlePath('/somewhere/else')).toBeUndefined()
     store.remove('tok123')
     expect(store.get('tok123')).toBeUndefined()
+  })
+
+  it('FileHttp01Store materializes challenges in a webroot and cleans up', () => {
+    const dir = fs.mkdtempSync(`${os.tmpdir()}/tlsx-webroot-`)
+    const store = new FileHttp01Store(dir)
+    store.add('tokABC', 'tokABC.thumb')
+    // file written for the webserver to serve verbatim
+    expect(fs.readFileSync(`${dir}/tokABC`, 'utf8')).toBe('tokABC.thumb')
+    // in-memory behavior preserved
+    expect(store.handlePath('/.well-known/acme-challenge/tokABC')).toBe('tokABC.thumb')
+    store.remove('tokABC')
+    expect(fs.existsSync(`${dir}/tokABC`)).toBe(false)
+    expect(store.get('tokABC')).toBeUndefined()
+    // cleanup() removes any stragglers
+    store.add('t1', 'v1')
+    store.add('t2', 'v2')
+    store.cleanup()
+    expect(fs.existsSync(`${dir}/t1`)).toBe(false)
+    expect(fs.existsSync(`${dir}/t2`)).toBe(false)
+    fs.rmSync(dir, { recursive: true, force: true })
   })
 })
 

@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
 import { CLI } from '@stacksjs/clapp'
-import { obtainCertificate, PorkbunDnsProvider } from '../src/acme'
+import { FileHttp01Store, obtainCertificate, PorkbunDnsProvider } from '../src/acme'
 import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, createRootCA, generateCertificate, installCA, removeCertFromSystemTrustStore, uninstallCA } from '../src/certificate'
 import { validateCertificate, willCertExpireSoon } from '../src/certificate/validation'
 import { config } from '../src/config'
@@ -424,13 +424,14 @@ cli
   .option('--dir <directory>', 'Output directory for <domain>.crt / <domain>.key', { default: process.cwd() })
   .option('--email <email>', 'Contact email for the ACME account')
   .option('--dns-provider <provider>', 'DNS provider for dns-01 (currently: porkbun)', { default: 'porkbun' })
+  .option('--webroot <dir>', 'http-01: write challenge files to this dir (served by an existing webserver at /.well-known/acme-challenge/) instead of running a listener')
   .option('--account-key <path>', 'Reuse an existing ACME account key (PEM); created + saved if absent')
   .option('--prod', 'Use Let\'s Encrypt production (default: staging)', { default: false })
   .option('--verbose', 'Enable verbose logging', { default: config.verbose })
   .usage('tlsx acme:issue --domains a.com,*.b.com --method dns-01 --dir ./certs [--prod]')
-  .example('tlsx acme:issue -d example.com --method http-01 --dir ./certs')
+  .example('tlsx acme:issue -d example.com --method http-01 --webroot /var/www/acme-challenge --dir ./certs')
   .example('tlsx acme:issue -d "example.com,*.example.com" --method dns-01 --dir ./certs --prod')
-  .action(async (options?: { domains?: string, method?: string, dir?: string, email?: string, dnsProvider?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
+  .action(async (options?: { domains?: string, method?: string, dir?: string, email?: string, dnsProvider?: string, webroot?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
     const opts = options || {}
     const domains = (opts.domains ?? '').split(',').map(d => d.trim()).filter(Boolean)
     if (domains.length === 0) {
@@ -457,6 +458,11 @@ cli
       }
     }
 
+    // http-01: write challenges to a webroot served by an existing webserver.
+    const http01Store = (method === 'http-01' && opts.webroot) ? new FileHttp01Store(opts.webroot) : undefined
+    if (http01Store)
+      log.info(`Using webroot ${opts.webroot} for http-01 challenges`)
+
     // Reuse a saved account key across runs if the file exists.
     let accountKeyPem: string | undefined
     if (opts.accountKey && fs.existsSync(opts.accountKey))
@@ -469,6 +475,7 @@ cli
         domains,
         method,
         dnsProvider,
+        http01Store,
         accountKeyPem,
         email: opts.email,
         staging: !opts.prod,
@@ -503,17 +510,20 @@ cli
   .option('--dir <directory>', 'Directory holding <domain>.crt / <domain>.key', { default: process.cwd() })
   .option('--days <days>', 'Renew if expiring within this many days', { default: 30 })
   .option('--method <method>', 'Challenge method: dns-01 or http-01', { default: 'dns-01' })
+  .option('--webroot <dir>', 'http-01: write challenge files to this dir (served by an existing webserver) instead of running a listener')
   .option('--email <email>', 'Contact email for the ACME account')
   .option('--account-key <path>', 'Reuse an existing ACME account key (PEM)')
   .option('--prod', 'Use Let\'s Encrypt production (default: staging)', { default: false })
   .option('--verbose', 'Enable verbose logging', { default: config.verbose })
   .usage('tlsx acme:renew --dir ./certs --days 30')
   .example('tlsx acme:renew --dir ./certs --days 30 --prod')
-  .action(async (options?: { domains?: string, dir?: string, days?: string | number, method?: string, email?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
+  .example('tlsx acme:renew --dir /etc/certs --method http-01 --webroot /var/www/acme-challenge --prod')
+  .action(async (options?: { domains?: string, dir?: string, days?: string | number, method?: string, webroot?: string, email?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
     const opts = options || {}
     const outDir = opts.dir ?? process.cwd()
     const days = Number(opts.days) || 30
     const method = (opts.method === 'http-01' ? 'http-01' : 'dns-01') as 'dns-01' | 'http-01'
+    const http01Store = (method === 'http-01' && opts.webroot) ? new FileHttp01Store(opts.webroot) : undefined
 
     // Determine candidate cert files: explicit domains, or scan the dir.
     let crtFiles: string[]
@@ -570,6 +580,7 @@ cli
           domains,
           method,
           dnsProvider,
+          http01Store,
           accountKeyPem,
           email: opts.email,
           staging: !opts.prod,

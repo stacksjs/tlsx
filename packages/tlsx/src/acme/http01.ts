@@ -66,3 +66,65 @@ export class Http01Store {
  * threading an instance through every call.
  */
 export const defaultHttp01Store: Http01Store = new Http01Store()
+
+/**
+ * An http-01 store that ALSO materializes each challenge as a file in a
+ * webroot directory, named by token. Use this when an existing webserver
+ * already serves `<webroot>/<token>` for the
+ * `/.well-known/acme-challenge/` path (e.g. nginx, Caddy, or an rpx gateway
+ * that owns :80) — issuance/renewal then needs no standalone listener.
+ *
+ * The directory must map to `/.well-known/acme-challenge/`: the file written
+ * for `<token>` is `<webroot>/<token>`, whose body the server returns verbatim.
+ *
+ * @example
+ * await obtainCertificate({
+ *   domains: ['origin.example.com'],
+ *   method: 'http-01',
+ *   http01Store: new FileHttp01Store('/var/www/acme-challenge'),
+ * })
+ */
+export class FileHttp01Store extends Http01Store {
+  private readonly written = new Set<string>()
+
+  /**
+   * @param webroot - Directory mapped to `/.well-known/acme-challenge/`.
+   *   Created (recursively) on construction if it does not exist.
+   */
+  constructor(private readonly webroot: string) {
+    super()
+    const fs = require('node:fs') as typeof import('node:fs')
+    fs.mkdirSync(this.webroot, { recursive: true })
+  }
+
+  private filePath(token: string): string {
+    const path = require('node:path') as typeof import('node:path')
+    // Guard against path traversal: tokens are opaque base64url, never contain separators.
+    return path.join(this.webroot, path.basename(token))
+  }
+
+  override add(token: string, keyAuthorization: string): void {
+    super.add(token, keyAuthorization)
+    const fs = require('node:fs') as typeof import('node:fs')
+    fs.writeFileSync(this.filePath(token), keyAuthorization, 'utf8')
+    this.written.add(token)
+  }
+
+  override remove(token: string): void {
+    super.remove(token)
+    const fs = require('node:fs') as typeof import('node:fs')
+    try {
+      fs.unlinkSync(this.filePath(token))
+    }
+    catch {
+      // already gone
+    }
+    this.written.delete(token)
+  }
+
+  /** Remove any challenge files this store still has on disk. */
+  cleanup(): void {
+    for (const token of [...this.written])
+      this.remove(token)
+  }
+}
