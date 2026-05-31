@@ -1,10 +1,21 @@
+import fs from 'node:fs'
 import os from 'node:os'
+import path from 'node:path'
 import process from 'node:process'
 import { CLI } from '@stacksjs/clapp'
+import { obtainCertificate, PorkbunDnsProvider } from '../src/acme'
 import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, createRootCA, generateCertificate, installCA, removeCertFromSystemTrustStore, uninstallCA } from '../src/certificate'
-import { validateCertificate } from '../src/certificate/validation'
+import { validateCertificate, willCertExpireSoon } from '../src/certificate/validation'
 import { config } from '../src/config'
 import { listCertsInDirectory, log, normalizeCertPaths } from '../src/utils'
+
+/**
+ * Maps a domain to its on-disk basename, mirroring mkcert/Let's Encrypt
+ * convention: a wildcard `*.example.com` is written as `_wildcard.example.com`.
+ */
+function certFileBase(domain: string): string {
+  return domain.startsWith('*.') ? `_wildcard.${domain.slice(2)}` : domain
+}
 
 interface CliOptions {
   keyPath?: string
@@ -403,6 +414,176 @@ cli
     catch (err) {
       log.error(`tlsx uninstall failed: ${err}`)
       process.exit(1)
+    }
+  })
+
+cli
+  .command('acme issue', 'Obtain a REAL certificate from Let\'s Encrypt (ACME / RFC 8555)')
+  .option('-d, --domains <domains>', 'Domains (comma-separated); wildcards require --method dns-01')
+  .option('--method <method>', 'Challenge method: dns-01 or http-01', { default: 'dns-01' })
+  .option('--dir <directory>', 'Output directory for <domain>.crt / <domain>.key', { default: process.cwd() })
+  .option('--email <email>', 'Contact email for the ACME account')
+  .option('--dns-provider <provider>', 'DNS provider for dns-01 (currently: porkbun)', { default: 'porkbun' })
+  .option('--account-key <path>', 'Reuse an existing ACME account key (PEM); created + saved if absent')
+  .option('--prod', 'Use Let\'s Encrypt production (default: staging)', { default: false })
+  .option('--verbose', 'Enable verbose logging', { default: config.verbose })
+  .usage('tlsx acme issue --domains a.com,*.b.com --method dns-01 --dir ./certs [--prod]')
+  .example('tlsx acme issue -d example.com --method http-01 --dir ./certs')
+  .example('tlsx acme issue -d "example.com,*.example.com" --method dns-01 --dir ./certs --prod')
+  .action(async (options?: { domains?: string, method?: string, dir?: string, email?: string, dnsProvider?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
+    const opts = options || {}
+    const domains = (opts.domains ?? '').split(',').map(d => d.trim()).filter(Boolean)
+    if (domains.length === 0) {
+      log.error('No domains specified. Use --domains a.com,*.b.com')
+      process.exit(1)
+    }
+
+    const method = (opts.method === 'http-01' ? 'http-01' : 'dns-01') as 'dns-01' | 'http-01'
+    const outDir = opts.dir ?? process.cwd()
+    fs.mkdirSync(outDir, { recursive: true })
+
+    let dnsProvider
+    if (method === 'dns-01') {
+      if ((opts.dnsProvider ?? 'porkbun') !== 'porkbun') {
+        log.error(`Unsupported dns-provider: ${opts.dnsProvider}. Only "porkbun" is built in.`)
+        process.exit(1)
+      }
+      try {
+        dnsProvider = new PorkbunDnsProvider()
+      }
+      catch (err) {
+        log.error(`${err}`)
+        process.exit(1)
+      }
+    }
+
+    // Reuse a saved account key across runs if the file exists.
+    let accountKeyPem: string | undefined
+    if (opts.accountKey && fs.existsSync(opts.accountKey))
+      accountKeyPem = fs.readFileSync(opts.accountKey, 'utf8')
+
+    log.info(`Requesting ${opts.prod ? 'PRODUCTION' : 'staging'} certificate for: ${domains.join(', ')} via ${method}`)
+
+    try {
+      const result = await obtainCertificate({
+        domains,
+        method,
+        dnsProvider,
+        accountKeyPem,
+        email: opts.email,
+        staging: !opts.prod,
+      })
+
+      // Persist the account key for reuse, if a path was given.
+      if (opts.accountKey && !accountKeyPem)
+        fs.writeFileSync(opts.accountKey, result.accountKeyPem, { mode: 0o600 })
+
+      const base = certFileBase(domains[0])
+      const certPath = path.join(outDir, `${base}.crt`)
+      const keyPath = path.join(outDir, `${base}.key`)
+      const chainPath = path.join(outDir, `${base}.chain.crt`)
+      fs.writeFileSync(certPath, result.fullChainPem)
+      fs.writeFileSync(keyPath, result.keyPem, { mode: 0o600 })
+      if (result.chainPem)
+        fs.writeFileSync(chainPath, result.chainPem)
+
+      log.success(`Certificate written to ${certPath}`)
+      log.info(`Private key:  ${keyPath}`)
+      log.info(`Expires:      ${result.notAfter.toISOString()}`)
+    }
+    catch (err) {
+      log.error(`ACME issuance failed: ${err}`)
+      process.exit(1)
+    }
+  })
+
+cli
+  .command('acme renew', 'Renew ACME certificates in a directory that expire soon')
+  .option('-d, --domains <domains>', 'Domains to renew (comma-separated); inferred from --dir if omitted')
+  .option('--dir <directory>', 'Directory holding <domain>.crt / <domain>.key', { default: process.cwd() })
+  .option('--days <days>', 'Renew if expiring within this many days', { default: 30 })
+  .option('--method <method>', 'Challenge method: dns-01 or http-01', { default: 'dns-01' })
+  .option('--email <email>', 'Contact email for the ACME account')
+  .option('--account-key <path>', 'Reuse an existing ACME account key (PEM)')
+  .option('--prod', 'Use Let\'s Encrypt production (default: staging)', { default: false })
+  .option('--verbose', 'Enable verbose logging', { default: config.verbose })
+  .usage('tlsx acme renew --dir ./certs --days 30')
+  .example('tlsx acme renew --dir ./certs --days 30 --prod')
+  .action(async (options?: { domains?: string, dir?: string, days?: string | number, method?: string, email?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
+    const opts = options || {}
+    const outDir = opts.dir ?? process.cwd()
+    const days = Number(opts.days) || 30
+    const method = (opts.method === 'http-01' ? 'http-01' : 'dns-01') as 'dns-01' | 'http-01'
+
+    // Determine candidate cert files: explicit domains, or scan the dir.
+    let crtFiles: string[]
+    if (opts.domains) {
+      crtFiles = opts.domains.split(',').map(d => d.trim()).filter(Boolean)
+        .map(d => path.join(outDir, `${certFileBase(d)}.crt`))
+    }
+    else {
+      crtFiles = fs.existsSync(outDir)
+        ? fs.readdirSync(outDir).filter(f => f.endsWith('.crt') && !f.endsWith('.chain.crt')).map(f => path.join(outDir, f))
+        : []
+    }
+
+    if (crtFiles.length === 0) {
+      log.info('No certificates found to renew.')
+      return
+    }
+
+    let dnsProvider
+    if (method === 'dns-01') {
+      try {
+        dnsProvider = new PorkbunDnsProvider()
+      }
+      catch (err) {
+        log.error(`${err}`)
+        process.exit(1)
+      }
+    }
+
+    let accountKeyPem: string | undefined
+    if (opts.accountKey && fs.existsSync(opts.accountKey))
+      accountKeyPem = fs.readFileSync(opts.accountKey, 'utf8')
+
+    for (const crtPath of crtFiles) {
+      if (!fs.existsSync(crtPath)) {
+        log.warn(`Skipping missing certificate: ${crtPath}`)
+        continue
+      }
+      if (!willCertExpireSoon(crtPath, days)) {
+        log.info(`Skipping ${path.basename(crtPath)} (not expiring within ${days} days)`)
+        continue
+      }
+
+      // Re-derive the requested domains from the cert's SANs.
+      const { domains } = validateCertificate(crtPath)
+      if (domains.length === 0) {
+        log.warn(`Could not determine domains for ${crtPath}; skipping`)
+        continue
+      }
+
+      log.info(`Renewing ${domains.join(', ')} (${opts.prod ? 'production' : 'staging'})...`)
+      try {
+        const result = await obtainCertificate({
+          domains,
+          method,
+          dnsProvider,
+          accountKeyPem,
+          email: opts.email,
+          staging: !opts.prod,
+        })
+        const base = certFileBase(domains[0])
+        fs.writeFileSync(path.join(outDir, `${base}.crt`), result.fullChainPem)
+        fs.writeFileSync(path.join(outDir, `${base}.key`), result.keyPem, { mode: 0o600 })
+        if (result.chainPem)
+          fs.writeFileSync(path.join(outDir, `${base}.chain.crt`), result.chainPem)
+        log.success(`Renewed ${base} (expires ${result.notAfter.toISOString()})`)
+      }
+      catch (err) {
+        log.error(`Failed to renew ${crtPath}: ${err}`)
+      }
     }
   })
 
