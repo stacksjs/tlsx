@@ -1,4 +1,38 @@
 # Changelog
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.6...v0.13.7)
+
+### 🚀 Features
+
+- **cli**: tlsx acme issue/renew ([f3de7b6](https://github.com/stacksjs/tlsx/commit/f3de7b6)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **acme**: obtainCertificate orchestration + export ([e1e4cf8](https://github.com/stacksjs/tlsx/commit/e1e4cf8)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **acme**: RFC 8555 protocol client ([dc92a62](https://github.com/stacksjs/tlsx/commit/dc92a62)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **acme**: DNS-01 (Porkbun) + HTTP-01 challenge providers ([ed0496e](https://github.com/stacksjs/tlsx/commit/ed0496e)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **acme**: PKCS#10 CSR builder (P-256, SAN, wildcard) ([0142714](https://github.com/stacksjs/tlsx/commit/0142714)) _(by Chris <chrisbreuer93@gmail.com>)_ ([#10](https://github.com/stacksjs/tlsx/issues/10), [#10](https://github.com/stacksjs/tlsx/issues/10))
+- **acme**: base64url + ES256 JWS/JWK primitives ([2a6681c](https://github.com/stacksjs/tlsx/commit/2a6681c)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **tlsx**: add mkcert-style `install` / `uninstall` CA commands ([6516186](https://github.com/stacksjs/tlsx/commit/6516186)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### 🐛 Bug Fixes
+
+- **acme**: wait for dns-01 TXT propagation before validating ([21e9f30](https://github.com/stacksjs/tlsx/commit/21e9f30)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **cli**: register acme commands as acme:issue/acme:renew ([d86b347](https://github.com/stacksjs/tlsx/commit/d86b347)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **scripts**: stop double-generating CHANGELOG on release ([600fd32](https://github.com/stacksjs/tlsx/commit/600fd32)) _(by Glenn Michael Torregosa <gtorregosa@gmail.com>)_
+
+### 🧪 Tests
+
+- **acme**: unit tests + docs ([f751494](https://github.com/stacksjs/tlsx/commit/f751494)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+### 🧹 Chores
+
+- release v0.13.7 ([b9561a3](https://github.com/stacksjs/tlsx/commit/b9561a3)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: refresh bun.lock to pick up @stacksjs/logsmith 0.2.3 ([0822a67](https://github.com/stacksjs/tlsx/commit/0822a67)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+- **deps**: refresh bun.lock to pick up buddy-bot 0.9.20 ([ef0e0c0](https://github.com/stacksjs/tlsx/commit/ef0e0c0)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+### Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _Glenn Michael Torregosa <gtorregosa@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.5...v0.13.6)
 
 ### 🐛 Bug Fixes
