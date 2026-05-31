@@ -17,6 +17,7 @@
 - 🛠️ Configurable Library & CLI
 - 🔀 Multi-domain Support
 - 🏗️ Cross-platform System Trust Store Integration
+- 🌐 ACME / Let's Encrypt _(real certs + wildcards, zero dependencies)_
 
 ## Install
 
@@ -131,6 +132,83 @@ tlsx secure --help
 # Show version
 tlsx version
 ```
+
+## ACME / Let's Encrypt
+
+In addition to local, self-signed development certificates, `tlsx` ships a dependency-free ACME (RFC 8555) client that obtains and renews real, publicly-trusted certificates from Let's Encrypt — including wildcards via the DNS-01 challenge. It uses only `node:crypto` and the global `fetch` (no external libraries), generating P-256 keys, hand-building the CSR, and signing every request as an ES256 JWS.
+
+> By default it targets Let's Encrypt staging (untrusted, but un-rate-limited — ideal for testing). Pass `staging: false` (library) or `--prod` (CLI) for real, trusted certificates.
+
+### Challenge methods
+
+- **`dns-01`** — required for wildcard certificates (`*.example.com`). The
+
+  client publishes a `_acme-challenge.<host>` TXT record via a `DnsProvider`
+  (a built-in **Porkbun** provider is included; the interface is open for
+  Route53/others). Set `PORKBUN_API_KEY` and `PORKBUN_SECRET_KEY`.
+
+- **`http-01`** — for non-wildcard domains. The client registers the challenge
+
+  response in an `Http01Store`; a webserver listening on **port 80** (e.g. rpx)
+  serves `GET /.well-known/acme-challenge/<token>` from that store.
+
+### Library
+
+```ts
+import { obtainCertificate, PorkbunDnsProvider } from '@stacksjs/tlsx'
+
+// Wildcard via DNS-01 (Porkbun), production cert:
+const { certPem, keyPem, chainPem, fullChainPem, notAfter, accountKeyPem } = await obtainCertificate({
+  domains: ['example.com', '_.example.com'],
+  method: 'dns-01',
+  dnsProvider: new PorkbunDnsProvider(), // reads PORKBUN_API_KEY / PORKBUN_SECRET_KEY
+  email: 'admin@example.com',
+  staging: false, // real cert; omit/true for Let's Encrypt staging
+})
+// Persist `accountKeyPem` to reuse the same ACME account next time.
+
+// HTTP-01 (no wildcard) — wire the shared store into your :80 webserver:
+import { defaultHttp01Store, Http01Store } from '@stacksjs/tlsx'
+
+// in your :80 handler:
+//   const keyAuth = defaultHttp01Store.handlePath(req.url)
+//   if (keyAuth) return new Response(keyAuth)
+const result = await obtainCertificate({
+  domains: ['example.com'],
+  method: 'http-01',
+  email: 'admin@example.com',
+  staging: false,
+})
+```
+
+`obtainCertificate` returns `{ certPem, keyPem, chainPem, fullChainPem, accountKeyPem, notAfter }`:
+the leaf certificate, its PKCS#8 private key, the intermediate chain, a
+leaf+intermediates bundle, the ACME account key (persist to reuse the account),
+and the certificate's expiry `Date`.
+
+### CLI
+
+```bash
+# Issue a wildcard cert via DNS-01 (Porkbun), production
+PORKBUN_API_KEY=... PORKBUN_SECRET_KEY=... \
+  tlsx acme issue --domains "example.com,_.example.com" --method dns-01 --dir ./certs --prod
+
+# Issue a single-domain cert via HTTP-01 (needs a webserver on :80), staging
+tlsx acme issue --domains example.com --method http-01 --dir ./certs
+
+# Reuse/persist an ACME account key across runs
+tlsx acme issue -d example.com --method http-01 --dir ./certs --account-key ./acme-account.key
+
+# Renew everything in a directory that expires within 30 days
+tlsx acme renew --dir ./certs --days 30 --prod
+```
+
+**Output filenames** (written into `--dir`): for a domain `example.com` the CLI
+writes `example.com.crt` (the full leaf+chain bundle) and `example.com.key`
+(plus `example.com.chain.crt` when an intermediate chain is present). A
+**wildcard** `*.example.com` is written as `_wildcard.example.com.crt` /
+`_wildcard.example.com.key` (mkcert/Let's Encrypt convention). `tlsx acme renew`
+re-derives the domains from each certificate's SANs and rewrites the same files.
 
 ## Configuration
 
