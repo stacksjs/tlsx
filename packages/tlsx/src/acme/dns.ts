@@ -1,4 +1,63 @@
+import { Resolver } from 'node:dns/promises'
 import process from 'node:process'
+
+/**
+ * Wait until a TXT record at `name` is observable with `expectedValue` before
+ * telling the ACME server to validate — Let's Encrypt queries the AUTHORITATIVE
+ * nameservers within seconds of `notifyChallengeReady`, but a provider's
+ * `create` call returns before the record has propagated there, so validating
+ * too early fails with "No TXT record found".
+ *
+ * Queries the apex's authoritative nameservers directly (avoids resolver
+ * caching / negative-cache). Falls back to the default resolver if the
+ * authoritative path isn't available. Resolves `true` once seen, `false` on
+ * timeout (the caller may still proceed and let ACME retry).
+ *
+ * @param name - FQDN of the TXT record, e.g. `_acme-challenge.example.com`.
+ * @param expectedValue - The exact TXT value that must be present.
+ * @param opts - `timeoutMs` (default 120000) and `intervalMs` (default 3000).
+ */
+export async function waitForTxtRecord(
+  name: string,
+  expectedValue: string,
+  opts: { timeoutMs?: number, intervalMs?: number } = {},
+): Promise<boolean> {
+  const timeoutMs = opts.timeoutMs ?? 120_000
+  const intervalMs = opts.intervalMs ?? 3000
+  const apex = name.split('.').slice(-2).join('.')
+
+  // Resolve the authoritative nameserver IPs once (best-effort).
+  let authoritative: Resolver | undefined
+  try {
+    const base = new Resolver()
+    const ns = await base.resolveNs(apex)
+    const ips = (await Promise.all(ns.map(h => base.resolve4(h).catch(() => [] as string[])))).flat()
+    if (ips.length > 0) {
+      authoritative = new Resolver()
+      authoritative.setServers(ips)
+    }
+  }
+  catch {
+    // Authoritative lookup unsupported/failed — fall back to the default resolver.
+  }
+
+  const deadline = Date.now() + timeoutMs
+  const resolver = authoritative ?? new Resolver()
+  for (;;) {
+    try {
+      const records = await resolver.resolveTxt(name)
+      // resolveTxt returns string[][] (each record may be split into chunks).
+      if (records.some(chunks => chunks.join('') === expectedValue))
+        return true
+    }
+    catch {
+      // NXDOMAIN / not-yet-present — keep polling until the deadline.
+    }
+    if (Date.now() >= deadline)
+      return false
+    await new Promise(r => setTimeout(r, intervalMs))
+  }
+}
 
 /**
  * Abstraction over a DNS provider's API, used to publish and clean up the

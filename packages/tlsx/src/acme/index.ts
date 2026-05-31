@@ -1,5 +1,6 @@
 import type { KeyObject } from 'node:crypto'
 import type { DnsProvider } from './dns'
+import { waitForTxtRecord } from './dns'
 import { generateKeyPairSync, X509Certificate } from 'node:crypto'
 import { AcmeClient, dns01RecordName, LETS_ENCRYPT_PRODUCTION_DIRECTORY, LETS_ENCRYPT_STAGING_DIRECTORY, splitPemChain } from './client'
 import { buildCsrBase64url } from './csr'
@@ -32,6 +33,8 @@ export interface ObtainCertificateOptions {
   email?: string
   /** Per-step poll/timeout overrides. */
   timeoutMs?: number
+  /** Max time to wait for a dns-01 TXT record to propagate before validating (default 120000ms). */
+  dnsPropagationTimeoutMs?: number
 }
 
 /** Result of {@link obtainCertificate}. */
@@ -122,6 +125,11 @@ export async function obtainCertificate(options: ObtainCertificateOptions): Prom
         const recordValue = client.dns01TxtValue(challenge.token)
         await options.dnsProvider!.setTxt(recordName, recordValue)
         dnsCleanups.push({ name: recordName, value: recordValue })
+        // Wait for the TXT to land on the authoritative NS before asking ACME
+        // to validate — otherwise Let's Encrypt checks too early and the authz
+        // goes invalid ("No TXT record found"). Best-effort: proceed on timeout
+        // and let ACME's own retries cover the rest.
+        await waitForTxtRecord(recordName, recordValue, { timeoutMs: options.dnsPropagationTimeoutMs ?? 120_000 })
       }
       else {
         http01Store.add(challenge.token, client.keyAuthorization(challenge.token))
