@@ -7,6 +7,7 @@ import { CERT_CONSTANTS, LOG_CATEGORIES } from '../constants'
 import { debugLog, findFoldersWithFile, log, normalizeCertPaths, runCommand, safeStringify } from '../utils'
 import { createRootCA } from './generate'
 import { storeCACertificate, storeCertificate } from './store'
+import { getCertCommonName, getCertSha256Fingerprint } from './validation'
 
 /**
  * Check if a certificate is already trusted in the system trust store
@@ -19,20 +20,24 @@ async function isCertAlreadyTrusted(certPath: string, verbose?: boolean): Promis
   }
 
   try {
-    // Get certificate fingerprint
-    const certFingerprint = execSync(`openssl x509 -noout -fingerprint -sha256 -in "${certPath}"`).toString().trim()
-    const fingerprintValue = certFingerprint.split('=')[1]?.trim() || ''
+    // Fingerprint via Node's X509Certificate (no openssl): uppercase hex, no colons.
+    const fingerprintValue = getCertSha256Fingerprint(certPath)
 
     if (!fingerprintValue) {
       debugLog(LOG_CATEGORIES.TRUST, 'Could not extract certificate fingerprint', verbose)
       return false
     }
 
-    // Check if the fingerprint exists in the system keychain
+    // `security -Z` already prints "SHA-256 hash: <HEX>" per cert — parse those
+    // directly instead of piping the keychain through openssl.
     try {
-      const keychainOutput = execSync(`security find-certificate -a -Z -p | openssl x509 -noout -fingerprint -sha256 2>/dev/null || true`).toString()
+      const keychainOutput = execSync('security find-certificate -a -Z 2>/dev/null || true').toString()
+      const found = keychainOutput.split('\n').some((line) => {
+        const m = line.match(/SHA-256 hash:\s*([A-F0-9]+)/i)
+        return !!m && m[1]!.toUpperCase() === fingerprintValue
+      })
 
-      if (keychainOutput.includes(fingerprintValue)) {
+      if (found) {
         debugLog(LOG_CATEGORIES.TRUST, 'Certificate fingerprint found in system keychain', verbose)
         return true
       }
@@ -462,13 +467,12 @@ export async function uninstallCA(options?: UninstallCAOptions): Promise<Uninsta
   let certName = options?.certName
   if (!certName && fs.existsSync(caCertPath)) {
     try {
-      const cnLine = execSync(`openssl x509 -noout -subject -in "${caCertPath}"`).toString().trim()
-      const m = cnLine.match(/CN\s*=\s*([^,/]+)/)
-      certName = m?.[1]?.trim()
+      // CN straight from the parsed cert (no openssl).
+      certName = getCertCommonName(caCertPath) || undefined
       debugLog(LOG_CATEGORIES.TRUST, `uninstallCA: extracted CN from cert: ${certName}`, verbose)
     }
     catch (err) {
-      debugLog(LOG_CATEGORIES.TRUST, `uninstallCA: openssl CN extraction failed: ${err}`, verbose)
+      debugLog(LOG_CATEGORIES.TRUST, `uninstallCA: CN extraction failed: ${err}`, verbose)
     }
   }
   certName = certName ?? config.commonName

@@ -1,6 +1,7 @@
 import type { CertDetails } from '../types'
 import crypto from 'node:crypto'
 import fs from 'node:fs'
+import tls from 'node:tls'
 import { LOG_CATEGORIES } from '../constants'
 import { debugLog, readCertFromFile } from '../utils'
 
@@ -19,6 +20,61 @@ export function getCertificateFromCertPemOrPath(certPemOrPath: string): crypto.X
   }
 
   return new crypto.X509Certificate(certPem)
+}
+
+/**
+ * SHA-256 fingerprint of a certificate as uppercase hex with no separators
+ * (e.g. `9AAB…`). Uses Node's X509Certificate — no openssl. Pairs with the
+ * `security find-certificate -Z` hash format for keychain comparisons.
+ * @param certPemOrPath - The certificate PEM or a path to the certificate file.
+ */
+export function getCertSha256Fingerprint(certPemOrPath: string): string {
+  return getCertificateFromCertPemOrPath(certPemOrPath).fingerprint256.replace(/:/g, '').toUpperCase()
+}
+
+/**
+ * The certificate subject's Common Name (CN), or '' when absent.
+ * @param certPemOrPath - The certificate PEM or a path to the certificate file.
+ */
+export function getCertCommonName(certPemOrPath: string): string {
+  return getCommonName(getCertificateFromCertPemOrPath(certPemOrPath).subject)
+}
+
+/**
+ * Verify that the live TLS server at `host:port` presents a chain trusted by
+ * `caCertPemOrPath`, via a real handshake pinned to that CA — no shell, no
+ * openssl. Resolves true only when the peer authorizes against the CA.
+ * @param host - Server hostname (also sent as SNI).
+ * @param caCertPemOrPath - Trust-anchor CA, as PEM or a path.
+ * @param port - TLS port. @default 443
+ * @param timeoutMs - Handshake timeout. @default 4000
+ */
+export function verifyServerChain(host: string, caCertPemOrPath: string, port = 443, timeoutMs = 4000): Promise<boolean> {
+  let ca: string
+  try {
+    ca = caCertPemOrPath.includes('-----BEGIN') ? caCertPemOrPath : fs.readFileSync(caCertPemOrPath, 'utf8')
+  }
+  catch {
+    return Promise.resolve(false)
+  }
+  return new Promise<boolean>((resolve) => {
+    let settled = false
+    const finish = (v: boolean): void => {
+      if (settled)
+        return
+      settled = true
+      resolve(v)
+    }
+    const socket = tls.connect({ host, port, servername: host, ca, rejectUnauthorized: true }, () => {
+      finish(socket.authorized)
+      socket.end()
+    })
+    socket.setTimeout(timeoutMs, () => {
+      socket.destroy()
+      finish(false)
+    })
+    socket.on('error', () => finish(false))
+  })
 }
 
 /**
