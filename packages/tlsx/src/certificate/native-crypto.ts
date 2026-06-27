@@ -512,10 +512,25 @@ function derToPem(der: Buffer, type: 'CERTIFICATE' | 'PRIVATE KEY' | 'RSA PRIVAT
 }
 
 /**
- * Generate a random serial number
+ * Generate a random certificate serial number.
+ *
+ * RFC 5280 §4.1.2.2 requires the serial to be a positive integer (≤ 20 octets),
+ * and DER additionally requires INTEGERs to be *minimally* encoded. A raw
+ * `randomBytes(20)` violates both at random: a leading `0x00` byte followed by a
+ * `< 0x80` byte is a non-minimal encoding, and a first byte with the high bit set
+ * is interpreted as negative. {@link encodeInteger} pads the negative case but
+ * cannot fix the non-minimal one, so ~1 in 512 certs encoded a serial that strict
+ * ASN.1 parsers (LibreSSL/BoringSSL — hence Bun's TLS) reject with
+ * `INVALID_INTEGER`, intermittently breaking cert generation.
+ *
+ * Forcing the first byte into `[0x01, 0x7f]` fixes both: the high bit is clear
+ * (positive, so no sign-padding byte is added) and the byte is non-zero (so the
+ * encoding is minimal — no superfluous leading `0x00`).
  */
 export function generateSerialNumber(): Buffer {
-  return crypto.randomBytes(20)
+  const bytes = crypto.randomBytes(20)
+  bytes[0] = (bytes[0] & 0x7f) || 0x01
+  return bytes
 }
 
 /**
