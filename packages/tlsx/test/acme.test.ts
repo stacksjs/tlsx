@@ -386,7 +386,7 @@ describe('acme/client happy-path order flow (mocked fetch)', () => {
 describe('acme key reuse for account', () => {
   it('createPublicKey from an account private key yields a matching JWK', () => {
     const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' })
-    const derived = createPublicKey(privateKey)
+    const derived = createPublicKey(privateKey.export({ format: 'pem', type: 'pkcs8' }))
     expect(jwkFromKey(derived)).toEqual(jwkFromKey(publicKey))
   })
 })

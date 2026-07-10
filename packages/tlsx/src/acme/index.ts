@@ -57,7 +57,7 @@ function loadOrCreateAccountKey(accountKeyPem?: string): { privateKey: KeyObject
   if (accountKeyPem) {
     const { createPrivateKey, createPublicKey } = require('node:crypto') as typeof import('node:crypto')
     const privateKey = createPrivateKey(accountKeyPem)
-    const publicKey = createPublicKey(privateKey)
+    const publicKey = createPublicKey(privateKey.export({ format: 'pem', type: 'pkcs8' }))
     return { privateKey, publicKey, pem: accountKeyPem }
   }
   const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' })

@@ -1,7 +1,8 @@
 # Changelog
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.7...v0.13.8)
 
-### 🚀 Features
+## 🚀 Features
 
 - FileHttp01Store + --webroot for http-01 with an existing webserver ([f674ca7](https://github.com/stacksjs/tlsx/commit/f674ca7)) _(by Chris <chrisbreuer93@gmail.com>)_
 
