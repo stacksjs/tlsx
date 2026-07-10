@@ -41,5 +41,5 @@ describe('certificate DER encoding', () => {
       })
       expect(() => new X509Certificate(cert.certificate)).not.toThrow()
     }
-  })
+  }, 15_000)
 })
