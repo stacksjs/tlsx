@@ -1,6 +1,7 @@
 {
   "name": "@stacksjs/tlsx",
   "type": "module",
+  "sideEffects": false,
   "version": "0.13.9",
   "description": "A TLS/HTTPS library with automation.",
   "author": "Chris Breuer <chris@stacksjs.org>",
