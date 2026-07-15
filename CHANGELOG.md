@@ -1,5 +1,19 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.10...v0.13.11)
+
+## ⚡ Performance Improvements
+
+- **tlsx**: serve built JS from the bun export condition ([2a508d8](https://github.com/stacksjs/tlsx/commit/2a508d8)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.13.11 ([8d3d4e7](https://github.com/stacksjs/tlsx/commit/8d3d4e7)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.9...v0.13.10)
 
 ## 🧪 Tests
