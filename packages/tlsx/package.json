@@ -36,7 +36,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "bun": "./src/index.ts",
+      "bun": "./dist/src/index.js",
       "import": "./dist/src/index.js"
     }
   },
@@ -47,8 +47,7 @@
   },
   "files": [
     "README.md",
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "lint": "bunx --bun pickier .",
