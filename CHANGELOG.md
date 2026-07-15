@@ -1,5 +1,23 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.9...v0.13.10)
+
+## 🧪 Tests
+
+- allow certificate stress test more time ([1bd3b6c](https://github.com/stacksjs/tlsx/commit/1bd3b6c)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.13.10 ([05dcd9d](https://github.com/stacksjs/tlsx/commit/05dcd9d)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **pkg**: publint clean — sideEffects:false + executable bin shebang ([f275b59](https://github.com/stacksjs/tlsx/commit/f275b59)) _(by Chris <chrisbreuer93@gmail.com>)_
+- upgrade to TypeScript 7 ([24797c0](https://github.com/stacksjs/tlsx/commit/24797c0)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: refresh bun.lock to pick up pickier 0.1.37 ([f518b95](https://github.com/stacksjs/tlsx/commit/f518b95)) _(by glennmichael123 <gtorregosa@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _glennmichael123 <gtorregosa@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.7...v0.13.8)
 
 ## 🚀 Features
