@@ -1,5 +1,6 @@
 import { Resolver } from 'node:dns/promises'
 import process from 'node:process'
+import { DEFAULT_REQUEST_TIMEOUT_MS, fetchWithTimeout } from './fetch'
 
 /**
  * Wait until a TXT record at `name` is observable with `expectedValue` before
@@ -125,8 +126,9 @@ export class PorkbunDnsProvider implements DnsProvider {
   private readonly apiKey: string
   private readonly secretApiKey: string
   private readonly baseUrl: string
+  private readonly requestTimeoutMs: number
 
-  constructor(credentials?: Partial<PorkbunCredentials> & { baseUrl?: string }) {
+  constructor(credentials?: Partial<PorkbunCredentials> & { baseUrl?: string, requestTimeoutMs?: number }) {
     const apiKey = credentials?.apiKey ?? process.env.PORKBUN_API_KEY
     const secretApiKey = credentials?.secretApiKey ?? process.env.PORKBUN_SECRET_KEY
     if (!apiKey || !secretApiKey)
@@ -135,14 +137,15 @@ export class PorkbunDnsProvider implements DnsProvider {
     this.apiKey = apiKey
     this.secretApiKey = secretApiKey
     this.baseUrl = credentials?.baseUrl ?? 'https://api.porkbun.com/api/json/v3'
+    this.requestTimeoutMs = credentials?.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS
   }
 
   private async post(path: string, body: Record<string, unknown>): Promise<any> {
-    const res = await fetch(`${this.baseUrl}${path}`, {
+    const res = await fetchWithTimeout(`${this.baseUrl}${path}`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ apikey: this.apiKey, secretapikey: this.secretApiKey, ...body }),
-    })
+    }, this.requestTimeoutMs)
     const json = await res.json().catch(() => ({})) as { status?: string, message?: string, records?: PorkbunRecord[] }
     if (!res.ok || json.status !== 'SUCCESS')
       throw new Error(`Porkbun API ${path} failed: ${json.message ?? `HTTP ${res.status}`}`)

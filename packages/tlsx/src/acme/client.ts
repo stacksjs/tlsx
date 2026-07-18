@@ -2,6 +2,7 @@ import type { KeyObject } from 'node:crypto'
 import type { DnsProvider } from './dns'
 import type { EcJwk, JwsProtectedHeader } from './jws'
 import { createHash } from 'node:crypto'
+import { DEFAULT_REQUEST_TIMEOUT_MS, fetchWithTimeout } from './fetch'
 import { Http01Store } from './http01'
 import { jwkFromKey, jwkThumbprint, signJws } from './jws'
 
@@ -87,6 +88,7 @@ export class AcmeClient {
   private readonly accountKey: KeyObject
   private readonly jwk: EcJwk
   private readonly thumbprint: string
+  private readonly requestTimeoutMs: number
 
   private directoryCache?: AcmeDirectory
   private nonce?: string
@@ -97,12 +99,16 @@ export class AcmeClient {
    * @param params.directoryUrl - The ACME directory URL (staging or production).
    * @param params.accountKey - The EC P-256 account private key.
    * @param params.accountPublicKey - The matching public key (for the JWK / thumbprint).
+   * @param params.requestTimeoutMs - Hard timeout per HTTP request (default 30000ms).
+   *   Bounds every directory/nonce/JWS request so a stalled connection can never
+   *   hang an issuance flow (and its callers' in-flight dedupe) forever.
    */
-  constructor(params: { directoryUrl: string, accountKey: KeyObject, accountPublicKey: KeyObject }) {
+  constructor(params: { directoryUrl: string, accountKey: KeyObject, accountPublicKey: KeyObject, requestTimeoutMs?: number }) {
     this.directoryUrl = params.directoryUrl
     this.accountKey = params.accountKey
     this.jwk = jwkFromKey(params.accountPublicKey)
     this.thumbprint = jwkThumbprint(this.jwk)
+    this.requestTimeoutMs = params.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS
   }
 
   /** The account key's RFC 7638 thumbprint (used to build key authorizations). */
@@ -120,7 +126,7 @@ export class AcmeClient {
     if (this.directoryCache)
       return this.directoryCache
 
-    const res = await fetch(this.directoryUrl)
+    const res = await fetchWithTimeout(this.directoryUrl, {}, this.requestTimeoutMs)
     if (!res.ok)
       throw new Error(`Failed to fetch ACME directory: HTTP ${res.status}`)
 
@@ -131,7 +137,7 @@ export class AcmeClient {
   /** Fetches a fresh anti-replay nonce via HEAD on `newNonce`. */
   async newNonce(): Promise<string> {
     const dir = await this.directory()
-    const res = await fetch(dir.newNonce, { method: 'HEAD' })
+    const res = await fetchWithTimeout(dir.newNonce, { method: 'HEAD' }, this.requestTimeoutMs)
     const nonce = res.headers.get('replay-nonce')
     if (!nonce)
       throw new Error('ACME server did not return a Replay-Nonce')
@@ -169,11 +175,11 @@ export class AcmeClient {
 
     const jws = signJws({ protectedHeader, payload, privateKey: this.accountKey })
 
-    const res = await fetch(url, {
+    const res = await fetchWithTimeout(url, {
       method: 'POST',
       headers: { 'content-type': 'application/jose+json' },
       body: JSON.stringify(jws),
-    })
+    }, this.requestTimeoutMs)
 
     // Track the replay nonce from EVERY response.
     const newNonce = res.headers.get('replay-nonce')

@@ -13,7 +13,9 @@ import {
 } from '../src/acme/client'
 import { buildCsr, buildCsrBase64url } from '../src/acme/csr'
 import { PorkbunDnsProvider, splitApexAndSubdomain } from '../src/acme/dns'
+import { DEFAULT_REQUEST_TIMEOUT_MS, fetchWithTimeout } from '../src/acme/fetch'
 import { FileHttp01Store, Http01Store } from '../src/acme/http01'
+import { obtainCertificate } from '../src/acme/index'
 import { jwkFromKey, jwkThumbprint, signJws } from '../src/acme/jws'
 
 describe('acme/base64url', () => {
@@ -388,5 +390,79 @@ describe('acme key reuse for account', () => {
     const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' })
     const derived = createPublicKey(privateKey.export({ format: 'pem', type: 'pkcs8' }))
     expect(jwkFromKey(derived)).toEqual(jwkFromKey(publicKey))
+  })
+})
+
+describe('acme request timeouts (hung-connection regression)', () => {
+  const realFetch = globalThis.fetch
+
+  afterEach(() => {
+    globalThis.fetch = realFetch
+  })
+
+  // Simulates a black-holed connection: the server accepts the request but
+  // never answers — and, like a real fetch, the promise rejects when the
+  // caller's abort signal fires. Before per-request timeouts this hung the
+  // issuance flow forever.
+  const hangForeverFetch = ((input: any, init?: any) => new Promise<Response>((resolve, reject) => {
+    void input
+    void resolve // never resolves on its own; only rejects via the abort signal
+    init?.signal?.addEventListener('abort', () => reject(init.signal.reason))
+  })) as typeof fetch
+
+  it('fetchWithTimeout rejects a never-answering server instead of hanging', async () => {
+    globalThis.fetch = hangForeverFetch
+    const start = Date.now()
+    await expect(fetchWithTimeout('https://acme.test/hang', {}, 100)).rejects.toThrow('timed out after 100ms')
+    expect(Date.now() - start).toBeLessThan(5_000)
+  })
+
+  it('AcmeClient sends every request with an abort signal and the default timeout', async () => {
+    expect(DEFAULT_REQUEST_TIMEOUT_MS).toBe(30_000)
+    const seenSignals: Array<AbortSignal | undefined> = []
+    globalThis.fetch = (async (input: any, init?: any) => {
+      void input
+      seenSignals.push(init?.signal)
+      const headers = new Headers({ 'replay-nonce': 'n1', 'content-type': 'application/json' })
+      return new Response(JSON.stringify({ newNonce: 'x', newAccount: 'y', newOrder: 'z' }), { status: 200, headers })
+    }) as typeof fetch
+    const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' })
+    const client = new AcmeClient({
+      directoryUrl: 'https://acme.test/directory',
+      accountKey: privateKey,
+      accountPublicKey: publicKey,
+    })
+    await client.directory()
+    expect(seenSignals.length).toBe(1)
+    expect(seenSignals[0]).toBeInstanceOf(AbortSignal)
+    expect(seenSignals[0]!.aborted).toBe(false)
+  })
+
+  it('a stalled ACME server fails obtainCertificate fast instead of wedging the host', async () => {
+    // Regression for the production wedge: an issuance attempt that never
+    // settles keeps the caller's per-host in-flight entry alive forever, so
+    // the host neither retries nor adopts externally-placed on-disk certs
+    // until the process restarts. With bounded requests the attempt rejects
+    // and the caller's retry/backoff logic can recover without a restart.
+    globalThis.fetch = hangForeverFetch
+    const start = Date.now()
+    await expect(obtainCertificate({
+      domains: ['wedged.example.com'],
+      method: 'http-01',
+      requestTimeoutMs: 150,
+    })).rejects.toThrow('timed out after 150ms')
+    expect(Date.now() - start).toBeLessThan(10_000)
+  })
+
+  it('requestTimeoutMs is configurable per AcmeClient', async () => {
+    globalThis.fetch = hangForeverFetch
+    const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' })
+    const client = new AcmeClient({
+      directoryUrl: 'https://acme.test/directory',
+      accountKey: privateKey,
+      accountPublicKey: publicKey,
+      requestTimeoutMs: 100,
+    })
+    await expect(client.directory()).rejects.toThrow('timed out after 100ms')
   })
 })

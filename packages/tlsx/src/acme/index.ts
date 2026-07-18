@@ -10,6 +10,7 @@ export * from './base64url'
 export * from './client'
 export * from './csr'
 export * from './dns'
+export * from './fetch'
 export * from './http01'
 export * from './jws'
 
@@ -33,6 +34,9 @@ export interface ObtainCertificateOptions {
   email?: string
   /** Per-step poll/timeout overrides. */
   timeoutMs?: number
+  /** Hard timeout per ACME HTTP request (default 30000ms) — bounds the flow so a
+   * stalled connection can never hang issuance (and callers' in-flight dedupe) forever. */
+  requestTimeoutMs?: number
   /** Max time to wait for a dns-01 TXT record to propagate before validating (default 120000ms). */
   dnsPropagationTimeoutMs?: number
 }
@@ -101,6 +105,7 @@ export async function obtainCertificate(options: ObtainCertificateOptions): Prom
     directoryUrl,
     accountKey: account.privateKey,
     accountPublicKey: account.publicKey,
+    requestTimeoutMs: options.requestTimeoutMs,
   })
 
   await client.newAccount({ email: options.email })
