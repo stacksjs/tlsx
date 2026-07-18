@@ -1,5 +1,19 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.12...v0.13.13)
+
+## 🐛 Bug Fixes
+
+- **pkg**: star re-export config module to cure bundler facade desync ([0b47f09](https://github.com/stacksjs/tlsx/commit/0b47f09)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.13.13 ([cb92912](https://github.com/stacksjs/tlsx/commit/cb92912)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.11...v0.13.12)
 
 ## 🐛 Bug Fixes
