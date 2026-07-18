@@ -1,5 +1,20 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.11...v0.13.12)
+
+## 🐛 Bug Fixes
+
+- **acme**: bound every ACME HTTP request with a hard timeout ([ea6106b](https://github.com/stacksjs/tlsx/commit/ea6106b)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.13.12 ([96297c9](https://github.com/stacksjs/tlsx/commit/96297c9)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: declare bun ^1.3.14 in deps.yaml ([fa37fcb](https://github.com/stacksjs/tlsx/commit/fa37fcb)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.10...v0.13.11)
 
 ## ⚡ Performance Improvements
