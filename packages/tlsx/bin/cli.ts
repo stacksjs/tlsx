@@ -425,7 +425,7 @@ cli
   .option('--email <email>', 'Contact email for the ACME account')
   .option('--dns-provider <provider>', 'DNS provider for dns-01 (currently: porkbun)', { default: 'porkbun' })
   .option('--webroot <dir>', 'http-01: write challenge files to this dir (served by an existing webserver at /.well-known/acme-challenge/) instead of running a listener')
-  .option('--account-key <path>', 'Reuse an existing ACME account key (PEM); created + saved if absent')
+  .option('--account-key <path>', 'ACME account key (PEM) to reuse; created + saved if absent. Default: <dir>/acme-account.key')
   .option('--prod', 'Use Let\'s Encrypt production (default: staging)', { default: false })
   .option('--verbose', 'Enable verbose logging', { default: config.verbose })
   .usage('tlsx acme:issue --domains a.com,*.b.com --method dns-01 --dir ./certs [--prod]')
@@ -463,10 +463,17 @@ cli
     if (http01Store)
       log.info(`Using webroot ${opts.webroot} for http-01 challenges`)
 
-    // Reuse a saved account key across runs if the file exists.
+    // Reuse a saved account key across runs. This DEFAULTS to a stable path
+    // beside the certificates rather than being opt-in: without a reused key
+    // every issuance registers a brand-new ACME account, and Let's Encrypt caps
+    // new registrations at 10 per IP per 3 hours. Issuing a modest fleet of
+    // hostnames from one box therefore failed part-way through with
+    // `too many new registrations`, which reads like a certificate limit but is
+    // an account limit the caller never meant to hit.
+    const accountKeyPath = opts.accountKey ?? path.join(outDir, 'acme-account.key')
     let accountKeyPem: string | undefined
-    if (opts.accountKey && fs.existsSync(opts.accountKey))
-      accountKeyPem = fs.readFileSync(opts.accountKey, 'utf8')
+    if (fs.existsSync(accountKeyPath))
+      accountKeyPem = fs.readFileSync(accountKeyPath, 'utf8')
 
     log.info(`Requesting ${opts.prod ? 'PRODUCTION' : 'staging'} certificate for: ${domains.join(', ')} via ${method}`)
 
@@ -481,9 +488,9 @@ cli
         staging: !opts.prod,
       })
 
-      // Persist the account key for reuse, if a path was given.
-      if (opts.accountKey && !accountKeyPem)
-        fs.writeFileSync(opts.accountKey, result.accountKeyPem, { mode: 0o600 })
+      // Persist the account key so the next issuance reuses this account.
+      if (!accountKeyPem)
+        fs.writeFileSync(accountKeyPath, result.accountKeyPem, { mode: 0o600 })
 
       const base = certFileBase(domains[0])
       const certPath = path.join(outDir, `${base}.crt`)
@@ -553,9 +560,13 @@ cli
       }
     }
 
+    // Same default as acme:issue — reuse one ACME account across every renewal
+    // rather than registering a new one per certificate, which Let's Encrypt
+    // rate-limits to 10 per IP per 3 hours.
+    const accountKeyPath = opts.accountKey ?? path.join(outDir, 'acme-account.key')
     let accountKeyPem: string | undefined
-    if (opts.accountKey && fs.existsSync(opts.accountKey))
-      accountKeyPem = fs.readFileSync(opts.accountKey, 'utf8')
+    if (fs.existsSync(accountKeyPath))
+      accountKeyPem = fs.readFileSync(accountKeyPath, 'utf8')
 
     for (const crtPath of crtFiles) {
       if (!fs.existsSync(crtPath)) {
@@ -585,6 +596,13 @@ cli
           email: opts.email,
           staging: !opts.prod,
         })
+        // Save the account on the first renewal that creates one, and reuse it
+        // for the rest of this run — otherwise a batch renewal registers one
+        // account per certificate and trips the per-IP registration limit.
+        if (!accountKeyPem) {
+          accountKeyPem = result.accountKeyPem
+          fs.writeFileSync(accountKeyPath, result.accountKeyPem, { mode: 0o600 })
+        }
         const base = certFileBase(domains[0])
         fs.writeFileSync(path.join(outDir, `${base}.crt`), result.fullChainPem)
         fs.writeFileSync(path.join(outDir, `${base}.key`), result.keyPem, { mode: 0o600 })
