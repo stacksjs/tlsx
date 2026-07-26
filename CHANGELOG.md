@@ -1,5 +1,23 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.13...v0.13.14)
+
+## 🐛 Bug Fixes
+
+- **acme**: reuse one ACME account instead of registering per certificate ([e7fbc62](https://github.com/stacksjs/tlsx/commit/e7fbc62)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 📚 Documentation
+
+- link the community as stacksjs.com/discord ([de8d3d8](https://github.com/stacksjs/tlsx/commit/de8d3d8)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.13.14 ([303ce50](https://github.com/stacksjs/tlsx/commit/303ce50)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.12...v0.13.13)
 
 ## 🐛 Bug Fixes
