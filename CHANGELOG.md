@@ -1,5 +1,19 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.14...v0.13.15)
+
+## 🐛 Bug Fixes
+
+- **acme**: renew a certificate in place instead of by its common name ([d1fc3bd](https://github.com/stacksjs/tlsx/commit/d1fc3bd)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.13.15 ([2f158df](https://github.com/stacksjs/tlsx/commit/2f158df)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.13...v0.13.14)
 
 ## 🐛 Bug Fixes
