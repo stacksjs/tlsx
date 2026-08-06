@@ -30,6 +30,16 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # The release has advertised these five zips since the workflow was
+      # written, but nothing produced them: action-releaser skips missing files
+      # without complaint, so every release shipped an empty downloads section
+      # and no job ever failed. Runs AFTER publish, and continue-on-error, so a
+      # cross-compilation problem surfaces as a warning instead of blocking the
+      # npm release or swallowing itself.
+      - name: Compile standalone binaries
+        continue-on-error: true
+        run: bun run build:binaries
+
       - name: Create GitHub Release
         uses: stacksjs/action-releaser@v1.2.9
         with:

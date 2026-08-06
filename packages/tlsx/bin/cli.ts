@@ -26,7 +26,20 @@ interface CliOptions {
 }
 
 const cli = new CLI('tlsx')
-const version = '0.13.5'
+
+/**
+ * Read the version from the package manifest rather than restating it here.
+ *
+ * This was a literal, and `bumpx` only rewrites package.json and the CHANGELOG
+ * — so it stopped tracking at 0.13.5 and `tlsx --version` under-reported by ten
+ * releases. A version a user can read off the tool is the first thing anyone
+ * checks when a fix "isn't working"; one that lies costs an hour before anyone
+ * suspects it.
+ *
+ * Resolved relative to this file so it works from the repo, from node_modules,
+ * and from a compiled binary's embedded module graph alike.
+ */
+const version: string = (await import('../package.json', { with: { type: 'json' } })).default.version
 
 cli
   .command('secure [domain]', 'Auto generate a self-signed SSL certificate for one or multiple domains')

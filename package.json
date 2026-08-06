@@ -51,7 +51,8 @@
     "typecheck": "bun --bun tsc --noEmit",
     "dev:docs": "bun --bun bunpress dev docs",
     "build:docs": "bun --bun bunpress build docs",
-    "preview:docs": "bun --bun bunpress preview docs"
+    "preview:docs": "bun --bun bunpress preview docs",
+    "build:binaries": "bun --bun scripts/compile-binaries.ts"
   },
   "devDependencies": {
     "better-dx": "^0.2.15",
