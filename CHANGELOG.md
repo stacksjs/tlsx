@@ -1,5 +1,21 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.15...v0.13.16)
+
+## 🐛 Bug Fixes
+
+- **cli**: report the real version, and build the release binaries ([2edc4ea](https://github.com/stacksjs/tlsx/commit/2edc4ea)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🧹 Chores
+
+- release v0.13.16 ([559a6a6](https://github.com/stacksjs/tlsx/commit/559a6a6)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: update shivammathur/setup-php action to v2.37.1 [security] (#1734) ([04ed9bf](https://github.com/stacksjs/tlsx/commit/04ed9bf)) _(by [renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot]))_ ([#1734](https://github.com/stacksjs/tlsx/issues/1734), [#1734](https://github.com/stacksjs/tlsx/issues/1734))
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+- _[renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>](https://github.com/renovate[bot])_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.14...v0.13.15)
 
 ## 🐛 Bug Fixes
