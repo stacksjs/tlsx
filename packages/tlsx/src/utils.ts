@@ -326,3 +326,38 @@ export function normalizeCertPaths(options: {
     basePath,
   }
 }
+
+/**
+ * Maps a domain to its on-disk basename, mirroring the mkcert / Let's Encrypt
+ * convention: a wildcard `*.example.com` is written as `_wildcard.example.com`.
+ */
+export function certFileBase(domain: string): string {
+  return domain.startsWith('*.') ? `_wildcard.${domain.slice(2)}` : domain
+}
+
+/**
+ * The basename a RENEWAL writes its result to.
+ *
+ * A renewal replaces the certificate file it just read, so the answer is always
+ * that file — never a name re-derived from the certificate's contents.
+ *
+ * This used to be `certFileBase(domains[0])`, where `domains` came from
+ * `validateCertificate()` and therefore began with the certificate's COMMON
+ * NAME. Nothing requires a certificate's CN to match the file it is stored in,
+ * and when two files on the same box share a CN the renewal of one silently
+ * overwrote the other:
+ *
+ *   mail.stacksjs.com.crt          CN=mail.stacksjs.com, 8 SANs  (the live cert)
+ *   autodiscover.stacksjs.com.crt  CN=mail.stacksjs.com, 4 SANs
+ *
+ * Renewing both — which `--domains a,b` does in one run — renewed the wide
+ * certificate and then wrote the narrow one over the top of it, dropping four
+ * hostnames belonging to other tenants from the certificate actually being
+ * served. Nothing failed; the names were simply gone.
+ *
+ * Writing back in place makes that unrepresentable: a renewal can only ever
+ * affect the file it was asked to renew.
+ */
+export function renewalOutputBase(crtPath: string): string {
+  return crtPath.replace(/\.crt$/, '')
+}

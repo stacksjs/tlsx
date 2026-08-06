@@ -7,15 +7,7 @@ import { FileHttp01Store, obtainCertificate, PorkbunDnsProvider } from '../src/a
 import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, createRootCA, generateCertificate, installCA, removeCertFromSystemTrustStore, uninstallCA } from '../src/certificate'
 import { validateCertificate, willCertExpireSoon } from '../src/certificate/validation'
 import { config } from '../src/config'
-import { listCertsInDirectory, log, normalizeCertPaths } from '../src/utils'
-
-/**
- * Maps a domain to its on-disk basename, mirroring mkcert/Let's Encrypt
- * convention: a wildcard `*.example.com` is written as `_wildcard.example.com`.
- */
-function certFileBase(domain: string): string {
-  return domain.startsWith('*.') ? `_wildcard.${domain.slice(2)}` : domain
-}
+import { certFileBase, listCertsInDirectory, log, normalizeCertPaths, renewalOutputBase } from '../src/utils'
 
 interface CliOptions {
   keyPath?: string
@@ -422,6 +414,7 @@ cli
   .option('-d, --domains <domains>', 'Domains (comma-separated); wildcards require --method dns-01')
   .option('--method <method>', 'Challenge method: dns-01 or http-01', { default: 'dns-01' })
   .option('--dir <directory>', 'Output directory for <domain>.crt / <domain>.key', { default: process.cwd() })
+  .option('--cert-name <name>', 'Basename to write as, instead of the first --domains entry. Use this when the certificate must land on a specific file (e.g. one an existing service already reads).')
   .option('--email <email>', 'Contact email for the ACME account')
   .option('--dns-provider <provider>', 'DNS provider for dns-01 (currently: porkbun)', { default: 'porkbun' })
   .option('--webroot <dir>', 'http-01: write challenge files to this dir (served by an existing webserver at /.well-known/acme-challenge/) instead of running a listener')
@@ -431,7 +424,8 @@ cli
   .usage('tlsx acme:issue --domains a.com,*.b.com --method dns-01 --dir ./certs [--prod]')
   .example('tlsx acme:issue -d example.com --method http-01 --webroot /var/www/acme-challenge --dir ./certs')
   .example('tlsx acme:issue -d "example.com,*.example.com" --method dns-01 --dir ./certs --prod')
-  .action(async (options?: { domains?: string, method?: string, dir?: string, email?: string, dnsProvider?: string, webroot?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
+  .example('tlsx acme:issue -d "a.com,b.com" --cert-name a.com --dir ./certs --prod')
+  .action(async (options?: { domains?: string, method?: string, dir?: string, certName?: string, email?: string, dnsProvider?: string, webroot?: string, accountKey?: string, prod?: boolean, verbose?: boolean }) => {
     const opts = options || {}
     const domains = (opts.domains ?? '').split(',').map(d => d.trim()).filter(Boolean)
     if (domains.length === 0) {
@@ -492,7 +486,12 @@ cli
       if (!accountKeyPem)
         fs.writeFileSync(accountKeyPath, result.accountKeyPem, { mode: 0o600 })
 
-      const base = certFileBase(domains[0])
+      // The output basename defaults to the first requested domain, which makes
+      // the filename depend on argument ORDER - a caller that builds its domain
+      // list from a certificate's existing SANs (they come back sorted) lands the
+      // result on whichever name happens to sort first, not the one the service
+      // reads. `--cert-name` lets such a caller say where it wants the file.
+      const base = certFileBase(opts.certName?.trim() || domains[0])
       const certPath = path.join(outDir, `${base}.crt`)
       const keyPath = path.join(outDir, `${base}.key`)
       const chainPath = path.join(outDir, `${base}.chain.crt`)
@@ -603,12 +602,15 @@ cli
           accountKeyPem = result.accountKeyPem
           fs.writeFileSync(accountKeyPath, result.accountKeyPem, { mode: 0o600 })
         }
-        const base = certFileBase(domains[0])
-        fs.writeFileSync(path.join(outDir, `${base}.crt`), result.fullChainPem)
-        fs.writeFileSync(path.join(outDir, `${base}.key`), result.keyPem, { mode: 0o600 })
+        // Write back to the certificate we just read, NOT to a name re-derived
+        // from its contents - see renewalOutputBase() for the tenant-clobbering
+        // this prevents.
+        const base = renewalOutputBase(crtPath)
+        fs.writeFileSync(`${base}.crt`, result.fullChainPem)
+        fs.writeFileSync(`${base}.key`, result.keyPem, { mode: 0o600 })
         if (result.chainPem)
-          fs.writeFileSync(path.join(outDir, `${base}.chain.crt`), result.chainPem)
-        log.success(`Renewed ${base} (expires ${result.notAfter.toISOString()})`)
+          fs.writeFileSync(`${base}.chain.crt`, result.chainPem)
+        log.success(`Renewed ${path.basename(base)} (expires ${result.notAfter.toISOString()})`)
       }
       catch (err) {
         log.error(`Failed to renew ${crtPath}: ${err}`)
