@@ -30,16 +30,45 @@ const cli = new CLI('tlsx')
 /**
  * Read the version from the package manifest rather than restating it here.
  *
- * This was a literal, and `bumpx` only rewrites package.json and the CHANGELOG
- * — so it stopped tracking at 0.13.5 and `tlsx --version` under-reported by ten
- * releases. A version a user can read off the tool is the first thing anyone
- * checks when a fix "isn't working"; one that lies costs an hour before anyone
- * suspects it.
+ * This was a literal, and `bumpx` only rewrites package.json and the CHANGELOG,
+ * so it stopped tracking at 0.13.5 and `tlsx --version` under-reported by ten
+ * releases. A version a user reads off the tool is the first thing anyone checks
+ * when a fix "isn't working"; one that lies costs an hour before anyone suspects
+ * it.
  *
- * Resolved relative to this file so it works from the repo, from node_modules,
- * and from a compiled binary's embedded module graph alike.
+ * NOT a JSON import. `await import('../package.json', { with: { type: 'json' } })`
+ * looks tidier and shipped broken in 0.13.16: the bundler rewrote it into a
+ * runtime resolution that reached a JavaScript module and handed it to
+ * JSON.parse, so the published CLI died on startup with
+ *
+ *   SyntaxError: JSON Parse error: Unexpected identifier "import"
+ *
+ * before it could run a single command. The repo build and the compiled binary
+ * were both fine, which is exactly why it got through — only the npm bundle was
+ * affected, and nothing exercised it.
+ *
+ * readFileSync against candidate paths is dull and survives bundling. The layout
+ * differs between the repo (bin/cli.ts, manifest one level up) and the published
+ * package (dist/bin/cli.js, manifest two levels up), so both are tried. If every
+ * candidate fails the CLI still starts — a wrong version string is a nuisance,
+ * an unusable binary is not.
  */
-const version: string = (await import('../package.json', { with: { type: 'json' } })).default.version
+function resolveVersion(): string {
+  for (const relative of ['../package.json', '../../package.json']) {
+    try {
+      const manifest = JSON.parse(fs.readFileSync(path.resolve(import.meta.dir, relative), 'utf8'))
+      if (typeof manifest?.version === 'string' && manifest.name === '@stacksjs/tlsx')
+        return manifest.version
+    }
+    catch {
+      // Try the next candidate.
+    }
+  }
+
+  return 'unknown'
+}
+
+const version: string = resolveVersion()
 
 cli
   .command('secure [domain]', 'Auto generate a self-signed SSL certificate for one or multiple domains')
