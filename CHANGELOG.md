@@ -1,5 +1,21 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.16...v0.13.17)
+
+## 🐛 Bug Fixes
+
+- **cli**: repair the published binary broken in 0.13.16 ([4c8516f](https://github.com/stacksjs/tlsx/commit/4c8516f)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🔧 Chores
+
+- release v0.13.17 ([8191b99](https://github.com/stacksjs/tlsx/commit/8191b99)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: bumpx 0.2.15, with the clean-tree guard ([a0d8c21](https://github.com/stacksjs/tlsx/commit/a0d8c21)) _(by Chris <chrisbreuer93@gmail.com>)_
+- **deps**: declare the release tool instead of inheriting it ([110c381](https://github.com/stacksjs/tlsx/commit/110c381)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.15...v0.13.16)
 
 ## 🐛 Bug Fixes
