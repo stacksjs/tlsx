@@ -55,8 +55,8 @@
     "build:binaries": "bun --bun scripts/compile-binaries.ts"
   },
   "devDependencies": {
-    "@stacksjs/bumpx": "^0.2.15",
-    "better-dx": "^0.2.15",
+    "@stacksjs/bumpx": "^0.2.17",
+    "better-dx": "^0.2.25",
     "typescript": "^7.0.2"
   },
   "git-hooks": {
