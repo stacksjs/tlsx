@@ -51,6 +51,15 @@ tlsx secure example.com -d "api.example.com,_.example.com"
 # Generate certificate with custom validity and organization
 tlsx secure example.com --validity-days 365 --organization-name "My Company"
 
+# Install the local Root CA into the system trust store (mkcert-style, idempotent)
+tlsx install
+
+# Export the Root CA for another device: pem (default), der, or an iOS mobileconfig profile
+tlsx export-ca --format mobileconfig --out ~/Desktop/root-ca.mobileconfig
+
+# Print the trust steps for a platform (macos, ios, windows, debian, rhel, android, linux-nss)
+tlsx trust-instructions --platform ios
+
 # Show all available options
 tlsx secure --help
 

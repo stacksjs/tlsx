@@ -4,7 +4,8 @@ import path from 'node:path'
 import process from 'node:process'
 import { CLI } from '@stacksjs/clapp'
 import { FileHttp01Store, obtainCertificate, PorkbunDnsProvider } from '../src/acme'
-import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, createRootCA, generateCertificate, installCA, removeCertFromSystemTrustStore, uninstallCA } from '../src/certificate'
+import type { CAExportFormat, TrustPlatform } from '../src/certificate'
+import { addCertToSystemTrustStoreAndSaveCert, cleanupTrustStore, createRootCA, exportCA, generateCertificate, installCA, removeCertFromSystemTrustStore, TRUST_PLATFORMS, trustInstructions, uninstallCA } from '../src/certificate'
 import { validateCertificate, willCertExpireSoon } from '../src/certificate/validation'
 import { config } from '../src/config'
 import { certFileBase, listCertsInDirectory, log, normalizeCertPaths, renewalOutputBase } from '../src/utils'
@@ -449,6 +450,80 @@ cli
       log.error(`tlsx uninstall failed: ${err}`)
       process.exit(1)
     }
+  })
+
+cli
+  .command('export-ca', 'Export the local Root CA as PEM, DER, or an Apple .mobileconfig profile for another device')
+  .option('--ca <path>', 'CA certificate to export', { default: config.caCertPath })
+  .option('--format <format>', 'Output format: pem, der, or mobileconfig', { default: 'pem' })
+  .option('--out <file>', 'Output file (defaults to <ca-name>.<ext> in the current directory)')
+  .option('--name <name>', 'Display name for the profile and filename (defaults to the CA common name)')
+  .option('--organization <org>', 'Organization shown on the profile (defaults to the CA organization)')
+  .option('--identifier <id>', 'Reverse-DNS profile identifier (defaults to dev.stacksjs.tlsx.<fingerprint-prefix>)')
+  .option('--verbose', 'Enable verbose logging', { default: config.verbose })
+  .usage('tlsx export-ca [options]')
+  .example('tlsx export-ca --format mobileconfig --out ~/Desktop/pi-root-ca.mobileconfig')
+  .example('tlsx export-ca --format der --out root-ca.cer')
+  .example('tlsx export-ca --ca ~/.stacks/ssl/stacks.localhost.ca.crt --format pem')
+  .action(async (options?: { ca?: string, format?: string, out?: string, name?: string, organization?: string, identifier?: string, verbose?: boolean }) => {
+    const format = (options?.format ?? 'pem').toLowerCase()
+    if (format !== 'pem' && format !== 'der' && format !== 'mobileconfig') {
+      log.error(`Unsupported format: ${options?.format}. Use pem, der, or mobileconfig.`)
+      process.exit(1)
+    }
+
+    const { caCertPath } = normalizeCertPaths({ caCertPath: options?.ca })
+    if (!fs.existsSync(caCertPath)) {
+      log.error(`CA certificate not found: ${caCertPath} (run "tlsx install" first, or pass --ca)`)
+      process.exit(1)
+    }
+
+    try {
+      const exported = await exportCA({
+        caCertPath,
+        format: format as CAExportFormat,
+        name: options?.name,
+        organization: options?.organization,
+        identifier: options?.identifier,
+      })
+      const outPath = path.resolve(options?.out ?? exported.filename)
+      fs.mkdirSync(path.dirname(outPath), { recursive: true })
+      fs.writeFileSync(outPath, exported.data)
+      log.success(`Wrote ${format} export of ${caCertPath} to ${outPath}`)
+      if (format === 'mobileconfig')
+        log.info(trustInstructions('ios', outPath))
+      else
+        log.info('Run "tlsx trust-instructions --platform <platform>" for the install steps on the target device.')
+    }
+    catch (err) {
+      log.error(`tlsx export-ca failed: ${err}`)
+      process.exit(1)
+    }
+  })
+
+cli
+  .command('trust-instructions', 'Print the steps to trust the Root CA on another device')
+  .option('--platform <platform>', `One of: ${TRUST_PLATFORMS.join(', ')} (omit to print all)`)
+  .option('--ca <path>', 'Path to the exported CA file to mention in the steps', { default: config.caCertPath })
+  .usage('tlsx trust-instructions --platform ios')
+  .example('tlsx trust-instructions --platform macos')
+  .example('tlsx trust-instructions --platform ios --ca ~/Desktop/pi-root-ca.mobileconfig')
+  .action(async (options?: { platform?: string, ca?: string }) => {
+    const caPath = options?.ca && path.isAbsolute(options.ca)
+      ? options.ca
+      : normalizeCertPaths({ caCertPath: options?.ca }).caCertPath
+
+    const requested = options?.platform?.toLowerCase()
+    const platforms: TrustPlatform[] = requested
+      ? [requested as TrustPlatform]
+      : [...TRUST_PLATFORMS]
+
+    if (requested && !TRUST_PLATFORMS.includes(requested as TrustPlatform)) {
+      log.error(`Unknown platform: ${options?.platform}. Expected one of ${TRUST_PLATFORMS.join(', ')}`)
+      process.exit(1)
+    }
+
+    log.info(platforms.map(p => trustInstructions(p, caPath)).join('\n\n'))
   })
 
 cli

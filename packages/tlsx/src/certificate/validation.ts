@@ -32,6 +32,64 @@ export function getCertSha256Fingerprint(certPemOrPath: string): string {
   return getCertificateFromCertPemOrPath(certPemOrPath).fingerprint256.replace(/:/g, '').toUpperCase()
 }
 
+const PEM_CERTIFICATE_BLOCK_RE = /-----BEGIN CERTIFICATE-----[\s\S]*?-----END CERTIFICATE-----/g
+
+/**
+ * Split a PEM bundle (for example `/etc/ssl/certs/ca-certificates.crt`) into
+ * its individual `-----BEGIN CERTIFICATE-----` blocks. Comments and anything
+ * between blocks are dropped; the order of the bundle is preserved.
+ * @param bundle - One or more concatenated PEM certificates.
+ */
+export function splitPemCertificates(bundle: string): string[] {
+  return bundle.match(PEM_CERTIFICATE_BLOCK_RE) ?? []
+}
+
+/**
+ * Decode a single PEM certificate block to its DER bytes. Only the base64
+ * body between the BEGIN and END lines is read, so leading comments (which
+ * some bundles carry) are harmless.
+ * @param pem - A PEM certificate.
+ */
+export function pemToDer(pem: string): Buffer {
+  const body = pem
+    .replace(/-----BEGIN [A-Z ]+-----/, '')
+    .replace(/-----END [A-Z ]+-----[\s\S]*$/, '')
+    .replace(/\s+/g, '')
+  return Buffer.from(body, 'base64')
+}
+
+/**
+ * SHA-256 fingerprint of DER certificate bytes, in the same uppercase
+ * colon-free form as {@link getCertSha256Fingerprint}, so the two compare
+ * directly. This is what lets a PEM bundle be searched without instantiating
+ * an X509Certificate per entry.
+ * @param der - DER-encoded certificate bytes.
+ */
+export function sha256FingerprintOfDer(der: Uint8Array): string {
+  return crypto.createHash('sha256').update(der).digest('hex').toUpperCase()
+}
+
+/**
+ * Whether a PEM bundle contains a certificate with the given SHA-256
+ * fingerprint (uppercase hex, no separators). Malformed blocks are skipped
+ * rather than failing the whole lookup.
+ * @param bundle - Concatenated PEM certificates.
+ * @param fingerprint - Fingerprint to look for, as `getCertSha256Fingerprint` returns it.
+ */
+export function pemBundleHasFingerprint(bundle: string, fingerprint: string): boolean {
+  const wanted = fingerprint.replace(/:/g, '').toUpperCase()
+  for (const block of splitPemCertificates(bundle)) {
+    try {
+      if (sha256FingerprintOfDer(pemToDer(block)) === wanted)
+        return true
+    }
+    catch {
+      // A damaged block in a system bundle must not mask a real match elsewhere.
+    }
+  }
+  return false
+}
+
 /**
  * The certificate subject's Common Name (CN), or '' when absent.
  * @param certPemOrPath - The certificate PEM or a path to the certificate file.

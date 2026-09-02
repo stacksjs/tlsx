@@ -109,6 +109,72 @@ describe('installCA', () => {
     expect(parsed.subject).toContain('My Custom Root')
     expect(parsed.subject).toContain('Acme')
   })
+
+  it('reports which stores took the CA', async () => {
+    const result = await installCA({ basePath, verbose: false })
+    expect(result.report.platform).toBe('linux')
+    // The fake NSS db from mockFindFoldersWithFile is always there.
+    expect(result.report.stores.some(s => s.store === 'linux-nss' && s.location === '/fake/nssdb' && s.status === 'installed')).toBe(true)
+    expect(result.report.trusted).toBe(true)
+  })
+
+  describe('already trusted on linux (system CA bundle)', () => {
+    let root: string
+
+    beforeEach(async () => {
+      root = await fsp.mkdtemp(path.join(os.tmpdir(), 'tlsx-fake-root-'))
+    })
+
+    afterEach(async () => {
+      await fsp.rm(root, { recursive: true, force: true }).catch(() => {})
+    })
+
+    it('skips the trust store entirely when the bundle already holds the CA', async () => {
+      // First run mints the CA (and installs via the mocked handler).
+      const first = await installCA({ basePath, verbose: false })
+      const caPem = await fsp.readFile(first.caCertPath, 'utf8')
+
+      // Fake a Debian box whose consolidated bundle already contains it.
+      await fsp.mkdir(path.join(root, 'etc/ssl/certs'), { recursive: true })
+      await fsp.writeFile(path.join(root, 'etc/os-release'), 'ID=debian\n')
+      await fsp.writeFile(path.join(root, 'etc/ssl/certs/ca-certificates.crt'), `${caPem}`)
+      mockRunCommand.mockClear()
+      mockFindFoldersWithFile.mockClear()
+
+      const second = await installCA({ basePath, verbose: false, linux: { root } })
+      expect(second.generated).toBe(false)
+      expect(second.alreadyTrusted).toBe(true)
+      expect(second.trustInstalled).toBe(false)
+      expect(second.report.trusted).toBe(true)
+      expect(second.report.stores).toEqual([{ store: 'linux-system', location: 'system CA bundle', status: 'already-trusted' }])
+
+      // No update-ca-certificates, no certutil, not even a look for NSS dbs.
+      expect(mockRunCommand).not.toHaveBeenCalled()
+      expect(mockFindFoldersWithFile).not.toHaveBeenCalled()
+    })
+
+    it('does install when the bundle holds a different CA', async () => {
+      const first = await installCA({ basePath, verbose: false })
+      const { createRootCA } = await import('../src/certificate/generate')
+      const stranger = await createRootCA({ commonName: 'Stranger CA', validityYears: 1 })
+
+      await fsp.mkdir(path.join(root, 'etc/ssl/certs'), { recursive: true })
+      await fsp.writeFile(path.join(root, 'etc/os-release'), 'ID=debian\n')
+      await fsp.writeFile(path.join(root, 'etc/ssl/certs/ca-certificates.crt'), stranger.certificate)
+      mockRunCommand.mockClear()
+
+      const second = await installCA({ basePath, verbose: false, linux: { root, isRoot: false } })
+      expect(second.alreadyTrusted).toBe(false)
+      expect(second.trustInstalled).toBe(true)
+      const cmds = mockRunCommand.mock.calls.map(c => c[0] as string)
+      expect(cmds.some(c => c.includes('sudo update-ca-certificates') && c.includes(first.caCertPath))).toBe(true)
+      expect(second.report.stores[0]).toMatchObject({
+        store: 'linux-system',
+        status: 'installed',
+        location: path.join(root, 'usr/local/share/ca-certificates/local-development-root-ca.crt'),
+      })
+    })
+  })
 })
 
 describe('uninstallCA', () => {

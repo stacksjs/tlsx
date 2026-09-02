@@ -103,6 +103,43 @@ describe('@stacksjs/tlsx', () => {
     expect(san).toContain('URI:https://localhost/app')
   })
 
+  it('should produce a leaf for a LAN host with both a dNSName (type 2) and an iPAddress (type 7) SAN', async () => {
+    // The Raspberry Pi case: reachable as pi-stacks.local via mDNS and by its
+    // LAN address, so the leaf must carry both name forms.
+    const hostCert = await generateCertificate({
+      domain: 'pi-stacks.local',
+      altNameIPs: ['192.168.1.50'],
+      rootCA: {
+        certificate: rootCA.certificate,
+        privateKey: rootCA.privateKey,
+      },
+    })
+    const cert = getCertificateFromCertPemOrPath(hostCert.certificate)
+
+    // What the platform parser sees.
+    expect(cert.subjectAltName).toBe('DNS:pi-stacks.local, IP Address:192.168.1.50')
+    expect(cert.checkHost('pi-stacks.local')).toBe('pi-stacks.local')
+    expect(cert.checkIP('192.168.1.50')).toBe('192.168.1.50')
+    expect(cert.checkIP('192.168.1.51')).toBeUndefined()
+    expect(cert.checkHost('192.168.1.50')).toBeUndefined()
+
+    // What is on the wire: GeneralName [2] IA5String for the dNSName and
+    // GeneralName [7] OCTET STRING of the 4 address bytes for the iPAddress.
+    const der = cert.raw
+    const dns = Buffer.concat([Buffer.from([0x82, 'pi-stacks.local'.length]), Buffer.from('pi-stacks.local', 'ascii')])
+    const ip = Buffer.from([0x87, 0x04, 192, 168, 1, 50])
+    expect(der.indexOf(dns)).toBeGreaterThan(-1)
+    expect(der.indexOf(ip)).toBeGreaterThan(-1)
+    // Both live inside one SAN SEQUENCE, name first then address.
+    expect(der.indexOf(ip)).toBe(der.indexOf(dns) + dns.length)
+    expect(der[der.indexOf(dns) - 2]).toBe(0x30)
+    expect(der[der.indexOf(dns) - 1]).toBe(dns.length + ip.length)
+
+    // The IP must not have been smuggled in as a DNS name, and the chain must verify.
+    expect(cert.subjectAltName).not.toContain('DNS:192.168.1.50')
+    expect(cert.verify(getCertificateFromCertPemOrPath(rootCA.certificate).publicKey)).toBe(true)
+  })
+
   it('should generate a certificate with custom validity period', async () => {
     const validityYears = 1
     const customCA = await createRootCA({

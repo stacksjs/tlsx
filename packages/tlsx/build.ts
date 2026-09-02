@@ -38,6 +38,11 @@ await smokeEntry('./dist/src/index.js', [
   'validateCertificate',
   'Http01Store',
   'PorkbunDnsProvider',
+  'addCertToSystemTrustStore',
+  'isCertTrusted',
+  'installCAIntoLinuxSystemStore',
+  'exportCA',
+  'trustInstructions',
 ])
 
 console.log('Built')
