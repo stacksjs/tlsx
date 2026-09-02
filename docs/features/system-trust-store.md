@@ -12,7 +12,7 @@ A trust store (or certificate store) is a database of trusted certificates used 
 
 - **macOS**: Integrates with the macOS Keychain
 - **Windows**: Adds certificates to the Windows Certificate Store
-- **Linux**: Supports various certificate databases including those used by Firefox and Chrome
+- **Linux**: Installs a distro anchor (`update-ca-certificates` on Debian and Ubuntu, `update-ca-trust` on the RHEL family) and also updates the NSS databases Firefox and Chromium use
 
 ## Benefits of Trust Store Integration
 

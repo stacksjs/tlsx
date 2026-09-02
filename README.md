@@ -133,6 +133,39 @@ tlsx secure --help
 tlsx version
 ```
 
+## Trusting the Root CA
+
+```bash
+# Install the local Root CA into the system trust store (mkcert-style, idempotent)
+tlsx install
+
+# Export it for another device: pem (default), der, or an Apple configuration profile
+tlsx export-ca --format mobileconfig --out ~/Desktop/root-ca.mobileconfig
+
+# Print the exact steps for a platform: macos, ios, windows, debian, rhel, android, linux-nss
+tlsx trust-instructions --platform ios
+
+# Remove the Root CA from the trust store again
+tlsx uninstall
+```
+
+On Linux, `install` writes the CA anchor where the distribution reads it,
+`/usr/local/share/ca-certificates` with `update-ca-certificates` on Debian and
+Ubuntu, `/etc/pki/ca-trust/source/anchors` with `update-ca-trust` on the RHEL
+family, detected from `/etc/os-release`. NSS databases are still updated when a
+browser profile is present. This is what makes a headless server work: it has
+no browser profile, so the NSS-only path found nothing to update and reported
+success while trusting nothing.
+
+`export-ca` covers the other machines on the network. One caveat is worth
+knowing before you debug the wrong thing: on iOS, installing the profile is
+only half the job, and full trust must then be enabled under Settings, General,
+About, Certificate Trust Settings. Until it is, Safari reports the certificate
+as invalid, which reads like a wrong certificate rather than a missing setting.
+
+Details, including the per-store report `installCA` returns, are in the
+[trust store docs](https://tlsx.sh/features/trust-store-management).
+
 ## ACME / Let's Encrypt
 
 In addition to local, self-signed development certificates, `tlsx` ships a dependency-free ACME (RFC 8555) client that obtains and renews real, publicly-trusted certificates from Let's Encrypt — including wildcards via the DNS-01 challenge. It uses only `node:crypto` and the global `fetch` (no external libraries), generating P-256 keys, hand-building the CSR, and signing every request as an ES256 JWS.

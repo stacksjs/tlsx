@@ -66,3 +66,17 @@ tlsx secure --help
 # Show version
 tlsx version
 ```
+
+`tlsx install` works on a headless machine. On Linux it writes the CA anchor
+into the directory the distribution reads (`/usr/local/share/ca-certificates`
+on Debian and Ubuntu, `/etc/pki/ca-trust/source/anchors` on the RHEL family)
+and runs that distribution's update command, so `curl`, Bun and system services
+trust it without a browser profile being present. Running it a second time
+costs nothing: the CA is looked up in the system bundle by fingerprint first,
+and an already-trusted CA is skipped without a sudo prompt.
+
+`tlsx export-ca` hands the same CA to another device, and
+`tlsx trust-instructions` prints the steps for that platform. On iOS,
+installing the exported profile is only half of it: full trust has to be
+enabled afterwards under Settings, General, About, Certificate Trust Settings.
+See [Trust Store Management](/features/trust-store-management) for both.

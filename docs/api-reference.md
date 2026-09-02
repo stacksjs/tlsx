@@ -120,6 +120,106 @@ const certPath = await addCertToSystemTrustStoreAndSaveCert(
 )
 ```
 
+### installCA
+
+Installs the local Root CA into the system trust store, mkcert style. Generates
+the CA on first run, then installs only the CA certificate, so every host
+certificate signed by it is trusted without another prompt. Idempotent: an
+already-trusted CA is detected by fingerprint and skipped.
+
+```ts
+async function installCA(options?: InstallCAOptions): Promise<InstallCAResult>
+```
+
+**Returns:**
+
+- `caCertPath`, `caKeyPath`: where the CA lives on disk
+- `generated`: true when this call minted a fresh CA
+- `trustInstalled`: true when this call wrote to a trust store
+- `alreadyTrusted`: true when the CA was trusted before the call
+- `report`: per-store outcome, so a system-store install can be told from an NSS one
+
+**Example:**
+
+```ts
+const { report } = await installCA()
+// report.stores, on a Raspberry Pi:
+// [{ store: 'linux-system', location: '/usr/local/share/ca-certificates/local-development-root-ca.crt', status: 'installed' }]
+```
+
+`report.trusted` is true when at least one store now holds the CA. On Linux the
+system store and the NSS databases are independent: a missing browser profile
+no longer discards a successful system install, and neither does a `certutil`
+failure.
+
+### isCertTrusted
+
+Whether a CA is already trusted by this platform's system store.
+
+```ts
+async function isCertTrusted(caCertPemOrPath: string, options?: TrustStoreOptions): Promise<boolean>
+```
+
+macOS reads the keychain's SHA-256 hashes. Linux searches the distribution's
+consolidated PEM bundle for the fingerprint, with no `openssl` and no
+subprocess. Windows always answers false, because there is no cheap lookup, so
+callers fall through to `certutil`. Ask this before generating certificates in
+a loop, rather than rerunning the distribution's update command each time.
+
+### installCAIntoLinuxSystemStore
+
+The Linux half of `installCA`, exported on its own: copy the CA into the
+distribution's anchor directory and regenerate the bundle.
+
+```ts
+async function installCAIntoLinuxSystemStore(
+  caCertPath: string,
+  options?: LinuxSystemTrustOptions
+): Promise<LinuxSystemTrustResult>
+```
+
+The family is detected from `/etc/os-release` (`ID`, then each `ID_LIKE`
+entry), falling back to probing for the anchor directories. It never throws for
+a store problem: the outcome is in `status` (`installed`, `already-trusted`,
+`unsupported`, `failed`) with `error` and the exact `commands` that ran, so the
+caller decides whether an unrecognised distribution is fatal. `removeCAFromLinuxSystemStore(name, options?)` is the inverse.
+
+### exportCA
+
+Exports a CA certificate as PEM, DER, or an Apple configuration profile.
+
+```ts
+async function exportCA(options: ExportCAOptions): Promise<ExportedCA>
+```
+
+**Parameters:**
+
+- `caCertPath`: path to the CA certificate, or the PEM itself
+- `format`: `'pem' | 'der' | 'mobileconfig'`
+- `name`, `organization`, `identifier`: profile metadata, each defaulting from the CA's own subject or fingerprint
+
+**Returns:**
+
+- `data`: text for PEM and profiles, bytes for DER
+- `filename`: a suggested name with the conventional extension
+- `mime`: the content type, so the result can be served straight from an HTTP handler
+
+The profile's `PayloadUUID`s are derived from the CA fingerprint, so exporting
+the same authority twice yields a byte-identical profile.
+
+### trustInstructions
+
+The exact steps to trust a CA on a given platform, as text.
+
+```ts
+function trustInstructions(platform: TrustPlatform, caPath: string): string
+```
+
+`TrustPlatform` is one of `macos`, `ios`, `windows`, `debian`, `rhel`,
+`android`, `linux-nss`. The iOS text includes the step that is easy to miss:
+after installing the profile, full trust has to be enabled under Settings,
+General, About, Certificate Trust Settings.
+
 ### storeCertificate
 
 Stores a certificate and private key to the filesystem.

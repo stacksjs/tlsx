@@ -194,7 +194,7 @@ await untrustRootCA({
 | Platform | Trust Store Location |
 |----------|---------------------|
 | macOS | Keychain Access (System) |
-| Linux | `/etc/ssl/certs/` or NSS database |
+| Linux | `/usr/local/share/ca-certificates/` (Debian) or `/etc/pki/ca-trust/source/anchors/` (RHEL), plus NSS databases under `$HOME` |
 | Windows | Certificate Manager (Local Machine) |
 
 ## CA Management

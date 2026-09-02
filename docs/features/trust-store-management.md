@@ -128,7 +128,11 @@ Requires: sudo/admin password
 
 ### Linux
 
-tlsx installs the CA into two places, and both are additive: the distro-wide system store first (this is what a headless box such as a Raspberry Pi needs, since curl, Bun and system services read it), then every NSS database (`cert9.db`) it finds under your home directory for Firefox and Chromium.
+tlsx installs the CA into two places, and both are additive: the distro-wide system store first, then every NSS database (`cert9.db`) it finds under your home directory for Firefox and Chromium.
+
+The system store came second, and it is the one that matters on a server. The original Linux path only ran `certutil` against NSS databases under `$HOME`. A headless box has no browser profile, so there was nothing to find: `installCA` searched, found no database, warned that the certificate "may not be trusted", and returned success. That is precisely the case that needs a trust store. A Raspberry Pi that has just minted its own certificate authority has no Firefox profile, and the CA it created was trusted by nothing, while the call reported that it had worked.
+
+Now the anchor is written where the distribution actually reads it, and the distribution's own update command regenerates the bundle. NSS is still updated when a database is present, and a `certutil` failure there no longer discards a system store install that succeeded. An unrecognised distribution is reported as skipped rather than attempted.
 
 The distro family is read from `/etc/os-release` (`ID`, then each `ID_LIKE` entry), so derivatives such as Raspberry Pi OS, Pop!_OS or Rocky resolve to their parent. When neither classifies the system, tlsx probes for the anchor directories below.
 
@@ -142,6 +146,8 @@ The distro family is read from `/etc/os-release` (`ID`, then each `ID_LIKE` entr
 
 Before touching anything, tlsx checks whether the CA is already trusted by looking for its SHA-256 fingerprint in the consolidated bundle (`/etc/ssl/certs/ca-certificates.crt` on Debian, `/etc/pki/tls/certs/ca-bundle.crt` on RHEL). A second `tlsx install` is therefore a no-op with no sudo prompt, and `update-ca-certificates` is never rerun for a CA that is already in the bundle.
 
+`isCertTrusted` answers from that same bundle on Linux, with no `openssl` and no shelling out. A caller that generates many certificates from one CA can ask before it acts, instead of rerunning the distribution's update command on every certificate.
+
 ```ts
 import { addCertToSystemTrustStore, installCA, isCertTrusted } from '@stacksjs/tlsx'
 
@@ -149,10 +155,12 @@ const { report } = await installCA()
 // report.stores, for example:
 // [{ store: 'linux-system', location: '/usr/local/share/ca-certificates/local-development-root-ca.crt', status: 'installed' }]
 
-await isCertTrusted('~/.stacks/ssl/stacks.localhost.ca.crt') // true once the bundle carries it
+// Paths are read as given, so pass a real one (no `~` expansion)
+await isCertTrusted('/home/pi/.stacks/ssl/stacks.localhost.ca.crt') // true once the bundle carries it
 
 // Install an existing CA file and get the same per-store report back
-const stores = await addCertToSystemTrustStore('/path/to/root-ca.crt')
+const installed = await addCertToSystemTrustStore('/path/to/root-ca.crt')
+// installed.trusted, installed.stores
 ```
 
 **Firefox and Chromium (NSS)**:
@@ -162,6 +170,8 @@ Command: certutil
 ```
 
 A missing NSS database is no longer a warning when the system store took the CA; the warning only appears when neither store could be updated.
+
+The authority being installed on a box like this is often one [rpx](https://github.com/stacksjs/rpx) minted for a private network in its `localCa` mode, which Stacks' `buddy server:*` commands set up for a Raspberry Pi.
 
 ### Windows
 
@@ -181,7 +191,13 @@ Requires: Administrator
 
 ## Handing the CA to Other Devices
 
-A CA minted on one machine (a Pi running a gateway, say) has to be trusted by every laptop and phone that talks to it. `tlsx export-ca` writes the CA in the container each platform wants, and `tlsx trust-instructions` prints the exact steps.
+A CA minted on one machine (a Pi running a gateway, say) has to be trusted by every laptop and phone that talks to it. Each platform wants the certificate in a different container. `tlsx export-ca` writes all three from the one PEM on disk, and `tlsx trust-instructions` prints the exact steps for a platform.
+
+| Format | Extension | For |
+| --- | --- | --- |
+| `pem` (default) | `.pem` | macOS and Linux |
+| `der` | `.cer` | Windows, and Android where a `.cer` extension is expected |
+| `mobileconfig` | `.mobileconfig` | iOS and iPadOS, which install a root only through a configuration profile |
 
 ```bash
 # PEM for macOS / Linux (default)
@@ -194,27 +210,41 @@ tlsx export-ca --format der --out root-ca.cer
 tlsx export-ca --format mobileconfig --name "Pi Stacks Root CA" --out ~/Desktop/pi-root-ca.mobileconfig
 
 # A different CA than the configured one
-tlsx export-ca --ca /etc/rpx/ssl/root-ca.crt --format mobileconfig
+tlsx export-ca --ca /etc/rpx/local-ca/rpx-root-ca.crt --format mobileconfig
 
 # The steps for one platform, or all of them when --platform is omitted
 tlsx trust-instructions --platform ios --ca ~/Desktop/pi-root-ca.mobileconfig
 tlsx trust-instructions --platform macos
 ```
 
-The `.mobileconfig` is an unsigned profile with a single `com.apple.security.root` payload. Its `PayloadUUID`s are derived from the CA's fingerprint, so re-exporting the same CA produces the same profile and iOS updates it in place instead of installing a duplicate. After installing the profile on iOS, full trust still has to be enabled under Settings > General > About > Certificate Trust Settings.
+`export-ca` options: `--ca <path>` (defaults to the configured CA), `--format pem|der|mobileconfig`, `--out <file>` (defaults to `<ca-name>.<ext>` in the current directory), `--name` (profile display name, defaults to the CA's Common Name), `--organization`, `--identifier` (reverse-DNS, defaults to `dev.stacksjs.tlsx.<fingerprint-prefix>`). Platforms for `trust-instructions`: `macos`, `ios`, `windows`, `debian`, `rhel`, `android`, `linux-nss`.
 
-Options: `--format pem|der|mobileconfig`, `--out <file>`, `--name` (profile display name, defaults to the CA's Common Name), `--organization`, `--identifier` (reverse-DNS, defaults to `dev.stacksjs.tlsx.<fingerprint-prefix>`). Platforms for `trust-instructions`: `macos`, `ios`, `windows`, `debian`, `rhel`, `android`, `linux-nss`.
+The `.mobileconfig` is an unsigned profile with a single `com.apple.security.root` payload. Its `PayloadUUID`s are derived from the CA's SHA-256 fingerprint, so exporting the same authority twice produces a byte-identical profile and iOS updates the existing one in place instead of installing a second copy.
+
+### iOS needs a second step
+
+Installing the profile is not enough. iOS installs the root but does not trust it until full trust is switched on by hand:
+
+1. Send the `.mobileconfig` to the device (AirDrop, Mail, or a link) and open it.
+2. Settings, Profile Downloaded, Install, and confirm with the passcode.
+3. **Settings, General, About, Certificate Trust Settings**, then enable full trust for the new root.
+
+Step 3 is the one everyone misses, and its symptom is misleading. Safari does not say the certificate is untrusted for want of a setting. It reports the certificate as invalid, exactly as it would for a wrong or expired one, so the natural response is to go and re-mint a certificate that was never the problem. If a device rejects the certificate after the profile is installed, check Certificate Trust Settings before touching the server.
+
+Android has a comparable catch: a CA installed by hand is a user CA, and apps only trust user CAs when their network security configuration opts in (Android 7 and later). Chrome does. Most apps do not.
 
 ```ts
 import { exportCA, trustInstructions } from '@stacksjs/tlsx'
 
-const profile = await exportCA({ caCertPath: '/etc/rpx/ssl/root-ca.crt', format: 'mobileconfig', name: 'Pi Stacks Root CA' })
+const profile = await exportCA({ caCertPath: '/etc/rpx/local-ca/rpx-root-ca.crt', format: 'mobileconfig', name: 'Pi Stacks Root CA' })
 // profile.data (string), profile.filename ('pi-stacks-root-ca.mobileconfig'), profile.mime ('application/x-apple-aspen-config')
 
 console.log(trustInstructions('ios', profile.filename))
 ```
 
-`exportCA` returns the bytes plus a filename and MIME type, so a server can hand the profile out over HTTP as easily as writing it to disk.
+`exportCA` returns the bytes (or text for PEM and profiles) plus a filename and MIME type, so a server can hand the profile out over HTTP as easily as writing it to disk.
+
+The CA exported here is often one [rpx](https://github.com/stacksjs/rpx) set up for a private network: its `localCa` mode calls tlsx to mint the authority and its leaf, and Stacks' `buddy server:*` commands drive the pair for a Raspberry Pi.
 
 ## Browser-Specific Trust
 
