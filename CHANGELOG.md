@@ -1,5 +1,19 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.18...v0.13.19)
+
+## 🐛 Bug Fixes
+
+- **test**: stop the Linux trust tests depending on file order ([a503908](https://github.com/stacksjs/tlsx/commit/a503908)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🔧 Chores
+
+- release v0.13.19 ([b2ee390](https://github.com/stacksjs/tlsx/commit/b2ee390)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.17...v0.13.18)
 
 ## ✨ Features
