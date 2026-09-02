@@ -1,5 +1,19 @@
 # Changelog
 
+[Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.17...v0.13.18)
+
+## ✨ Features
+
+- **trust**: install the CA into the Linux system store, and export it ([279e0d7](https://github.com/stacksjs/tlsx/commit/279e0d7)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## 🔧 Chores
+
+- release v0.13.18 ([0fa1485](https://github.com/stacksjs/tlsx/commit/0fa1485)) _(by Chris <chrisbreuer93@gmail.com>)_
+
+## Contributors
+
+- _Chris <chrisbreuer93@gmail.com>_
+
 [Compare changes](https://github.com/stacksjs/tlsx/compare/v0.13.16...v0.13.17)
 
 ## 🐛 Bug Fixes

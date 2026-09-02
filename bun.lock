@@ -12,11 +12,11 @@
     },
     "packages/bun-plugin": {
       "name": "bun-plugin-tlsx",
-      "version": "0.13.17",
+      "version": "0.13.18",
     },
     "packages/tlsx": {
       "name": "@stacksjs/tlsx",
-      "version": "0.13.17",
+      "version": "0.13.18",
       "bin": {
         "tlsx": "./dist/bin/cli.js",
       },
