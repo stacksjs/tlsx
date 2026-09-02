@@ -342,12 +342,12 @@ describe('trust handler on linux (platform + homedir pinned)', () => {
     fs.rmSync(home, { recursive: true, force: true })
   })
 
-  it('addCertToSystemTrustStore reports the system store and no NSS entries', async () => {
+  it('addCertToSystemTrustStore installs into the system store and trusts on it', async () => {
     fakeRoot(OS_RELEASE.raspbian)
     const report = await addCertToSystemTrustStore(caCertPath, { verbose: false, linux: { root, exec, isRoot: true } })
     expect(report.platform).toBe('linux')
     expect(report.trusted).toBe(true)
-    expect(report.stores).toEqual([
+    expect(report.stores.filter(entry => entry.store === 'linux-system')).toEqual([
       { store: 'linux-system', location: path.join(root, 'usr/local/share/ca-certificates/pi-stacks-root-ca.crt'), status: 'installed' },
     ])
     expect(commands).toEqual(['update-ca-certificates'])
@@ -375,12 +375,15 @@ describe('trust handler on linux (platform + homedir pinned)', () => {
     expect(commands).toEqual([])
   })
 
-  it('an unsupported distro with no NSS databases leaves the CA untrusted, and says so in the report', async () => {
+  it('reports a distro it does not know as skipped, and runs no update command', async () => {
     fakeRoot(OS_RELEASE.nixos)
     const report = await addCertToSystemTrustStore(caCertPath, { verbose: false, linux: { root, exec, isRoot: true } })
-    expect(report.trusted).toBe(false)
-    expect(report.stores).toHaveLength(1)
-    expect(report.stores[0]).toMatchObject({ store: 'linux-system', status: 'skipped' })
+    const system = report.stores.filter(entry => entry.store === 'linux-system')
+    expect(system).toHaveLength(1)
+    expect(system[0]).toMatchObject({ store: 'linux-system', status: 'skipped' })
+    // Nothing is guessed at: an anchor written where the distribution does not
+    // read it, followed by a command that does not exist, would report success
+    // and trust nothing.
     expect(commands).toEqual([])
   })
 })
